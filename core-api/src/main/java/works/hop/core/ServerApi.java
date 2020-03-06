@@ -1,4 +1,4 @@
-package works.hop;
+package works.hop.core;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -6,6 +6,17 @@ public class ServerApi implements Rest {
 
     public static void main(String[] args) {
         System.out.println("Hello World!");
+    }
+
+    @Override
+    public <T> CompletableFuture<ResponseEntity> all(String method, String url, CompletableFuture<Exchange> future, Handler<T> handler) {
+        return future.thenCompose(exchange -> handler.handle(exchange.request(), exchange.response()).handle((data, th) -> {
+            if (th == null) {
+                return ResponseEntity.ok(data);
+            } else {
+                return ResponseEntity.error(th);
+            }
+        }));
     }
 
     @Override
@@ -29,13 +40,17 @@ public class ServerApi implements Rest {
     }
 
     @Override
-    public <T> CompletableFuture<ResponseEntity> all(String method, String url, CompletableFuture<Exchange> future, Handler<T> handler) {
-        return future.thenCompose(exchange -> handler.handle(exchange.request(), exchange.response()).handle((data, th) -> {
-            if (th == null) {
-                return ResponseEntity.ok(data);
-            } else {
-                return ResponseEntity.error(th);
-            }
-        }));
+    public void start() {
+
+    }
+
+    @Override
+    public void shutdown() {
+
+    }
+
+    @Override
+    public void listen(Integer port, String host) {
+
     }
 }

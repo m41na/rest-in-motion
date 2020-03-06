@@ -1,4 +1,4 @@
-package works.hop;
+package works.hop.core;
 
 import java.util.Collections;
 import java.util.HashMap;

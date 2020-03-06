@@ -1,4 +1,4 @@
-package works.hop;
+package works.hop.core;
 
 public class Exchange {
 
