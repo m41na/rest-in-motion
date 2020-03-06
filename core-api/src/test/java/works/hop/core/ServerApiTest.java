@@ -1,4 +1,4 @@
-package works.hop.netty.core;
+package works.hop.core;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -20,8 +20,8 @@ public class ServerApiTest {
     @Test
     public void getRequestOnContextPathShouldReturn200Ok() {
         CompletableFuture<Exchange> future = CompletableFuture.supplyAsync(() -> new Exchange());
-        CompletableFuture<ResponseEntity> reply = server.get("/", future, (request, response) -> CompletableFuture.completedFuture("Hello"));
-        ResponseEntity result = reply.join();
+        CompletableFuture<AResponseEntity> reply = server.get("/", future, (request, response) -> CompletableFuture.completedFuture("Hello"));
+        AResponseEntity result = reply.join();
         assertEquals("Expecting Hello", "Hello", result.data.toString());
         assertEquals("Expecting 0", 0, result.errors.size());
     }
@@ -29,8 +29,8 @@ public class ServerApiTest {
     @Test
     public void postRequestOnContextPathShouldReturn200Ok() {
         CompletableFuture<Exchange> future = CompletableFuture.supplyAsync(() -> new Exchange());
-        CompletableFuture<ResponseEntity> reply = server.delete("/", future, (request, response) -> CompletableFuture.completedFuture("Hello"));
-        ResponseEntity result = reply.join();
+        CompletableFuture<AResponseEntity> reply = server.delete("/", future, (request, response) -> CompletableFuture.completedFuture("Hello"));
+        AResponseEntity result = reply.join();
         assertEquals("Expecting Hello", "Hello", result.data.toString());
         assertEquals("Expecting 0", 0, result.errors.size());
     }
@@ -38,8 +38,8 @@ public class ServerApiTest {
     @Test
     public void putRequestOnContextPathShouldReturn200Ok() {
         CompletableFuture<Exchange> future = CompletableFuture.supplyAsync(() -> new Exchange());
-        CompletableFuture<ResponseEntity> reply = server.delete("/", future, (request, response) -> CompletableFuture.completedFuture("Hello"));
-        ResponseEntity result = reply.join();
+        CompletableFuture<AResponseEntity> reply = server.delete("/", future, (request, response) -> CompletableFuture.completedFuture("Hello"));
+        AResponseEntity result = reply.join();
         assertEquals("Expecting Hello", "Hello", result.data.toString());
         assertEquals("Expecting 0", 0, result.errors.size());
     }
@@ -47,8 +47,8 @@ public class ServerApiTest {
     @Test
     public void deleteRequestOnContextPathShouldReturn200Ok() {
         CompletableFuture<Exchange> future = CompletableFuture.supplyAsync(() -> new Exchange());
-        CompletableFuture<ResponseEntity> reply = server.delete("/", future, (request, response) -> CompletableFuture.completedFuture("Hello"));
-        ResponseEntity result = reply.join();
+        CompletableFuture<AResponseEntity> reply = server.delete("/", future, (request, response) -> CompletableFuture.completedFuture("Hello"));
+        AResponseEntity result = reply.join();
         assertEquals("Expecting Hello", "Hello", result.data.toString());
         assertEquals("Expecting 0", 0, result.errors.size());
     }

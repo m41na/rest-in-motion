@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>works.hop</groupId>
-    <artifactId>netty-imp</artifactId>
+    <artifactId>netty-impl</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <name>netty-impl</name>

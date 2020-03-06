@@ -1,4 +1,4 @@
-package works.hop.netty.core;
+package works.hop.core;
 
 public interface Headers<T> extends Iterable<T> {
 }

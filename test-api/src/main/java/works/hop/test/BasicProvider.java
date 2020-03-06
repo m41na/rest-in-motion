@@ -1,4 +1,4 @@
-package works.hop.netty.test;
+package works.hop.test;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

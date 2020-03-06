@@ -13,6 +13,7 @@
         <module>core-api</module>
         <module>test-api</module>
         <module>netty-impl</module>
+        <module>jetty-impl</module>
     </modules>
 
     <name>a-rest-api</name>

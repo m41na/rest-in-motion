@@ -5,27 +5,35 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>works.hop</groupId>
-    <artifactId>test-api</artifactId>
+    <artifactId>jetty-impl</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>test-api</name>
+    <name>jetty-impl</name>
     <url>http://www.works-hop.com</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jetty.version>9.4.27.v20200227</jetty.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>works.hop</groupId>
-            <artifactId>jetty-impl</artifactId>
+            <artifactId>core-api</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>${jetty.version}</version>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

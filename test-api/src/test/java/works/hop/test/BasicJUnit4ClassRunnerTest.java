@@ -1,10 +1,10 @@
-package works.hop.netty.test;
+package works.hop.test;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import works.hop.netty.core.Exchange;
-import works.hop.netty.core.ServerApi;
+import works.hop.core.Exchange;
+import works.hop.core.ServerApi;
+import works.hop.jetty.JettyServer;
 
 import java.io.IOException;
 import java.net.URI;
@@ -16,15 +16,14 @@ import java.util.concurrent.CompletableFuture;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(BasicJUnit4ClassRunner.class)
-@Ignore("work not complete - placeholder for testing later")
 public class BasicJUnit4ClassRunnerTest {
 
-    public static final Integer PORT = 9099;
+    public static final Integer PORT = 8080;
     public static final String HOST = "127.0.0.1";
 
     @BasicProvider
-    public ServerApi provider() {
-        ServerApi server = new ServerApi();
+    public ServerApi provider() throws Exception {
+        ServerApi server = JettyServer.createServer();
         CompletableFuture<Exchange> future = CompletableFuture.supplyAsync(() -> new Exchange());
         server.get("/", future, (req, res) -> CompletableFuture.completedFuture("hello from server"));
         server.listen(PORT, HOST);

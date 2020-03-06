@@ -8,7 +8,6 @@ import static io.netty.buffer.Unpooled.copiedBuffer;
 
 public class NettyHandler extends ChannelInboundHandlerAdapter {
 
-
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof FullHttpRequest) {
