@@ -1,4 +1,8 @@
 package works.hop;
 
-public class Request {
+public interface Request {
+
+    <T> Headers<T> headers();
+
+    <T> RequestEntity<T> body();
 }

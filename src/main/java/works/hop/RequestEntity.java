@@ -1,4 +1,4 @@
 package works.hop;
 
-public class RequestEntity {
+public interface RequestEntity<T> {
 }

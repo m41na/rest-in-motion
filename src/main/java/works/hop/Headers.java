@@ -1,4 +1,4 @@
 package works.hop;
 
-public class Headers {
+public interface Headers<T> extends Iterable<T> {
 }

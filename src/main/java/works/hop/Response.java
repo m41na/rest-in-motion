@@ -1,4 +1,6 @@
 package works.hop;
 
-public class Response {
+public interface Response {
+
+    <T> ResponseEntity<T> result();
 }
