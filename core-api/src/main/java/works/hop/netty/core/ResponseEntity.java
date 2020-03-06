@@ -1,4 +1,4 @@
-package works.hop.core;
+package works.hop.netty.core;
 
 import java.util.Collections;
 import java.util.HashMap;

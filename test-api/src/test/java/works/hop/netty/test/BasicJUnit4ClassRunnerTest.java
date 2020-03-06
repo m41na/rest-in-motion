@@ -1,10 +1,10 @@
-package works.hop.test;
+package works.hop.netty.test;
 
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import works.hop.core.Exchange;
-import works.hop.core.ServerApi;
+import works.hop.netty.core.Exchange;
+import works.hop.netty.core.ServerApi;
 
 import java.io.IOException;
 import java.net.URI;

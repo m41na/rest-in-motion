@@ -5,16 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>works.hop</groupId>
-    <artifactId>just-in-time</artifactId>
+    <artifactId>a-rest-api</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
 
     <modules>
         <module>core-api</module>
         <module>test-api</module>
+        <module>netty-impl</module>
     </modules>
 
-    <name>just-in-time</name>
+    <name>a-rest-api</name>
     <url>http://www.works-hop.com</url>
 
     <properties>

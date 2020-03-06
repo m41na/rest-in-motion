@@ -1,4 +1,4 @@
-package works.hop.core;
+package works.hop.netty.core;
 
 public interface Response {
 

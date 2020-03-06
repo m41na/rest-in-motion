@@ -1,10 +1,10 @@
-package works.hop.test;
+package works.hop.netty.test;
 
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-import works.hop.core.ServerApi;
+import works.hop.netty.core.ServerApi;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
