@@ -1,12 +1,8 @@
 package works.hop.core;
 
-public class Exchange {
+public interface Exchange {
 
-    public ARequest request() {
-        return null;
-    }
+    ARequest request();
 
-    public AResponse response() {
-        return null;
-    }
+    AResponse response();
 }

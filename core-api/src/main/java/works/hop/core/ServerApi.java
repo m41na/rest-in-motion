@@ -37,16 +37,16 @@ public class ServerApi implements Rest {
 
     @Override
     public void start() throws Exception {
-
+        throw new UnsupportedOperationException("Implement this in a subclass");
     }
 
     @Override
     public void shutdown() throws Exception {
-
+        throw new UnsupportedOperationException("Implement this in a subclass");
     }
 
     @Override
     public void listen(Integer port, String host) throws Exception {
-
+        throw new UnsupportedOperationException("Implement this in a subclass");
     }
 }

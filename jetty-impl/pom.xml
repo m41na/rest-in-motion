@@ -18,6 +18,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+
+        <dependency>
             <groupId>works.hop</groupId>
             <artifactId>core-api</artifactId>
             <version>${project.version}</version>

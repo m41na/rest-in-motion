@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 
-public class JettyExchange extends Exchange {
+public class JettyExchange implements Exchange {
 
     private final ARequest ARequest;
     private final AResponse AResponse;

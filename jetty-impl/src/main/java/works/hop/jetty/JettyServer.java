@@ -1,53 +1,76 @@
 package works.hop.jetty;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import works.hop.core.AResponseEntity;
 import works.hop.core.Handler;
+import works.hop.core.ObjectMapperSupplier;
 import works.hop.core.ServerApi;
+import works.hop.route.MethodRouter;
+import works.hop.route.Routing;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+
+import static java.util.Collections.emptyMap;
 
 public class JettyServer extends ServerApi {
 
     private final Server server;
     private final ServerConnector connector;
+    private final ObjectMapper mapper;
     private final ContextHandlerCollection contexts = new ContextHandlerCollection();
+    private final JettyRouter router = new JettyRouter(new MethodRouter());
 
-    private JettyServer() {
+    private JettyServer(String base) {
+        this.mapper = ObjectMapperSupplier.version1.get();
+        //create server
         this.server = new Server();
         //add connector
         this.connector = new ServerConnector(server);
+        //add routing handler
+        this.addHandler(base);
         //set contexts handler
         this.server.setHandler(contexts);
     }
 
-    public void addHandler(String path, AbstractHandler handler) {
-        ContextHandler context = new ContextHandler(path);
-        context.setHandler(handler);
-        contexts.addHandler(context);
-    }
-
-    public void addHandler(String method, String path, Handler handler) {
-        JettyHandler handle = new JettyHandler(handler);
-        ContextHandler context = new ContextHandler(path);
-        context.setHandler(handle);
-        contexts.addHandler(context);
-    }
-
-    public static JettyServer createServer() throws Exception {
-        JettyServer server = new JettyServer();
+    public static JettyServer createServer(String base) throws Exception {
+        JettyServer server = new JettyServer(base);
         return server;
     }
 
     public static void main(String[] args) throws Exception {
         int port = 8080;
         String host = "localhost";
-        JettyServer server = createServer();
-        server.addHandler("all", "/", (request, response) -> CompletableFuture.completedFuture("Hello Universe"));
+        String base = "/";
+        JettyServer server = createServer(base);
+        server.addRoute("get", "/", "*", "", emptyMap(), (request, response) ->
+                CompletableFuture.completedFuture(AResponseEntity.ok(new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z").format(new Date()))));
         server.listen(port, host);
+    }
+
+    public void addRoute(String method, String path, String accept, String contentType, Map<String, String> headers, Handler handler) {
+        Routing.Route route = Routing.RouteBuilder.newRoute()
+                .handler(handler)
+                .accept(accept)
+                .contentType(contentType)
+                .path(path)
+                .method(method)
+                .headers(() -> headers)
+                .build();
+        router.add(route);
+    }
+
+    private void addHandler(String path) {
+        JettyHandler handle = new JettyHandler(router);
+        ContextHandler context = new ContextHandler(path);
+        context.setHandler(handle);
+        contexts.addHandler(context);
     }
 
     @Override
