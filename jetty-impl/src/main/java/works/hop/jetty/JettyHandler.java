@@ -44,6 +44,7 @@ public class JettyHandler extends AbstractHandler {
             Routing.Search route = router.search(baseRequest);
             if (route.result != null) {
                 LOG.info("matched route -> {}", route.result.toString());
+                aRequest.route(route);
                 HandlerPromise promise = new HandlerPromise();
                 promise.OnSuccess(new Function<HandlerResult, HandlerResult>() {
                     @Override
@@ -121,8 +122,8 @@ public class JettyHandler extends AbstractHandler {
                     baseRequest.setHandled(true);
                 }
             } else {
-                LOG.error("no matching route handler found for request -> " + request.getRequestURI());
-                baseRequest.setHandled(true);
+                LOG.warn("no matching route handler found for request -> " + request.getRequestURI() + ". Returning from handler without setting handled as true");
+                return;
             }
         });
     }

@@ -8,28 +8,34 @@ import works.hop.handler.HandlerPromise;
 import works.hop.handler.HandlerResult;
 import works.hop.route.Routing;
 
+import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertTrue;
+import static works.hop.core.RestServer.APP_CTX_KEY;
 
-public class ServerApiTest {
+public class RestServerTest {
 
-    private ServerApi server;
+    private RestServer server;
     @Mock
     private ARequest request;
     @Mock
     private AResponse response;
 
+    private Map<String, String> props = new HashMap<>();
     private HandlerPromise promise;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        server = new BasicServerApi();
+        props.put(APP_CTX_KEY, "/");
+        server = new BasicRestServer((key) -> props.get(key));
         promise = new HandlerPromise();
         promise.OnSuccess(new Function<HandlerResult, HandlerResult>() {
             @Override
@@ -89,9 +95,18 @@ public class ServerApiTest {
         assertTrue(result.isSuccess());
     }
 
-    class BasicServerApi extends ServerApi {
+    class BasicRestServer extends RestServer {
 
         BasicRouter router = new BasicRouter();
+
+        public BasicRestServer(Function<String, String> properties) {
+            super(properties);
+        }
+
+        @Override
+        public Restful upload(String path, String uploadDir, Object configuration) throws IOException {
+            return null;
+        }
 
         @Override
         public Routing.Router getRouter() {

@@ -8,9 +8,9 @@ import java.util.concurrent.CompletableFuture;
 
 public interface AResponse<RES> {
 
-    void initialize();
-
     RES response();
+
+    void initialize();
 
     void setStatus(int scOk);
 

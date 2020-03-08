@@ -8,6 +8,8 @@ public interface ARequest<REQ> {
 
     REQ request();
 
+    void initialize();
+
     String protocol();
 
     boolean secure();
@@ -18,9 +20,19 @@ public interface ARequest<REQ> {
 
     String path();
 
-    String param(String name);
+    String param(String name); //char, short, int, long, float, double, boolean, string
 
-    <T>T param(String name, Class<T> type);
+    Short shortParam(String name);
+
+    Integer intParam(String name);
+
+    Long longParam(String name);
+
+    Float floatParam(String name);
+
+    Double doubleParam(String name);
+
+    Boolean boolParam(String name);
 
     Map<String, String> pathParams();
 
@@ -47,4 +59,6 @@ public interface ARequest<REQ> {
     Routing.Search route();
 
     void route(Routing.Search route);
+
+    String requestLine();
 }

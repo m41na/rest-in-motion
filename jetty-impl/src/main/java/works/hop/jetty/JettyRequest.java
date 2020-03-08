@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import works.hop.core.ARequest;
 import works.hop.core.BodyReader;
+import works.hop.core.ObjectMapperSupplier;
 import works.hop.route.Routing;
 
 import javax.servlet.ServletException;
@@ -33,10 +34,16 @@ public class JettyRequest implements ARequest<HttpServletRequest> {
     protected String message;
     protected byte[] body;
     protected Cookie[] cookies;
-    protected ObjectMapper mapper;
+    protected ObjectMapper jsonMapper;
 
     public JettyRequest(HttpServletRequest request) {
         this.request = request;
+        initialize();
+    }
+
+    @Override
+    public void initialize() {
+        this.jsonMapper = ObjectMapperSupplier.version1.get();
     }
 
     public Cookie[] cookies() {
@@ -83,6 +90,11 @@ public class JettyRequest implements ARequest<HttpServletRequest> {
     }
 
     @Override
+    public String requestLine() {
+        return String.format("%s %s %s", request.getMethod(), request.getRequestURI(), request.getProtocol());
+    }
+
+    @Override
     public String path() {
         return request.getRequestURI();
     }
@@ -103,8 +115,33 @@ public class JettyRequest implements ARequest<HttpServletRequest> {
     }
 
     @Override
-    public <T> T param(String name, Class<T> type) {
-        return type.cast(param(name));
+    public Short shortParam(String name) {
+        return Short.parseShort(param(name));
+    }
+
+    @Override
+    public Integer intParam(String name) {
+        return Integer.parseInt(param(name));
+    }
+
+    @Override
+    public Long longParam(String name) {
+        return Long.parseLong(param(name));
+    }
+
+    @Override
+    public Float floatParam(String name) {
+        return Float.parseFloat(param(name));
+    }
+
+    @Override
+    public Double doubleParam(String name) {
+        return Double.parseDouble(param(name));
+    }
+
+    @Override
+    public Boolean boolParam(String name) {
+        return Boolean.parseBoolean(param(name));
     }
 
     @Override
@@ -155,7 +192,7 @@ public class JettyRequest implements ARequest<HttpServletRequest> {
         if (contentType.contains("application/json")) {
             Reader reader = new InputStreamReader(new ByteArrayInputStream(body()));
             try {
-                return this.mapper.readValue(reader, type);
+                return this.jsonMapper.readValue(reader, type);
             } catch (Exception e) {
                 throw new RuntimeException("Could not parse json body into java entity", e);
             }

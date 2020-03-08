@@ -1,1 +1,1 @@
-Play project for sampling http
+Simplified interfaces for Restful API

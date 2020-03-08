@@ -4,7 +4,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-import works.hop.core.ServerApi;
+import works.hop.core.RestServer;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -35,7 +35,7 @@ public class BasicJUnit4ClassRunner extends BlockJUnit4ClassRunner {
         CompletableFuture.runAsync(() -> {
             try {
                 FrameworkMethod method = provider.get(0);
-                ServerApi server = (ServerApi) method.invokeExplosively(createTest());
+                RestServer server = (RestServer) method.invokeExplosively(createTest());
                 serverLatch.await();
                 server.shutdown();
                 executor.shutdown();
@@ -62,7 +62,11 @@ public class BasicJUnit4ClassRunner extends BlockJUnit4ClassRunner {
     }
 
     protected HttpClient startClient() {
-        HttpClient httpClient = HttpClient.newHttpClient();
+        HttpClient httpClient = HttpClient.newBuilder()
+                .version(HttpClient.Version.HTTP_1_1)
+                .followRedirects(HttpClient.Redirect.NORMAL)
+                //.authenticator(Authenticator.getDefault())
+                .build();
         return httpClient;
     }
 
