@@ -1,7 +1,7 @@
 package works.hop.route;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import works.hop.core.Handler;
+import works.hop.handler.Handler;
 
 import java.util.Collections;
 import java.util.HashMap;
