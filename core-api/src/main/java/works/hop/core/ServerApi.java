@@ -1,52 +1,47 @@
 package works.hop.core;
 
-import java.util.concurrent.CompletableFuture;
+import works.hop.handler.Handler;
+import works.hop.route.Routing;
 
-public class ServerApi implements Rest {
+import java.util.Map;
+
+public abstract class ServerApi implements Rest {
 
     @Override
-    public <T> CompletableFuture<AResponseEntity> all(String method, String url, CompletableFuture<Exchange> future, Handler<T> handler) {
-        return future.thenCompose(exchange -> handler.handle(exchange.request(), exchange.response()).handle((data, th) -> {
-            if (th == null) {
-                return AResponseEntity.ok(data);
-            } else {
-                return AResponseEntity.error(th);
-            }
-        }));
+    public void all(String method, String url, String accept, String contentType, Map<String, String> headers, Handler handler) {
+        addRoute(method, url, accept, contentType, headers, handler);
     }
 
     @Override
-    public <T> CompletableFuture<AResponseEntity> get(String url, CompletableFuture<Exchange> future, Handler<T> handler) {
-        return all("get", url, future, handler);
+    public void get(String url, String accept, String contentType, Map<String, String> headers, Handler handler) {
+        all("get", url, accept, contentType, headers, handler);
     }
 
     @Override
-    public <T> CompletableFuture<AResponseEntity> post(String url, CompletableFuture<Exchange> future, Handler<T> handler) {
-        return all("post", url, future, handler);
+    public void post(String url, String accept, String contentType, Map<String, String> headers, Handler handler) {
+        all("post", url, accept, contentType, headers, handler);
     }
 
     @Override
-    public <T> CompletableFuture<AResponseEntity> put(String url, CompletableFuture<Exchange> future, Handler<T> handler) {
-        return all("put", url, future, handler);
+    public void put(String url, String accept, String contentType, Map<String, String> headers, Handler handler) {
+        all("put", url, accept, contentType, headers, handler);
     }
 
     @Override
-    public <T> CompletableFuture<AResponseEntity> delete(String url, CompletableFuture<Exchange> future, Handler<T> handler) {
-        return all("delete", url, future, handler);
+    public void delete(String url, String accept, String contentType, Map<String, String> headers, Handler handler) {
+        all("delete", url, accept, contentType, headers, handler);
     }
 
     @Override
-    public void start() throws Exception {
-        throw new UnsupportedOperationException("Implement this in a subclass");
-    }
-
-    @Override
-    public void shutdown() throws Exception {
-        throw new UnsupportedOperationException("Implement this in a subclass");
-    }
-
-    @Override
-    public void listen(Integer port, String host) throws Exception {
-        throw new UnsupportedOperationException("Implement this in a subclass");
+    public void addRoute(String method, String path, String accept, String contentType, Map<String, String> headers, Handler handler) {
+        Routing.Route route = Routing.RouteBuilder.newRoute()
+                .handler(handler)
+                .accept(accept)
+                .contentType(contentType)
+                .path(path)
+                .method(method)
+                .headers(() -> headers)
+                .build();
+        getRouter().add(route);
     }
 }

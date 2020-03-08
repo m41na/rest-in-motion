@@ -1,18 +1,25 @@
 package works.hop.core;
 
-import java.util.concurrent.CompletableFuture;
+import works.hop.handler.Handler;
+import works.hop.route.Routing;
+
+import java.util.Map;
 
 public interface Rest {
 
-    <T> CompletableFuture<AResponseEntity> all(String method, String url, CompletableFuture<Exchange> future, Handler<T> handler);
+    void all(String method, String url, String accept, String contentType, Map<String, String> headers, Handler handler);
 
-    <T> CompletableFuture<AResponseEntity> get(String url, CompletableFuture<Exchange> future, Handler<T> handler);
+    void get(String url, String accept, String contentType, Map<String, String> headers, Handler handler);
 
-    <T> CompletableFuture<AResponseEntity> post(String url, CompletableFuture<Exchange> future, Handler<T> handler);
+    void post(String url, String accept, String contentType, Map<String, String> headers, Handler handler);
 
-    <T> CompletableFuture<AResponseEntity> put(String url, CompletableFuture<Exchange> future, Handler<T> handler);
+    void put(String url, String accept, String contentType, Map<String, String> headers, Handler handler);
 
-    <T> CompletableFuture<AResponseEntity> delete(String url, CompletableFuture<Exchange> future, Handler<T> handler);
+    void delete(String url, String accept, String contentType, Map<String, String> headers, Handler handler);
+
+    void addRoute(String method, String path, String accept, String contentType, Map<String, String> headers, Handler handler);
+
+    Routing.Router getRouter();
 
     void start() throws Exception;
 
