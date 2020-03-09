@@ -1,7 +1,9 @@
 package works.hop.route;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import works.hop.handler.Handler;
+import works.hop.handler.HandlerFunction;
+import works.hop.traverse.Visitable;
+import works.hop.traverse.Visitor;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,7 +26,12 @@ public interface Routing {
         void remove(E entity);
     }
 
-    interface Router extends Searchable<Search, Route> {
+    interface Router extends Searchable<Search, Route>, Visitable {
+
+        @Override
+        default void accept(Visitor visitor) {
+            visitor.visitParent(this);
+        }
     }
 
     class Search {
@@ -58,16 +65,16 @@ public interface Routing {
         }
     }
 
-    class Route {
+    class Route implements Visitable {
 
         public final String path;
         public final String accept;
         public final String contentType;
         public final Map<String, String> headers = new HashMap<>();
-        public final Handler handler;
+        public final HandlerFunction handler;
         public String method;
 
-        public Route(Handler handler, String path, String method, String accept, String contentType, Map<String, String> headers) {
+        public Route(HandlerFunction handler, String path, String method, String accept, String contentType, Map<String, String> headers) {
             this.path = path;
             this.method = method;
             this.accept = accept;
@@ -76,7 +83,7 @@ public interface Routing {
             this.handler = handler;
         }
 
-        public Route(Handler handler, String... args) {
+        public Route(HandlerFunction handler, String... args) {
             this(handler,
                     args.length > 0 ? args[0] : null,
                     args.length > 1 ? args[1] : null,
@@ -85,7 +92,7 @@ public interface Routing {
                     Collections.emptyMap());
         }
 
-        public Route(Handler handler, String path, String method, String accept, String contentType) {
+        public Route(HandlerFunction handler, String path, String method, String accept, String contentType) {
             this(handler,
                     path,
                     method,
@@ -99,11 +106,16 @@ public interface Routing {
             return "Route [path=" + path + ", method=" + method + ", accept=" + accept + ", contentType="
                     + contentType + ", headers=" + headers + "]";
         }
+
+        @Override
+        public void accept(Visitor visitor) {
+            visitor.visitChild(this);
+        }
     }
 
     class RouteBuilder {
 
-        private Handler handler;
+        private HandlerFunction handler;
         private String path;
         private String method;
         private String accept;
@@ -117,23 +129,23 @@ public interface Routing {
             return new RouteBuilder();
         }
 
-        public static Route create(Handler handler, String path, String method, String accept, String contentType, Map<String, String> headers) {
+        public static Route create(HandlerFunction handler, String path, String method, String accept, String contentType, Map<String, String> headers) {
             return newRoute().handler(handler).path(path).method(method).accept(accept).contentType(contentType).headers(() -> headers).build();
         }
 
-        public static Route create(Handler handler, String path, String method, String accept, String contentType) {
+        public static Route create(HandlerFunction handler, String path, String method, String accept, String contentType) {
             return create(handler, path, method, accept, contentType, Collections.emptyMap());
         }
 
-        public static Route create(Handler handler, String path, String method, String accept) {
+        public static Route create(HandlerFunction handler, String path, String method, String accept) {
             return create(handler, path, method, accept, null, Collections.emptyMap());
         }
 
-        public static Route create(Handler handler, String path, String method) {
+        public static Route create(HandlerFunction handler, String path, String method) {
             return create(handler, path, method, null, null, Collections.emptyMap());
         }
 
-        public RouteBuilder handler(Handler handler) {
+        public RouteBuilder handler(HandlerFunction handler) {
             this.handler = handler;
             return this;
         }

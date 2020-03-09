@@ -5,13 +5,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import works.hop.core.ARequest;
 import works.hop.core.BodyReader;
+import works.hop.core.JsonSupplier;
 import works.hop.route.Routing;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
+import javax.servlet.http.*;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -23,38 +21,37 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Paths;
 import java.util.Map;
 
-public class JettyRequest implements ARequest<HttpServletRequest> {
+public class JettyRequest extends HttpServletRequestWrapper implements ARequest {
 
     public static final Logger LOG = LoggerFactory.getLogger(JettyRequest.class);
 
-    private final HttpServletRequest request;
     protected Routing.Search route;
     protected boolean error;
     protected String message;
     protected byte[] body;
-    protected Cookie[] cookies;
-    protected ObjectMapper mapper;
+    protected ObjectMapper jsonMapper;
 
     public JettyRequest(HttpServletRequest request) {
-        this.request = request;
-    }
-
-    public Cookie[] cookies() {
-        return this.cookies;
-    }
-
-    public HttpSession session(boolean create) {
-        return this.request.getSession(create);
+        super(request);
+        initialize();
     }
 
     @Override
-    public HttpServletRequest request() {
-        return request;
+    public void initialize() {
+        jsonMapper = JsonSupplier.version1.get();
+    }
+
+    public Cookie[] cookies() {
+        return getCookies();
+    }
+
+    public HttpSession session(boolean create) {
+        return getSession(create);
     }
 
     @Override
     public String protocol() {
-        return request.getProtocol();
+        return getProtocol();
     }
 
     @Override
@@ -64,17 +61,17 @@ public class JettyRequest implements ARequest<HttpServletRequest> {
 
     @Override
     public String hostname() {
-        return request.getRemoteHost();
+        return getRemoteHost();
     }
 
     @Override
     public String ip() {
-        return request.getRemoteAddr();
+        return getRemoteAddr();
     }
 
     @Override
     public Routing.Search route() {
-        return this.route;
+        return route;
     }
 
     @Override
@@ -83,8 +80,18 @@ public class JettyRequest implements ARequest<HttpServletRequest> {
     }
 
     @Override
+    public String requestLine() {
+        return String.format("%s %s %s", getMethod(), getRequestURI(), getProtocol());
+    }
+
+    @Override
+    public String method() {
+        return getMethod();
+    }
+
+    @Override
     public String path() {
-        return request.getRequestURI();
+        return getRequestURI();
     }
 
     @Override
@@ -98,13 +105,38 @@ public class JettyRequest implements ARequest<HttpServletRequest> {
                 return value;
             }
         } else {
-            return this.request.getParameter(name);
+            return getParameter(name);
         }
     }
 
     @Override
-    public <T> T param(String name, Class<T> type) {
-        return type.cast(param(name));
+    public Short shortParam(String name) {
+        return Short.parseShort(param(name));
+    }
+
+    @Override
+    public Integer intParam(String name) {
+        return Integer.parseInt(param(name));
+    }
+
+    @Override
+    public Long longParam(String name) {
+        return Long.parseLong(param(name));
+    }
+
+    @Override
+    public Float floatParam(String name) {
+        return Float.parseFloat(param(name));
+    }
+
+    @Override
+    public Double doubleParam(String name) {
+        return Double.parseDouble(param(name));
+    }
+
+    @Override
+    public Boolean boolParam(String name) {
+        return Boolean.parseBoolean(param(name));
     }
 
     @Override
@@ -114,37 +146,37 @@ public class JettyRequest implements ARequest<HttpServletRequest> {
 
     @Override
     public String query() {
-        return this.request.getQueryString();
+        return getQueryString();
     }
 
     @Override
     public String header(String name) {
-        return this.request.getHeader(name);
+        return getHeader(name);
     }
 
     @Override
     public <T> T attribute(String name, Class<T> type) {
-        Object obj = this.request.getAttribute(name);
+        Object obj = getAttribute(name);
         if (obj != null && type.isAssignableFrom(obj.getClass())) {
-            return type.cast(this.request.getAttribute(name));
+            return type.cast(getAttribute(name));
         }
         return null;
     }
 
     @Override
     public boolean error() {
-        return this.error;
+        return error;
     }
 
     @Override
     public String message() {
-        return this.message;
+        return message;
     }
 
     @Override
     public byte[] body() {
         if (capture() > 0) {
-            return this.body;
+            return body;
         }
         return null;
     }
@@ -155,7 +187,7 @@ public class JettyRequest implements ARequest<HttpServletRequest> {
         if (contentType.contains("application/json")) {
             Reader reader = new InputStreamReader(new ByteArrayInputStream(body()));
             try {
-                return this.mapper.readValue(reader, type);
+                return jsonMapper.readValue(reader, type);
             } catch (Exception e) {
                 throw new RuntimeException("Could not parse json body into java entity", e);
             }
@@ -193,7 +225,7 @@ public class JettyRequest implements ARequest<HttpServletRequest> {
 
         long size = 0;
         try {
-            for (Part part : this.request.getParts()) {
+            for (Part part : getParts()) {
                 String fileName = extractFileName(part);
                 if (fileName != null && fileName.trim().length() > 0) {
                     // refines the fileName in case it is an absolute path
@@ -203,11 +235,11 @@ public class JettyRequest implements ARequest<HttpServletRequest> {
                 }
             }
         } catch (IOException | ServletException e) {
-            this.error = true;
-            this.message = e.getMessage();
+            error = true;
+            message = e.getMessage();
             return -1;
         }
-        this.message = "Upload has been done successfully!";
+        message = "Upload has been done successfully!";
         return size;
     }
 
@@ -216,16 +248,16 @@ public class JettyRequest implements ARequest<HttpServletRequest> {
         // content queue
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 
-        try (ReadableByteChannel inChannel = Channels.newChannel(this.request.getInputStream())) {
+        try (ReadableByteChannel inChannel = Channels.newChannel(getInputStream())) {
             ByteBuffer buffer = ByteBuffer.allocate(4096);
             int bytesRead = inChannel.read(buffer); // read into buffer.
             while (bytesRead != -1) {
                 buffer.flip(); // make buffer ready for read
 
                 if (buffer.hasRemaining()) {
-                    byte[] xfer = new byte[buffer.limit()]; // transfer buffer bytes dest a different aray
-                    buffer.get(xfer);
-                    bytes.write(xfer); // read entire array backing buffer
+                    byte[] transfer = new byte[buffer.limit()]; // transfer buffer bytes dest a different aray
+                    buffer.get(transfer);
+                    bytes.write(transfer); // read entire array backing buffer
                 }
 
                 buffer.clear(); // make buffer ready for writing
@@ -234,8 +266,8 @@ public class JettyRequest implements ARequest<HttpServletRequest> {
             LOG.debug("Completed reading content from input channel. bytes size = {} * {}", bytes.size());
             body = bytes.toByteArray();
         } catch (IOException e) {
-            this.error = true;
-            this.message = e.getMessage();
+            error = true;
+            message = e.getMessage();
             return -1;
         }
         // return approx size
@@ -246,8 +278,8 @@ public class JettyRequest implements ARequest<HttpServletRequest> {
      * Extracts file name from HTTP header content-disposition
      */
     private String extractFileName(Part part) {
-        String contentDisp = part.getHeader("content-disposition");
-        String[] items = contentDisp.split(";");
+        String contentDisposition = part.getHeader("content-disposition");
+        String[] items = contentDisposition.split(";");
         for (String s : items) {
             if (s.trim().startsWith("filename")) {
                 return s.substring(s.indexOf("=") + 2, s.length() - 1);

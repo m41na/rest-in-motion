@@ -7,29 +7,36 @@ import org.mockito.MockitoAnnotations;
 import works.hop.handler.HandlerPromise;
 import works.hop.handler.HandlerResult;
 import works.hop.route.Routing;
+import works.hop.traverse.Visitor;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertTrue;
+import static works.hop.core.RestServer.APP_CTX_KEY;
 
-public class ServerApiTest {
+public class RestServerTest {
 
-    private ServerApi server;
+    private RestServer server;
     @Mock
     private ARequest request;
     @Mock
     private AResponse response;
 
+    private Map<String, String> props = new HashMap<>();
     private HandlerPromise promise;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        server = new BasicServerApi();
+        props.put(APP_CTX_KEY, "/");
+        server = new BasicRestServer((key) -> props.get(key));
         promise = new HandlerPromise();
         promise.OnSuccess(new Function<HandlerResult, HandlerResult>() {
             @Override
@@ -48,7 +55,7 @@ public class ServerApiTest {
     @Test
     public void getRequestOnContextPathShouldReturn200Ok() {
         server.get("/", "", "", Collections.emptyMap(),
-                (request, response, done) -> done.resolve(CompletableFuture.completedFuture(AResponseEntity.ok("get request"))));
+                (request, response, done) -> done.resolve(CompletableFuture.completedFuture("get request")));
         Routing.Search search = new Routing.Search(null);
         server.getRouter().search(search);
         search.result.handler.handle(request, response, promise);
@@ -59,7 +66,7 @@ public class ServerApiTest {
     @Test
     public void postRequestOnContextPathShouldReturn200Ok() {
         server.post("/", "", "", Collections.emptyMap(),
-                (request, response, done) -> done.resolve(CompletableFuture.completedFuture(AResponseEntity.ok("post request"))));
+                (request, response, done) -> done.resolve(CompletableFuture.completedFuture("post request")));
         Routing.Search search = new Routing.Search(null);
         server.getRouter().search(search);
         search.result.handler.handle(request, response, promise);
@@ -70,7 +77,7 @@ public class ServerApiTest {
     @Test
     public void putRequestOnContextPathShouldReturn200Ok() {
         server.put("/", "", "", Collections.emptyMap(),
-                (request, response, done) -> done.resolve(CompletableFuture.completedFuture(AResponseEntity.ok("put request"))));
+                (request, response, done) -> done.resolve(CompletableFuture.completedFuture("put request")));
         Routing.Search search = new Routing.Search(null);
         server.getRouter().search(search);
         search.result.handler.handle(request, response, promise);
@@ -81,7 +88,7 @@ public class ServerApiTest {
     @Test
     public void deleteRequestOnContextPathShouldReturn200Ok() {
         server.delete("/", "", "", Collections.emptyMap(),
-                (request, response, done) -> done.resolve(CompletableFuture.completedFuture(AResponseEntity.ok("delete request"))));
+                (request, response, done) -> done.resolve(CompletableFuture.completedFuture("delete request")));
         Routing.Search search = new Routing.Search(null);
         server.getRouter().search(search);
         search.result.handler.handle(request, response, promise);
@@ -89,9 +96,28 @@ public class ServerApiTest {
         assertTrue(result.isSuccess());
     }
 
-    class BasicServerApi extends ServerApi {
+    class BasicRestServer extends RestServer {
 
         BasicRouter router = new BasicRouter();
+
+        public BasicRestServer(Function<String, String> properties) {
+            super(properties);
+        }
+
+        @Override
+        public Restful assets(String mapping, String folder) {
+            return null;
+        }
+
+        @Override
+        public Restful cors(Map<String, String> cors) {
+            return null;
+        }
+
+        @Override
+        public Restful wordpress(String home, String proxyTo) {
+            return null;
+        }
 
         @Override
         public Routing.Router getRouter() {
@@ -99,15 +125,28 @@ public class ServerApiTest {
         }
 
         @Override
+        public void traverse(Visitor<Routing.Router, Routing.Route> visitor) {
+        }
+
+        @Override
+        public String status() {
+            return null;
+        }
+
+        @Override
         public void start() throws Exception {
         }
 
         @Override
-        public void shutdown() throws Exception {
+        public void listen(Integer port, String host) {
         }
 
         @Override
-        public void listen(Integer port, String host) throws Exception {
+        public void listen(Integer port, String host, Consumer<String> result) {
+        }
+
+        @Override
+        public void shutdown() {
         }
     }
 
