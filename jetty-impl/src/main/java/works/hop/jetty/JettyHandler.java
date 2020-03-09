@@ -50,7 +50,7 @@ public class JettyHandler extends AbstractHandler {
                     @Override
                     public HandlerResult apply(HandlerResult res) {
                         try {
-                            LOG.info("Servlet {} request resolved with success status. Now preparing response", request.getRequestURI());
+                            LOG.info("Servlet {} request resolved with success status. Now preparing response", target);
                             if (aResponse.forward) {
                                 try {
                                     request.getRequestDispatcher(aResponse.routeUri).forward(request, response);
@@ -79,9 +79,8 @@ public class JettyHandler extends AbstractHandler {
                         } catch (Exception e) {
                             e.printStackTrace(System.err);
                         } finally {
-                            LOG.info("Async request '{}' COMPLETED successfully: {}", request.getRequestURI(), res);
+                            LOG.info("Async request '{}' COMPLETED successfully: {}", target, res);
                             async.complete();
-                            baseRequest.setHandled(true);
                             LOG.info("Duration of processed request -> {} ms", res.duration());
                             return res;
                         }
@@ -92,7 +91,7 @@ public class JettyHandler extends AbstractHandler {
                     @Override
                     public HandlerResult apply(HandlerResult res, Throwable th) {
                         try {
-                            LOG.info("Servlet {} request resolved with failure status. Now preparing response", request.getRequestURI());
+                            LOG.info("Servlet {} request resolved with failure status. Now preparing response", target);
                             int status = 500;
                             if (HandlerException.class.isAssignableFrom(th.getClass())) {
                                 status = ((HandlerException) th).status;
@@ -101,9 +100,8 @@ public class JettyHandler extends AbstractHandler {
                         } catch (Exception e) {
                             e.printStackTrace(System.err);
                         } finally {
-                            LOG.info("Async request '{}' COMPLETED with an exception", request.getRequestURI());
+                            LOG.info("Async request '{}' COMPLETED with an exception", target);
                             async.complete();
-                            baseRequest.setHandled(true);
                             LOG.info("Duration of processed request -> {} ms", res.duration());
                             return res;
                         }
@@ -112,7 +110,7 @@ public class JettyHandler extends AbstractHandler {
 
                 //handle request
                 try {
-                    LOG.debug("DELEGATING REQUEST TO HANDLER METHOD WITH COMPLETION PROMISE");
+                    LOG.debug("Delegating request to handler function with completion promise");
                     route.result.handler.handle(aRequest, aResponse, promise);
                 } catch (Exception e) {
                     LOG.warn("Uncaught Exception in the promise resolver. Completing promise with failure: {}", e.getMessage());
@@ -122,8 +120,9 @@ public class JettyHandler extends AbstractHandler {
                     baseRequest.setHandled(true);
                 }
             } else {
-                LOG.warn("no matching route handler found for request -> " + request.getRequestURI() + ". Returning from handler without setting handled as true");
-                return;
+                LOG.warn("no matching route handler found for request -> " + target + ". Exiting handler and setting handled to true");
+                async.complete();
+                baseRequest.setHandled(true);
             }
         });
     }

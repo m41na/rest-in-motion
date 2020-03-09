@@ -4,19 +4,23 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import works.hop.core.RestServer;
 import works.hop.core.Restful;
+import works.hop.jetty.websocket.JettyWsAdapter;
+import works.hop.jetty.websocket.JettyWsPolicy;
+import works.hop.jetty.websocket.JettyWsProvider;
+import works.hop.jetty.websocket.JettyWsServlet;
 import works.hop.route.MethodRouter;
 import works.hop.route.Routing;
 
-import javax.servlet.MultipartConfigElement;
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static java.util.Collections.emptyMap;
@@ -26,6 +30,7 @@ public class JettyServer extends RestServer {
     private final Server server;
     private final ServerConnector connector;
     private final ContextHandlerCollection contexts = new ContextHandlerCollection();
+    private final ServletContextHandler servlets = new ServletContextHandler(ServletContextHandler.SESSIONS);
     private final JettyRouter router = new JettyRouter(new MethodRouter());
 
     private JettyServer(Function<String, String> properties) {
@@ -38,6 +43,9 @@ public class JettyServer extends RestServer {
         this.addHandler(properties.apply(APP_CTX_KEY));
         //set contexts handler
         this.server.setHandler(contexts);
+        // configure context for servlets
+        String appctx = this.properties.apply("appctx");
+        servlets.setContextPath(appctx.endsWith("/*") ? appctx.substring(0, appctx.length() - 2) : appctx.endsWith("/") ? appctx.substring(0, appctx.length() - 1) : appctx);
     }
 
     public static JettyServer createServer(Map<String, String> props) throws Exception {
@@ -59,6 +67,7 @@ public class JettyServer extends RestServer {
             response.ok(new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z").format(new Date()));
             promise.complete();
         });
+        server.websocket("/events/*", () -> new JettyWsAdapter());
         server.listen(port, host);
     }
 
@@ -69,12 +78,14 @@ public class JettyServer extends RestServer {
         contexts.addHandler(context);
     }
 
-    @Override
-    public Restful upload(String path, String outputDir, Object configuration) throws IOException {
-        UploadHandler handle = new UploadHandler(path, Paths.get(outputDir), (MultipartConfigElement) configuration);
-        ContextHandler context = new ContextHandler(path);
-        context.setHandler(handle);
-        contexts.addHandler(context);
+    public Restful websocket(String ctx, JettyWsProvider provider) {
+        return websocket(ctx, (JettyWsProvider) provider, JettyWsPolicy::defaultConfig);
+    }
+
+    public Restful websocket(String ctx, JettyWsProvider provider, JettyWsPolicy policy) {
+        // Add a websocket destination using a specific path spec
+        ServletHolder holderEvents = new ServletHolder("ws-events", new JettyWsServlet(provider, policy.getPolicy()));
+        servlets.addServlet(holderEvents, ctx);
         return this;
     }
 
@@ -95,13 +106,26 @@ public class JettyServer extends RestServer {
     }
 
     @Override
-    public void listen(Integer port, String host) throws Exception {
+    public void listen(Integer port, String host) {
+        listen(port, host, null);
+    }
+
+    @Override
+    public void listen(int port, String host, Consumer<String> result) {
         this.connector.setHost(host);
         this.connector.setPort(port);
-        this.connector.setIdleTimeout(30000);
+        this.connector.setIdleTimeout(300000);
 
-        //set the connector
-        server.addConnector(connector);
-        this.start();
+        try {
+            //set the connector
+            server.addConnector(connector);
+            this.start();
+
+            if (result != null) {
+                result.accept(String.format("AppServer is now listening on http://%s:%d. (Press CTRL+C to quit)", host, port));
+            }
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+        }
     }
 }

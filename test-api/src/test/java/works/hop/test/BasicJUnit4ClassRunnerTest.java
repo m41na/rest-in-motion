@@ -2,20 +2,32 @@ package works.hop.test;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.junit.Ignore;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import works.hop.core.ObjectMapperSupplier;
+import works.hop.core.JsonSupplier;
 import works.hop.core.RestServer;
 import works.hop.jetty.JettyServer;
 import works.hop.jetty.UploadHandler;
+import works.hop.jetty.websocket.JettyWsAdapter;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,14 +69,14 @@ public class BasicJUnit4ClassRunnerTest {
             promise.complete();
         });
         server.post("/", "application/json", "application/json", (request, response, promise) -> {
-            Content content = (Content) request.body(Content.class);
+            Content content = request.body(Content.class);
             assertEquals("Expecting Posted Hello", "Posted Hello", content.message);
             response.send("Post Ok");
             promise.complete();
         });
-        //server.upload("/file", "target", UploadHandler.defaultConfig());
+        server.post("/file", new UploadHandler(Path.of("target"), UploadHandler.defaultConfig()));
         server.put("/", "application/json", "application/json", emptyMap(), (request, response, promise) -> {
-            Content content = (Content) request.body(Content.class);
+            Content content = request.body(Content.class);
             assertEquals("Expecting Put Hello", "Put Hello", content.message);
             response.send("Put Ok");
             promise.complete();
@@ -73,6 +85,7 @@ public class BasicJUnit4ClassRunnerTest {
             response.send("Delete Ok");
             promise.complete();
         });
+        server.websocket("/events/*", () -> new JettyWsAdapter());
         server.listen(PORT, HOST);
         return server;
     }
@@ -85,6 +98,16 @@ public class BasicJUnit4ClassRunnerTest {
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals("Contains 'GET / HTTP/1.1'", true, response.body().contains("GET / HTTP/1.1"));
+    }
+
+    @Test
+    public void testGET_Using_Invalid_Path(HttpClient client) throws InterruptedException, IOException {
+        String uri = String.format("http://%s:%d%s", HOST, PORT, "/invalid");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(uri))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals("Contains 'Error 404 Not Found'", true, response.body().contains("Error 404 Not Found"));
     }
 
     @Test
@@ -121,7 +144,7 @@ public class BasicJUnit4ClassRunnerTest {
     public void testPOST_Hello_To_Server(HttpClient client) throws InterruptedException, IOException {
         String uri = String.format("http://%s:%d%s", HOST, PORT, BASE);
         Content content = new Content("Posted Hello");
-        String json = ObjectMapperSupplier.version2.get().writeValueAsString(content);
+        String json = JsonSupplier.version2.get().writeValueAsString(content);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(uri))
                 .timeout(Duration.ofSeconds(10))
@@ -137,7 +160,7 @@ public class BasicJUnit4ClassRunnerTest {
     public void testPUT_Hello_To_Server(HttpClient client) throws InterruptedException, IOException {
         String uri = String.format("http://%s:%d%s", HOST, PORT, BASE);
         Content content = new Content("Put Hello");
-        String json = ObjectMapperSupplier.version2.get().writeValueAsString(content);
+        String json = JsonSupplier.version2.get().writeValueAsString(content);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(uri))
                 .timeout(Duration.ofSeconds(10))
@@ -162,17 +185,37 @@ public class BasicJUnit4ClassRunnerTest {
     }
 
     @Test
-    @Ignore
     public void testPOST_Upload_MULTI_PART_File_To_Server(HttpClient client) throws InterruptedException, IOException {
         String uri = String.format("http://%s:%d%s", HOST, PORT, "/file");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(uri))
-                .timeout(Duration.ofSeconds(10))
-                .header("Content-Type", "multipart/form-data")
-                .POST(HttpRequest.BodyPublishers.ofFile(Paths.get("target/test-api-1.0-SNAPSHOT.jar")))
-                .build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals("Contains 'Multipart File Upload Ok'", true, response.body().contains("Multipart File Upload Ok"));
+        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+            File uploadTarget = new File("pom.xml");
+            HttpEntity data = MultipartEntityBuilder.create()
+                    .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+                    .addBinaryBody("fileContent", uploadTarget, ContentType.DEFAULT_BINARY, uploadTarget.getName())
+                    .addTextBody("text", "sample upload file", ContentType.DEFAULT_BINARY)
+                    .build();
+
+            HttpUriRequest request = RequestBuilder
+                    .post(uri)
+                    .setEntity(data)
+                    .build();
+
+            System.out.println("Executing request " + request.getRequestLine());
+
+            ResponseHandler<String> responseHandler = response -> {
+                int status = response.getStatusLine().getStatusCode();
+                if (status >= 200 && status < 300) {
+                    HttpEntity entity = response.getEntity();
+                    return entity != null ? EntityUtils.toString(entity) : null;
+                } else {
+                    throw new ClientProtocolException("Unexpected response status: " + status);
+                }
+            };
+            String response = httpclient.execute(request, responseHandler);
+            System.out.println("----------------------------------------");
+            System.out.println(response);
+            assertEquals("Contains 'Got Part'", true, response.contains("Got Part"));
+        }
     }
 
     static class Content {

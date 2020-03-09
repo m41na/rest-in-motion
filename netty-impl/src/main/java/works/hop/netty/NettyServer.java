@@ -12,13 +12,17 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 
 public class NettyServer {
-    private ChannelFuture channel;
     private final EventLoopGroup masterGroup;
     private final EventLoopGroup slaveGroup;
+    private ChannelFuture channel;
 
     public NettyServer() {
         masterGroup = new NioEventLoopGroup();
         slaveGroup = new NioEventLoopGroup();
+    }
+
+    public static void main(String[] args) {
+        new NettyServer().start();
     }
 
     public void start() {
@@ -52,9 +56,5 @@ public class NettyServer {
             channel.channel().closeFuture().sync();
         } catch (InterruptedException e) {
         }
-    }
-
-    public static void main(String[] args) {
-        new NettyServer().start();
     }
 }

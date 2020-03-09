@@ -4,9 +4,7 @@ import works.hop.route.Routing;
 
 import java.util.Map;
 
-public interface ARequest<REQ> {
-
-    REQ request();
+public interface ARequest {
 
     void initialize();
 
@@ -61,4 +59,6 @@ public interface ARequest<REQ> {
     void route(Routing.Search route);
 
     String requestLine();
+
+    String method();
 }

@@ -8,13 +8,13 @@ import works.hop.handler.HandlerPromise;
 import works.hop.handler.HandlerResult;
 import works.hop.route.Routing;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertTrue;
@@ -104,11 +104,6 @@ public class RestServerTest {
         }
 
         @Override
-        public Restful upload(String path, String uploadDir, Object configuration) throws IOException {
-            return null;
-        }
-
-        @Override
         public Routing.Router getRouter() {
             return router;
         }
@@ -122,7 +117,12 @@ public class RestServerTest {
         }
 
         @Override
-        public void listen(Integer port, String host) throws Exception {
+        public void listen(Integer port, String host) {
+        }
+
+        @Override
+        public void listen(int port, String host, Consumer<String> result) {
+
         }
     }
 

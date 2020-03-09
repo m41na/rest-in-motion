@@ -1,6 +1,6 @@
 package works.hop.core;
 
-public enum HttpStatusCode  {
+public enum HttpStatusCode {
 
     //Information responses
     Continue(100, "Continue", "Interim response indicating that everything so far is OK and that the client should continue the request, or ignore the response if the request is already finished."),

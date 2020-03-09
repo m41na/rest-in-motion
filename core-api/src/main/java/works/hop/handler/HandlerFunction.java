@@ -5,5 +5,5 @@ import works.hop.core.AResponse;
 
 public interface HandlerFunction {
 
-    void handle(ARequest ARequest, AResponse AResponse, HandlerPromise promise);
+    void handle(ARequest request, AResponse response, HandlerPromise promise);
 }

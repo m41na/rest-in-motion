@@ -10,7 +10,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.text.SimpleDateFormat;
 import java.util.function.Supplier;
 
-public class ObjectMapperSupplier {
+public class JsonSupplier {
 
     public static Supplier<ObjectMapper> version1 = new Supplier<>() {
 

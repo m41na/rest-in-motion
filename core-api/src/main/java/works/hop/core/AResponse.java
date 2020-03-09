@@ -1,20 +1,11 @@
 package works.hop.core;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
-public interface AResponse<RES> {
-
-    RES response();
+public interface AResponse {
 
     void initialize();
-
-    void setStatus(int scOk);
-
-    PrintWriter getWriter() throws IOException;
 
     void header(String header, String value);
 
@@ -50,7 +41,7 @@ public interface AResponse<RES> {
 
     void redirect(int status, String path);
 
-    void type(String mimetype);
+    void type(String mimeType);
 
     void cookie(String name, String value);
 

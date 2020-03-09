@@ -3,8 +3,8 @@ package works.hop.core;
 import works.hop.handler.HandlerFunction;
 import works.hop.route.Routing;
 
-import java.io.IOException;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public interface Restful {
 
@@ -53,7 +53,6 @@ public interface Restful {
     Restful route(String method, String path, String accept, String type, Map<String, String> headers, HandlerFunction handler);
 
     // ************* SPECIALIZED *****************//
-    Restful upload(String path, String uploadDir, Object configuration) throws IOException;
 
     // ************* Get Router instance ************** //
     Routing.Router getRouter();
@@ -63,5 +62,7 @@ public interface Restful {
 
     void shutdown() throws Exception;
 
-    void listen(Integer port, String host) throws Exception;
+    void listen(Integer port, String host);
+
+    void listen(int port, String host, Consumer<String> result);
 }
