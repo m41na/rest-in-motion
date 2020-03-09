@@ -1,11 +1,12 @@
-package works.hop.core;
+package works.hop.jetty.startup;
 
 import org.apache.commons.cli.Options;
+import works.hop.core.Restful;
 
 import java.util.Map;
 import java.util.function.Function;
 
-import static works.hop.cli.AppOptions.applyDefaults;
+import static works.hop.jetty.startup.AppOptions.applyDefaults;
 
 public interface Rest {
 

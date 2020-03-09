@@ -7,6 +7,7 @@ import org.mockito.MockitoAnnotations;
 import works.hop.handler.HandlerPromise;
 import works.hop.handler.HandlerResult;
 import works.hop.route.Routing;
+import works.hop.traverse.Visitor;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -54,7 +55,7 @@ public class RestServerTest {
     @Test
     public void getRequestOnContextPathShouldReturn200Ok() {
         server.get("/", "", "", Collections.emptyMap(),
-                (request, response, done) -> done.resolve(CompletableFuture.completedFuture(AResponseEntity.ok("get request"))));
+                (request, response, done) -> done.resolve(CompletableFuture.completedFuture("get request")));
         Routing.Search search = new Routing.Search(null);
         server.getRouter().search(search);
         search.result.handler.handle(request, response, promise);
@@ -65,7 +66,7 @@ public class RestServerTest {
     @Test
     public void postRequestOnContextPathShouldReturn200Ok() {
         server.post("/", "", "", Collections.emptyMap(),
-                (request, response, done) -> done.resolve(CompletableFuture.completedFuture(AResponseEntity.ok("post request"))));
+                (request, response, done) -> done.resolve(CompletableFuture.completedFuture("post request")));
         Routing.Search search = new Routing.Search(null);
         server.getRouter().search(search);
         search.result.handler.handle(request, response, promise);
@@ -76,7 +77,7 @@ public class RestServerTest {
     @Test
     public void putRequestOnContextPathShouldReturn200Ok() {
         server.put("/", "", "", Collections.emptyMap(),
-                (request, response, done) -> done.resolve(CompletableFuture.completedFuture(AResponseEntity.ok("put request"))));
+                (request, response, done) -> done.resolve(CompletableFuture.completedFuture("put request")));
         Routing.Search search = new Routing.Search(null);
         server.getRouter().search(search);
         search.result.handler.handle(request, response, promise);
@@ -87,7 +88,7 @@ public class RestServerTest {
     @Test
     public void deleteRequestOnContextPathShouldReturn200Ok() {
         server.delete("/", "", "", Collections.emptyMap(),
-                (request, response, done) -> done.resolve(CompletableFuture.completedFuture(AResponseEntity.ok("delete request"))));
+                (request, response, done) -> done.resolve(CompletableFuture.completedFuture("delete request")));
         Routing.Search search = new Routing.Search(null);
         server.getRouter().search(search);
         search.result.handler.handle(request, response, promise);
@@ -104,8 +105,32 @@ public class RestServerTest {
         }
 
         @Override
+        public Restful assets(String mapping, String folder) {
+            return null;
+        }
+
+        @Override
+        public Restful cors(Map<String, String> cors) {
+            return null;
+        }
+
+        @Override
+        public Restful wordpress(String home, String proxyTo) {
+            return null;
+        }
+
+        @Override
         public Routing.Router getRouter() {
             return router;
+        }
+
+        @Override
+        public void traverse(Visitor<Routing.Router, Routing.Route> visitor) {
+        }
+
+        @Override
+        public String status() {
+            return null;
         }
 
         @Override
@@ -113,16 +138,15 @@ public class RestServerTest {
         }
 
         @Override
-        public void shutdown() throws Exception {
-        }
-
-        @Override
         public void listen(Integer port, String host) {
         }
 
         @Override
-        public void listen(int port, String host, Consumer<String> result) {
+        public void listen(Integer port, String host, Consumer<String> result) {
+        }
 
+        @Override
+        public void shutdown() {
         }
     }
 

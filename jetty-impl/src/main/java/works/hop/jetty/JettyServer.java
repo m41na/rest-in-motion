@@ -14,6 +14,7 @@ import works.hop.jetty.websocket.JettyWsProvider;
 import works.hop.jetty.websocket.JettyWsServlet;
 import works.hop.route.MethodRouter;
 import works.hop.route.Routing;
+import works.hop.traverse.Visitor;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -90,8 +91,28 @@ public class JettyServer extends RestServer {
     }
 
     @Override
+    public Restful assets(String mapping, String folder) {
+        return null;
+    }
+
+    @Override
+    public Restful cors(Map<String, String> cors) {
+        return null;
+    }
+
+    @Override
+    public Restful wordpress(String home, String proxyTo) {
+        return null;
+    }
+
+    @Override
     public Routing.Router getRouter() {
-        return this.router;
+        return router;
+    }
+
+    @Override
+    public void traverse(Visitor<Routing.Router, Routing.Route> visitor) {
+        //TODO: implement traversal of tree nodes
     }
 
     @Override
@@ -111,7 +132,7 @@ public class JettyServer extends RestServer {
     }
 
     @Override
-    public void listen(int port, String host, Consumer<String> result) {
+    public void listen(Integer port, String host, Consumer<String> result) {
         this.connector.setHost(host);
         this.connector.setPort(port);
         this.connector.setIdleTimeout(300000);

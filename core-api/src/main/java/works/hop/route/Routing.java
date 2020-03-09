@@ -2,6 +2,8 @@ package works.hop.route;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import works.hop.handler.HandlerFunction;
+import works.hop.traverse.Visitable;
+import works.hop.traverse.Visitor;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,7 +26,12 @@ public interface Routing {
         void remove(E entity);
     }
 
-    interface Router extends Searchable<Search, Route> {
+    interface Router extends Searchable<Search, Route>, Visitable {
+
+        @Override
+        default void accept(Visitor visitor) {
+            visitor.visitParent(this);
+        }
     }
 
     class Search {
@@ -58,7 +65,7 @@ public interface Routing {
         }
     }
 
-    class Route {
+    class Route implements Visitable {
 
         public final String path;
         public final String accept;
@@ -98,6 +105,11 @@ public interface Routing {
         public String toString() {
             return "Route [path=" + path + ", method=" + method + ", accept=" + accept + ", contentType="
                     + contentType + ", headers=" + headers + "]";
+        }
+
+        @Override
+        public void accept(Visitor visitor) {
+            visitor.visitChild(this);
         }
     }
 

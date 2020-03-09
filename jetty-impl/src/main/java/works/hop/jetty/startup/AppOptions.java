@@ -1,4 +1,4 @@
-package works.hop.cli;
+package works.hop.jetty.startup;
 
 import org.apache.commons.cli.*;
 

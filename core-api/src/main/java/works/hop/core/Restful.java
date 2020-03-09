@@ -2,13 +2,18 @@ package works.hop.core;
 
 import works.hop.handler.HandlerFunction;
 import works.hop.route.Routing;
+import works.hop.traverse.Visitor;
 
 import java.util.Map;
-import java.util.function.Consumer;
 
-public interface Restful {
+public interface Restful extends Startable {
 
     String resolve(String path);
+
+    Restful assets(String mapping, String folder);
+
+    // ************* CORS Headers *****************//
+    Restful cors(Map<String, String> cors);
 
     // ************* GET *****************//
     Restful get(String path, HandlerFunction handler);
@@ -52,17 +57,11 @@ public interface Restful {
 
     Restful route(String method, String path, String accept, String type, Map<String, String> headers, HandlerFunction handler);
 
-    // ************* SPECIALIZED *****************//
+    // ************* SPECIALIZED HANDLERS *****************//
+    Restful wordpress(String home, String proxyTo);
 
-    // ************* Get Router instance ************** //
+    // ************* ROUTES ************** //
     Routing.Router getRouter();
 
-    // ************* Start/Stop/Listen server ************** //
-    void start() throws Exception;
-
-    void shutdown() throws Exception;
-
-    void listen(Integer port, String host);
-
-    void listen(int port, String host, Consumer<String> result);
+    void traverse(Visitor<Routing.Router, Routing.Route> visitor);
 }
