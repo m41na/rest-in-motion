@@ -1,6 +1,5 @@
 package works.hop.jetty;
 
-import org.apache.commons.cli.Options;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.Server;
@@ -18,20 +17,14 @@ import works.hop.jetty.session.SessionUtil;
 import works.hop.jetty.startup.AppConnectors;
 import works.hop.jetty.startup.AppFcgiHandler;
 import works.hop.jetty.startup.AppThreadPool;
-import works.hop.jetty.websocket.JettyWsAdapter;
 import works.hop.route.MethodRouter;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import static java.util.Collections.emptyMap;
-import static works.hop.jetty.startup.AppOptions.applyDefaults;
 
 public class JettyStartable extends JettyRestful implements StartableRest {
 
@@ -48,7 +41,7 @@ public class JettyStartable extends JettyRestful implements StartableRest {
         this.contexts = contexts;
     }
 
-    public static JettyStartable createServer(Map<String, String> props) throws Exception {
+    public static JettyStartable createServer(Map<String, String> props) {
         Properties locals = new Properties();
         props.forEach((key, value) -> locals.setProperty(key, value));
         Function<String, String> properties = key -> locals.getProperty(key);
@@ -56,20 +49,6 @@ public class JettyStartable extends JettyRestful implements StartableRest {
         JettyRouter router = new JettyRouter(new MethodRouter());
         JettyStartable server = new JettyStartable(properties, contexts, router, new Properties());
         return server;
-    }
-
-    public static void main(String[] args) throws Exception {
-        int port = 8080;
-        String host = "localhost";
-        Map<String, String> props = applyDefaults(new Options(), args);
-        JettyStartable server = createServer(props);
-        server.get("/api", "*", "", emptyMap(), (request, response, promise) -> {
-            response.ok(new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z").format(new Date()));
-            promise.complete();
-        });
-        server.assets(System.getProperty("user.dir"));
-        server.websocket("/events/*", () -> new JettyWsAdapter());
-        server.listen(port, host);
     }
 
     @Override
@@ -122,14 +101,12 @@ public class JettyStartable extends JettyRestful implements StartableRest {
             status = "starting";
             // splash banner
             banner();
-
             // create server with thread pool
             QueuedThreadPool threadPool = threadPools.createThreadPool(this.properties);
             Server server = new Server(threadPool);
 
             // Scheduler
             server.addBean(new ScheduledExecutorScheduler());
-
             // HTTP Configuration
             HttpConfiguration httpConfig = connectors.createHttpConfiguration(this.properties);
             ServerConnector http2Connector = connectors.configureHttpsConnector(this.properties, server, host, port, httpConfig);
@@ -161,40 +138,6 @@ public class JettyStartable extends JettyRestful implements StartableRest {
             HandlerList handlerList = new HandlerList();
             handlerList.setHandlers(handlers.toArray(new Handler[0]));
             server.setHandler(handlerList);
-
-            //***** BEGIN EXPERIMENT *****//
-//            ServletContextHandler servletsContext = new ServletContextHandler(ServletContextHandler.SESSIONS);
-//            servletsContext.setContextPath("/ser");
-//            servletsContext.addServlet(HelloServlet.class, "/hello/*");
-//
-////            ContextHandler context = new ContextHandler("/");
-////            context.setContextPath("/");
-////            context.setHandler(new HelloHandler("Root Hello"));
-//
-//            ContextHandler contextFR = new ContextHandler("/fr");
-//            contextFR.setHandler(new HelloHandler("Bonjour"));
-//            ContextHandlerCollection handlerCollection = new ContextHandlerCollection(contextFR, createRoutesHandler("/wow"));
-//
-//            Path userDir = Paths.get(System.getProperty("user.dir"));
-//            PathResource pathResource = new PathResource(userDir);
-//            ResourceHandler resourceHandler = new ResourceHandler();
-//
-//            // Configure the ResourceHandler. Setting the resource base indicates where the files should be served out of.
-//            // In this example it is the current directory but it can be configured to anything that the jvm has access to.
-//            resourceHandler.setDirectoriesListed(true);
-//            resourceHandler.setWelcomeFiles(new String[]{"index.html"});
-//            resourceHandler.setBaseResource(pathResource);
-//
-//            // Add the ResourceHandler to the server.
-//            HandlerList handlerList = new HandlerList();
-//            handlerList.setHandlers(new Handler[]{resourceHandler, servletsContext, handlerCollection});
-//            server.setHandler(handlerList);
-//
-//            route("get", "/api", "text/html", "*", (req, res, done) -> {
-//                res.send("wow handler!");
-//                done.complete();
-//            });
-            //***** END EXPERIMENT *****//
 
             // add shutdown handler
             shutdown = (flag) -> {
