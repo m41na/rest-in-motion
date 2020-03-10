@@ -19,9 +19,8 @@ import java.util.stream.Stream;
 
 public class AppOptions {
 
-    public static final String UNASSIGNED = "not.yet.assigned";
-
     private AppOptions() {
+        throw new UnsupportedOperationException("You should not instantiate this class. It's intended to be used as a utility class");
     }
 
     private static Properties loadProperties(String protocol, String host, String jarFile, String propsFile) {
@@ -64,16 +63,15 @@ public class AppOptions {
                 .addOption("c", "config", true, "The application's config properties file")
 
                 .addOption("appctx", true, "The application's entry point from the URL")
-                .addOption("assets", true, "The location to load static content from, if it is required")
                 .addOption("templates", true, "The base location from which to look up content templates")
                 .addOption("engine", true, "The application to use for interpreting the content templates")
                 .addOption("lookup", true, "The strategy which the application should use to load content templates")
+                .addOption("splash", true, "A file whose content is used for the banner")
 
-                .addOption("sessionJdbcEnable", true, "Enable using a jdbc-backed session")
+                .addOption("sessionJdbcEnable", false, "Enable using a jdbc-backed session")
                 .addOption("sessionJdbcUrl", true, "The jdbc url to the session database")
                 .addOption("sessionJdbcDriver", true, "The jdbc driver to the session database")
 
-                .addOption("assetsDefaultServlet", true, "Enable a default servlet for loading static content")
                 .addOption("assetsDirAllowed", true, "Allow the application to server the static content folder")
                 .addOption("assetsPathInfoOnly", true, "Set the default servlet to use the path info only for resolving content lookup")
                 .addOption("assetsWelcomeFile", true, "Name of static resource file to serve when no resource name is provided")
@@ -91,7 +89,9 @@ public class AppOptions {
                 .addOption("httpsSslStsMaxAge", true, "The base location from which to look up content templates")
                 .addOption("httpsSslIncludeSubDomains", true, "Use secure connections fro sub-domains")
                 .addOption("httpsKeystoreClasspath", true, "The classpath location of the keystore file")
-                .addOption("httpsKeystorePassword", true, "The keystore's password");
+                .addOption("httpsKeystorePassword", true, "The keystore's password")
+
+                .addOption("fcgi", true, "Activate fcgi servlet context handler");
 
         Properties props = new Properties();
         try {
@@ -124,9 +124,6 @@ public class AppOptions {
             if (cmd.hasOption("appctx")) {
                 props.setProperty("appctx", cmd.getOptionValue("appctx"));
             }
-            if (cmd.hasOption("assets")) {
-                props.setProperty("assets", cmd.getOptionValue("assets"));
-            }
             if (cmd.hasOption("templates")) {
                 props.setProperty("templates", cmd.getOptionValue("templates"));
             }
@@ -135,6 +132,9 @@ public class AppOptions {
             }
             if (cmd.hasOption("lookup")) {
                 props.setProperty("lookup", cmd.getOptionValue("lookup"));
+            }
+            if (cmd.hasOption("splash")) {
+                props.setProperty("splash", cmd.getOptionValue("splash"));
             }
 
             if (cmd.hasOption("sessionJdbcEnable")) {
@@ -147,9 +147,6 @@ public class AppOptions {
                 props.setProperty("session.jdbc.driver", cmd.getOptionValue("sessionJdbcDriver"));
             }
 
-            if (cmd.hasOption("assetsDefaultServlet")) {
-                props.setProperty("assets.default.servlet", cmd.getOptionValue("assetsDefaultServlet"));
-            }
             if (cmd.hasOption("assetsDirAllowed")) {
                 props.setProperty("assets.dirAllowed", cmd.getOptionValue("assetsDirAllowed"));
             }
@@ -200,6 +197,10 @@ public class AppOptions {
             if (cmd.hasOption("httpsKeystorePassword")) {
                 props.setProperty("https.keystore.password", cmd.getOptionValue("httpsKeystorePassword"));
             }
+
+            if (cmd.hasOption("fcgi")) {
+                props.setProperty("fcgi", cmd.getOptionValue("fcgi"));
+            }
         } catch (Exception e) {
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("AppOptions CLI", options);
@@ -221,20 +222,18 @@ public class AppOptions {
         properties.put("name", Optional.ofNullable(props.getProperty("name")).orElse(UUID.randomUUID().toString()));
         //basic
         properties.put("appctx", Optional.ofNullable(props.getProperty("appctx")).orElse("/"));
-        properties.put("assets", Optional.ofNullable(props.getProperty("assets")).orElse(UNASSIGNED));
         properties.put("templates", Optional.ofNullable(props.getProperty("templates")).orElse("templates/"));
         properties.put("engine", Optional.ofNullable(props.getProperty("engine")).orElse("*"));
         properties.put("lookup", Optional.ofNullable(props.getProperty("lookup")).orElse("FILE"));
+        properties.put("splash", Optional.ofNullable(props.getProperty("splash")).orElse("/splash/shadow.txt"));
         //http session
         properties.put("session.jdbc.enable", Optional.ofNullable(props.getProperty("session.jdbc.enable")).orElse(
-                Optional.ofNullable(props.getProperty("sessionJdbcEnable")).orElse("true")));
+                Optional.ofNullable(props.getProperty("sessionJdbcEnable")).orElse("false")));
         properties.put("session.jdbc.url", Optional.ofNullable(props.getProperty("session.jdbc.url")).orElse(
                 Optional.ofNullable(props.getProperty("sessionJdbcUrl")).orElse(String.format("%s%s%s", "jdbc:h2:~/", properties.get("name"), "-session"))));
         properties.put("session.jdbc.driver", Optional.ofNullable(props.getProperty("session.jdbc.driver")).orElse(
                 Optional.ofNullable(props.getProperty("sessionJdbcDriver")).orElse("org.h2.Driver")));
         //static resources
-        properties.put("assets.default.servlet", Optional.ofNullable(props.getProperty("assets.default.servlet")).orElse(
-                Optional.ofNullable(props.getProperty("assetsDefaultServlet")).orElse("false")));
         properties.put("assets.dirAllowed", Optional.ofNullable(props.getProperty("assets.dirAllowed")).orElse(
                 Optional.ofNullable(props.getProperty("assetsDirAllowed")).orElse("false")));
         properties.put("assets.pathInfoOnly", Optional.ofNullable(props.getProperty("assets.pathInfoOnly")).orElse(
@@ -266,6 +265,9 @@ public class AppOptions {
                 Optional.ofNullable(props.getProperty("httpsKeystoreClasspath")).orElse("keystore.jks")));
         properties.put("https.keystore.password", Optional.ofNullable(props.getProperty("https.keystore.password")).orElse(
                 Optional.ofNullable(props.getProperty("httpsKeystorePassword")).orElse("OBF:1x901wu01v1x20041ym71zzu1v2h1wue1x7u")));
+        //bonus
+        properties.put("fcgi", Optional.ofNullable(props.getProperty("fcgi")).orElse(
+                Optional.ofNullable(props.getProperty("fcgi")).orElse("false")));
 
         return properties;
     }

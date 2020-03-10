@@ -9,7 +9,6 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static works.hop.jetty.startup.AppOptions.UNASSIGNED;
 
 public class AppFcgiHandlerTest {
 
@@ -30,7 +29,7 @@ public class AppFcgiHandlerTest {
     };
 
     @Before
-    public void setUp(){
+    public void setUp() {
         fcgiHandler = new AppFcgiHandler();
     }
 

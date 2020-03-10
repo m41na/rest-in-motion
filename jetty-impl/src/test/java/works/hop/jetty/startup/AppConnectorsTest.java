@@ -14,14 +14,12 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static org.junit.Assert.*;
-import static works.hop.jetty.startup.AppOptions.UNASSIGNED;
 
 public class AppConnectorsTest {
 
     private AppConnectors connectors;
     private Map<String, String> map = new HashMap<>() {
         {
-            put("assets", UNASSIGNED);
             put("https.outputBufferSize", "9018");
             put("https.idleTimeout", "30000");
             put("https.port", "8443");

@@ -1,5 +1,7 @@
 package works.hop.route;
 
+import works.hop.handler.HandlerException;
+
 import java.util.*;
 
 public class HeadersRouter implements Routing.Router {
@@ -68,9 +70,9 @@ public class HeadersRouter implements Routing.Router {
         }
         //set first matched route if it exists in the input object
         if (pool.size() > 1) {
-            throw new RuntimeException("Matched more than one route. You need more specificity with these matched routes -> " + pool.toString());
+            throw new HandlerException(404, "Matched more than one route. You need more specificity with these matched routes -> " + pool.toString());
         } else if (pool.size() == 0) {
-            throw new RuntimeException("No match was matched for against incoming inputs -> " + input.attributes.toString());
+            throw new HandlerException(404, "No match was matched for against incoming inputs -> " + input.attributes.toString());
         } else {
             input.result = pool.get(0);
         }

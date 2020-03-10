@@ -10,7 +10,7 @@
         </encoder>
     </appender>
 
-    <logger name="works.hop.jetty" level="DEBUG"/>
+    <logger name="works.hop" level="DEBUG"/>
     <logger name="org.eclipse.jetty" level="WARN"/>
 
     <root level="debug">

@@ -1,7 +1,7 @@
 package works.hop.jetty.startup;
 
 import org.apache.commons.cli.Options;
-import works.hop.core.Restful;
+import works.hop.jetty.JettyStartable;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -10,9 +10,9 @@ import static works.hop.jetty.startup.AppOptions.applyDefaults;
 
 public interface Rest {
 
-    Restful provide(Map<String, String> properties);
+    JettyStartable provide(Map<String, String> properties);
 
-    Function<Map<String, String>, Restful> build(Restful server);
+    Function<Map<String, String>, JettyStartable> build(JettyStartable server);
 
     default void start(String[] args) {
         start(new Options(), args);

@@ -3,7 +3,7 @@ package works.hop.core;
 public enum HttpStatusCode {
 
     //Information responses
-    Continue(100, "Continue", "Interim response indicating that everything so far is OK and that the client should continue the request, or ignore the response if the request is already finished."),
+    Continue(100, "Continue", "Interim response indicating that everything so far is OK and that the client should continue the request, or hello the response if the request is already finished."),
     Switching_Protocol(101, "Switching Protocol", "Sent in response to an Upgrade request header from the client, and indicates the protocol the server is switching to."),
     Processing(102, "Processing", "Indicates that the server has received and is processing the request, but no response is available yet"),
     Early_Hints(103, "Early Hints", "Intended to be used with the Link header, letting the user agent start preloading resources while the server prepares a response."),

@@ -6,7 +6,6 @@ import org.junit.Test;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 public class StartableTest {
@@ -14,7 +13,7 @@ public class StartableTest {
     private Startable startable;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         startable = new BasicStartable();
     }
 
