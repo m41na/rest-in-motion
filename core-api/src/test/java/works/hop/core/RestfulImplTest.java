@@ -15,15 +15,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertTrue;
-import static works.hop.core.RestServer.APP_CTX_KEY;
+import static works.hop.core.RestfulImpl.APP_CTX_KEY;
 
-public class RestServerTest {
+public class RestfulImplTest {
 
-    private RestServer server;
+    private RestfulImpl server;
     @Mock
     private ARequest request;
     @Mock
@@ -36,7 +35,7 @@ public class RestServerTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         props.put(APP_CTX_KEY, "/");
-        server = new BasicRestServer((key) -> props.get(key));
+        server = new BasicRestfulImpl((key) -> props.get(key));
         promise = new HandlerPromise();
         promise.OnSuccess(new Function<HandlerResult, HandlerResult>() {
             @Override
@@ -96,12 +95,17 @@ public class RestServerTest {
         assertTrue(result.isSuccess());
     }
 
-    class BasicRestServer extends RestServer {
+    class BasicRestfulImpl extends RestfulImpl {
 
         BasicRouter router = new BasicRouter();
 
-        public BasicRestServer(Function<String, String> properties) {
+        public BasicRestfulImpl(Function<String, String> properties) {
             super(properties);
+        }
+
+        @Override
+        public Restful assets(String folder) {
+            return null;
         }
 
         @Override
@@ -115,7 +119,7 @@ public class RestServerTest {
         }
 
         @Override
-        public Restful wordpress(String home, String proxyTo) {
+        public Restful fcgi(String home, String proxyTo) {
             return null;
         }
 
@@ -126,27 +130,6 @@ public class RestServerTest {
 
         @Override
         public void traverse(Visitor<Routing.Router, Routing.Route> visitor) {
-        }
-
-        @Override
-        public String status() {
-            return null;
-        }
-
-        @Override
-        public void start() throws Exception {
-        }
-
-        @Override
-        public void listen(Integer port, String host) {
-        }
-
-        @Override
-        public void listen(Integer port, String host, Consumer<String> result) {
-        }
-
-        @Override
-        public void shutdown() {
         }
     }
 

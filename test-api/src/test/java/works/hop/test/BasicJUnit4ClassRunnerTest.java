@@ -2,6 +2,7 @@ package works.hop.test;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.cli.Options;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
@@ -16,8 +17,8 @@ import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import works.hop.core.JsonSupplier;
-import works.hop.core.RestServer;
-import works.hop.jetty.JettyServer;
+import works.hop.core.RestfulImpl;
+import works.hop.jetty.JettyStartable;
 import works.hop.jetty.UploadHandler;
 import works.hop.jetty.websocket.JettyWsAdapter;
 
@@ -29,13 +30,12 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Path;
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertEquals;
-import static works.hop.core.RestServer.APP_CTX_KEY;
-import static works.hop.jetty.JettyServer.createServer;
+import static works.hop.jetty.JettyStartable.createServer;
+import static works.hop.jetty.startup.AppOptions.applyDefaults;
 
 @RunWith(BasicJUnit4ClassRunner.class)
 public class BasicJUnit4ClassRunnerTest {
@@ -45,10 +45,9 @@ public class BasicJUnit4ClassRunnerTest {
     public static final String BASE = "/";
 
     @BasicProvider
-    public RestServer provider() throws Exception {
-        Map<String, String> props = new HashMap<>();
-        props.put(APP_CTX_KEY, BASE);
-        JettyServer server = createServer(props);
+    public RestfulImpl provider() throws Exception {
+        Map<String, String> props = applyDefaults(new Options(), new String[]{});
+        JettyStartable server = createServer(props);
         server.get("/", (request, response, promise) -> {
             response.ok(request.requestLine());
             promise.complete();

@@ -7,15 +7,14 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-import static works.hop.jetty.startup.AppOptions.UNASSIGNED;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class AppCorsFilterTest {
 
     private AppCorsFilter corsFilter;
     private Map<String, String> map = new HashMap<>() {
         {
-            put("assets", UNASSIGNED);
             put("https.outputBufferSize", "9018");
             put("https.idleTimeout", "30000");
             put("https.port", "8443");
@@ -24,7 +23,7 @@ public class AppCorsFilterTest {
     };
 
     @Before
-    public void setUp(){
+    public void setUp() {
         corsFilter = new AppCorsFilter();
     }
 

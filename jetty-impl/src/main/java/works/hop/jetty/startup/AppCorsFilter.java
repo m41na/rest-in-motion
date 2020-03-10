@@ -13,7 +13,7 @@ import static org.eclipse.jetty.servlets.CrossOriginFilter.*;
 
 public class AppCorsFilter {
 
-    public FilterHolder configCorsFilter(Map<String, String> corscontext){
+    public FilterHolder configCorsFilter(Map<String, String> corscontext) {
         FilterHolder corsFilter = new FilterHolder(CrossOriginFilter.class);
         //add default values
         corsFilter.setInitParameter(ALLOWED_ORIGINS_PARAM, Optional.ofNullable(corscontext.get(ALLOWED_ORIGINS_PARAM)).orElse("*"));

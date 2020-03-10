@@ -6,9 +6,11 @@ import works.hop.traverse.Visitor;
 
 import java.util.Map;
 
-public interface Restful extends Startable {
+public interface Restful {
 
     String resolve(String path);
+
+    Restful assets(String folder);
 
     Restful assets(String mapping, String folder);
 
@@ -58,7 +60,7 @@ public interface Restful extends Startable {
     Restful route(String method, String path, String accept, String type, Map<String, String> headers, HandlerFunction handler);
 
     // ************* SPECIALIZED HANDLERS *****************//
-    Restful wordpress(String home, String proxyTo);
+    Restful fcgi(String home, String proxyTo);
 
     // ************* ROUTES ************** //
     Routing.Router getRouter();

@@ -4,7 +4,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-import works.hop.core.RestServer;
+import works.hop.core.StartableRest;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -35,7 +35,7 @@ public class BasicJUnit4ClassRunner extends BlockJUnit4ClassRunner {
         CompletableFuture.runAsync(() -> {
             try {
                 FrameworkMethod method = provider.get(0);
-                RestServer server = (RestServer) method.invokeExplosively(createTest());
+                StartableRest server = (StartableRest) method.invokeExplosively(createTest());
                 serverLatch.await();
                 server.shutdown();
                 executor.shutdown();

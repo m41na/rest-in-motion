@@ -1,52 +1,20 @@
 package works.hop.core;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import works.hop.handler.HandlerFunction;
 import works.hop.route.Routing;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 import java.util.function.Function;
 
 import static java.util.Collections.emptyMap;
 
-public abstract class RestServer implements Restful {
-
-    public static final Logger LOG = LoggerFactory.getLogger(RestServer.class);
+public abstract class RestfulImpl implements Restful {
 
     public static final String APP_CTX_KEY = "appctx";
     protected final Function<String, String> properties;
-    private String status = "stopped";
 
-    public RestServer(Function<String, String> properties) {
+    public RestfulImpl(Function<String, String> properties) {
         this.properties = properties;
-    }
-
-    @Override
-    public Restful rest() {
-        return this;
-    }
-
-    @Override
-    public String status() {
-        return this.status;
-    }
-
-    @Override
-    public void banner() {
-        try (InputStream is = getClass().getResourceAsStream(properties.apply("splash"))) {
-            if (is != null) {
-                int maxSize = 1024;
-                byte[] bytes = new byte[maxSize];
-                int size = is.read(bytes);
-                System.out.printf("splash file is %d bytes in size of a max acceptable %d bytes%n", size, maxSize);
-                LOG.info(new String(bytes, 0, size));
-            }
-        } catch (IOException e) {
-            e.printStackTrace(System.err);
-        }
     }
 
     @Override
@@ -146,7 +114,7 @@ public abstract class RestServer implements Restful {
     }
 
     @Override
-    public RestServer route(String method, String path, String accept, String type, Map<String, String> headers, HandlerFunction handler) {
+    public RestfulImpl route(String method, String path, String accept, String type, Map<String, String> headers, HandlerFunction handler) {
         Routing.Route route = Routing.RouteBuilder.newRoute()
                 .handler(handler)
                 .accept(accept)

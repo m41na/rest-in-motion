@@ -16,8 +16,12 @@ public class JettyRouter implements Routing.Router {
     }
 
     public Routing.Search search(Request request) {
+        return search(request.getRequestURI(), request);
+    }
+
+    public Routing.Search search(String target, Request request) {
         Routing.Attributes search = new Routing.Attributes();
-        search.url = request.getRequestURI();
+        search.url = target;
         search.method = request.getMethod();
         for (Enumeration<String> keys = request.getHeaderNames(); keys.hasMoreElements(); ) {
             String key = keys.nextElement();

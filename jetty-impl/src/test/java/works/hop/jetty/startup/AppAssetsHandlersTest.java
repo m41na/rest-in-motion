@@ -1,31 +1,35 @@
 package works.hop.jetty.startup;
 
 import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.hamcrest.Matchers;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
-import static works.hop.jetty.startup.AppOptions.UNASSIGNED;
+import static org.mockito.Mockito.doAnswer;
 
 public class AppAssetsHandlersTest {
 
     private AppAssetsHandlers appAssets;
-    private String USE_SERVLET_RESOURCES = "assets.default.servlet";
     private Map<String, String> map = new HashMap<>() {
         {
-            put("assets", UNASSIGNED);
+            put("assets.welcomeFile", "home.html");
+            put("assets.pathInfoOnly", "false");
+            put("assets.dirAllowed", "true");
         }
     };
     private Function<String, String> properties = s -> map.getOrDefault(s, s);
@@ -51,16 +55,20 @@ public class AppAssetsHandlersTest {
 
     @Test
     public void configureAssetsToUseServletHandler() {
-        map.put(USE_SERVLET_RESOURCES, "true");
-        appAssets.configureAssets(properties, contexts, servlets, "/", "dir");
-        verify(servlets, times(1));
+        ServletHolder holder = appAssets.createResourceServlet(properties, "/file");
+        assertNotNull(holder);
+        assertEquals("home.html", holder.getInitParameter("welcomeFile"));
+        assertEquals("false", holder.getInitParameter("pathInfoOnly"));
+        assertEquals("true", holder.getInitParameter("dirAllowed"));
     }
 
     @Test
-    @Ignore("figure out what's making the test fail when ran from the class level")
     public void configureAssetsToUseContextHandler() {
-        map.put(USE_SERVLET_RESOURCES, "false");
-        appAssets.configureAssets(properties, contexts, servlets, "/", "dir");
-        verify(contexts, times(1));
+        ResourceHandler handler = appAssets.createResourceHandler(properties, "");
+        assertNotNull(handler);
+        assertThat(Arrays.asList(handler.getWelcomeFiles()), hasSize(1));
+        assertThat(Arrays.asList(handler.getWelcomeFiles()), Matchers.contains(("home.html")));
+        assertTrue(handler.isDirAllowed());
+        assertFalse(handler.isPathInfoOnly());
     }
 }
