@@ -1,6 +1,5 @@
 package works.hop.jetty;
 
-import org.eclipse.jetty.server.Request;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -9,6 +8,7 @@ import works.hop.handler.HandlerFunction;
 import works.hop.route.MethodRouter;
 import works.hop.route.Routing;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +23,8 @@ public class JettyRouterTest {
     private JettyRouter router;
     @Mock
     private HandlerFunction handler;
+    @Mock
+    private HttpServletRequest servletRequest;
 
     public JettyRouterTest() {
         router = new JettyRouter(new MethodRouter());
@@ -119,7 +121,7 @@ public class JettyRouterTest {
     @Test
     public void testMatchBookAuthorNameRoute() {
         Routing.Route incoming = new Routing.Route(handler, "/book/1234/author/6789/name", "get", "application/json", null);
-        Request request = new MockRoute(null, null, incoming);
+        JettyRequest request = new MockRoute(servletRequest, incoming);
         Routing.Search match = router.search(request);
         assertTrue(match != null);
         assertEquals("Expecting '1234'", "1234", match.pathParams.get("id"));
@@ -129,7 +131,7 @@ public class JettyRouterTest {
     @Test
     public void testMatchBookAuthorCityRoute() {
         Routing.Route incoming = new Routing.Route(handler, "/book/9876/author/5432/address/chicago", "get", "application/json", "");
-        Request request = new MockRoute(null, null, incoming);
+        JettyRequest request = new MockRoute(servletRequest, incoming);
         Routing.Search match = router.search(request);
         assertTrue(match != null);
         assertEquals("Expecting '9876'", "9876", match.pathParams.get("id"));
@@ -140,19 +142,19 @@ public class JettyRouterTest {
     @Test
     public void testMatchBookPathWithDifferentMethods() {
         Routing.Route incoming = new Routing.Route(handler, "/book", "get", "application/json", "application/json");
-        Request request = new MockRoute(null, null, incoming);
+        JettyRequest request = new MockRoute(servletRequest, incoming);
         Routing.Search match = router.search(request);
         assertTrue(match != null);
         assertEquals("Expecting 'get'", "get", match.result.method.toLowerCase());
 
         incoming = new Routing.Route(handler, "/book", "post", "application/json", "application/json");
-        request = new MockRoute(null, null, incoming);
+        request = new MockRoute(servletRequest, incoming);
         match = router.search(request);
         assertTrue(match != null);
         assertEquals("Expecting 'post'", "post", match.result.method.toLowerCase());
 
         incoming = new Routing.Route(handler, "/book", "put", "application/json", "application/json");
-        request = new MockRoute(null, null, incoming);
+        request = new MockRoute(servletRequest, incoming);
         match = router.search(request);
         assertTrue(match != null);
         assertEquals("Expecting 'put'", "put", match.result.method.toLowerCase());
