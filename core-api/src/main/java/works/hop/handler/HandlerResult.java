@@ -17,7 +17,13 @@ public class HandlerResult {
         return this.success;
     }
 
-    public void succeeded(Boolean status) {
-        this.success = status;
+    public HandlerResult succeeded() {
+        this.success = Boolean.TRUE;
+        return this;
+    }
+
+    public HandlerResult failed() {
+        this.success = Boolean.FALSE;
+        return this;
     }
 }

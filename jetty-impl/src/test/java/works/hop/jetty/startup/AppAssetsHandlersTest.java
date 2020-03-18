@@ -42,13 +42,12 @@ public class AppAssetsHandlersTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        appAssets = new AppAssetsHandlers();
         doAnswer(invocation -> {
             System.out.println("ContextHandler will be used for resources");
             return null;
         }).when(contexts).add(any(ContextHandler.class));
         doAnswer(invocation -> {
-            System.out.println("ServletHandler will be used for resources");
+            System.out.println("JettyServlet will be used for resources");
             return null;
         }).when(servlets).addServlet(any(ServletHolder.class), anyString());
     }

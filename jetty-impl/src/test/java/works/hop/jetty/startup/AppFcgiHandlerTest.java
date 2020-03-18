@@ -1,7 +1,6 @@
 package works.hop.jetty.startup;
 
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -28,14 +27,9 @@ public class AppFcgiHandlerTest {
         }
     };
 
-    @Before
-    public void setUp() {
-        fcgiHandler = new AppFcgiHandler();
-    }
-
     @Test
     public void createFcgiHandler() {
-        ServletContextHandler handler = fcgiHandler.createFcgiHandler(map);
+        ServletContextHandler handler = AppFcgiHandler.createFcgiHandler(map);
         assertNotNull(handler);
         assertEquals("/", handler.getContextPath());
     }

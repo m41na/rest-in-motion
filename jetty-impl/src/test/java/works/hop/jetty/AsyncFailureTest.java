@@ -8,7 +8,6 @@ import works.hop.handler.HandlerException;
 import works.hop.handler.HandlerResult;
 
 import javax.servlet.AsyncContext;
-
 import java.io.IOException;
 
 import static org.junit.Assert.assertNotNull;
@@ -28,7 +27,7 @@ public class AsyncFailureTest {
     private JettyResponse response;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         this.failure = new AsyncFailure(async, target, response);
     }

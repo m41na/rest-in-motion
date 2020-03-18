@@ -30,7 +30,7 @@ public interface Routing {
 
         @Override
         default void accept(Visitor visitor) {
-            visitor.visitParent(this);
+            visitor.visit(this);
         }
     }
 
@@ -109,7 +109,7 @@ public interface Routing {
 
         @Override
         public void accept(Visitor visitor) {
-            visitor.visitChild(this);
+            visitor.visit(this);
         }
     }
 

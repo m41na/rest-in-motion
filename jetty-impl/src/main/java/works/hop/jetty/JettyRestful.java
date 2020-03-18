@@ -2,85 +2,98 @@ package works.hop.jetty;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import works.hop.core.Restful;
-import works.hop.core.RestfulImpl;
+import works.hop.jetty.builder.ContextHandlerBuilder;
+import works.hop.jetty.handler.JettyHandler;
+import works.hop.jetty.session.SessionUtil;
 import works.hop.jetty.startup.AppAssetsHandlers;
+import works.hop.jetty.startup.AppFcgiHandler;
 import works.hop.jetty.websocket.JettyWsPolicy;
 import works.hop.jetty.websocket.JettyWsProvider;
 import works.hop.jetty.websocket.JettyWsServlet;
 import works.hop.route.Routing;
 import works.hop.traverse.Visitor;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
-public class JettyRestful extends RestfulImpl {
+public class JettyRestful implements Restful {
 
-    protected final List<Handler> handlers = new LinkedList<>();
-    protected final ServletContextHandler servlets;
-    protected final Properties locals;
-    protected final Map<String, String> fcgiContext = new HashMap<>();
-    protected final Map<String, String> corsContext = new HashMap<>();
-    private final JettyRouter router;
-    private final AppAssetsHandlers assetsHandlers = new AppAssetsHandlers();
+    final String APP_CTX_KEY = "appctx";
+    final List<Handler> rootHandlers = new LinkedList<>();
+    final ContextHandlerCollection contextHandlers = new ContextHandlerCollection();
+    final Function<String, String> properties;
+    final JettyRouter router;
 
-    public JettyRestful(Function<String, String> properties, JettyRouter router, Properties locals) {
-        super(properties);
+    public JettyRestful(Function<String, String> properties, JettyRouter router) {
         this.router = router;
-        this.locals = locals;
-        this.servlets = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        this.servlets.setContextPath("/app"); //TODO: figure out how to generically configure this context
+        this.properties = properties;
     }
 
-    protected ContextHandler createRoutesHandler(String path) {
-        JettyHandler handler = new JettyHandler(router);
+    @Override
+    public Restful context(String path) {
+        JettyHandler routeHandler = new JettyHandler(router);
         ContextHandler context = new ContextHandler();
         context.setContextPath(path);
-        context.setHandler(handler);
-        return context;
+        context.setHandler(routeHandler);
+        this.contextHandlers.addHandler(context);
+        return this;
     }
 
-    public Restful websocket(String ctx, JettyWsProvider provider) {
-        return websocket(ctx, (JettyWsProvider) provider, JettyWsPolicy::defaultConfig);
+    public Restful context(String path, Function<ContextHandlerBuilder, ServletContextHandler> builder) {
+        contextHandlers.addHandler(builder.apply(ContextHandlerBuilder.newBuilder(path, router, null)));
+        return this;
     }
 
-    public Restful websocket(String ctx, JettyWsProvider provider, JettyWsPolicy policy) {
-        // Add a websocket destination using a specific path spec
-        ServletHolder holderEvents = new ServletHolder("ws-events", new JettyWsServlet(provider, policy.getPolicy()));
-        servlets.addServlet(holderEvents, ctx);
+    public Restful websocket(String path, JettyWsProvider provider, JettyWsPolicy policy) {
+        String pathSpec = path.endsWith("/*") ? path : (path.endsWith("/")? path.substring(0, path.length() - 1) : path.concat("/*"));
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.setContextPath(path);
+        ServletHolder handlerHolder = new ServletHolder("websocket-".concat(path), new JettyWsServlet(provider, policy.getPolicy()));
+        context.addServlet(handlerHolder, pathSpec);
+        contextHandlers.addHandler(context);
+        return this;
+    }
+
+    @Override
+    public Restful session(Function<String, String> properties) {
+        String url = properties.apply("session.jdbc.url");
+        String driver = properties.apply("session.jdbc.driver");
+        SessionHandler sessionHandler = SessionUtil.sqlSessionHandler(driver, url);
+        rootHandlers.add(sessionHandler);
         return this;
     }
 
     @Override
     public Restful assets(String folder) {
-        handlers.add(assetsHandlers.createResourceHandler(this.properties, folder));
+        rootHandlers.add(AppAssetsHandlers.createResourceHandler(this.properties, folder));
         return this;
     }
 
     @Override
     public Restful assets(String mapping, String folder) {
-        String pathSpec = mapping.endsWith("/*") ? mapping.substring(0, mapping.length() - 1) : (mapping.endsWith("/") ? mapping : mapping.concat("/"));
-        ServletHolder defaultServlet = assetsHandlers.createResourceServlet(this.properties, folder);
-        servlets.setContextPath(pathSpec);
-        servlets.addServlet(defaultServlet, pathSpec);
+        ContextHandler context = new ContextHandler();
+        context.setContextPath(mapping);
+        context.setHandler(AppAssetsHandlers.createResourceHandler(this.properties, folder));
+        contextHandlers.addHandler(context);
         return this;
     }
 
     @Override
-    public Restful cors(Map<String, String> cors) {
-        this.corsContext.putAll(cors);
-        return this;
+    public Function<String, String> properties() {
+        return this.properties;
     }
 
     @Override
-    public Restful fcgi(String home, String proxyTo) {
-        this.fcgiContext.put("activate", "true");
-        this.fcgiContext.put("resourceBase", home);
-        this.fcgiContext.put("welcomeFile", "index.php");
-        this.fcgiContext.put("proxyTo", proxyTo);
-        this.fcgiContext.put("scriptRoot", home);
+    public Restful fcgi(String context, String home, String proxyTo) {
+        Map<String, String> fcgiContext = AppFcgiHandler.defaultFcgProperties(context, home, proxyTo);
+        contextHandlers.addHandler(AppFcgiHandler.createFcgiHandler(fcgiContext));
         return this;
     }
 
@@ -90,7 +103,12 @@ public class JettyRestful extends RestfulImpl {
     }
 
     @Override
-    public void traverse(Visitor<Routing.Router, Routing.Route> visitor) {
-        //TODO: implement traversal of tree nodes
+    public String getContext() {
+        return this.properties.apply(APP_CTX_KEY);
+    }
+
+    @Override
+    public void traverse(Visitor<Routing.Router> visitor) {
+        visitor.visit(router);
     }
 }

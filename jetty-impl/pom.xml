@@ -13,7 +13,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jetty.version>9.4.26.v20200117</jetty.version>
+        <jetty.version>9.4.27.v20200227</jetty.version>
     </properties>
 
     <dependencies>
@@ -38,6 +38,12 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlets</artifactId>
             <version>${jetty.version}</version>
         </dependency>
 
@@ -108,20 +114,11 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- jetty specialized servlets -->
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlets</artifactId>
-            <version>${jetty.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
         <!-- jetty fcgi -->
         <dependency>
             <groupId>org.eclipse.jetty.fcgi</groupId>
             <artifactId>fcgi-server</artifactId>
             <version>${jetty.version}</version>
-            <scope>compile</scope>
         </dependency>
 
         <!-- jetty session impl -->

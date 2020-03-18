@@ -1,4 +1,4 @@
-package works.hop.jetty;
+package works.hop.jetty.handler;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -6,21 +6,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import works.hop.handler.HandlerException;
 import works.hop.handler.HandlerPromise;
+import works.hop.jetty.*;
 import works.hop.route.Routing;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
-import java.util.concurrent.CompletableFuture;
 
 public class JettyHandler extends AbstractHandler {
 
     public static final Logger LOG = LoggerFactory.getLogger(JettyHandler.class);
 
-    private final JettyRouter router;
+    private final Routing.Router router;
 
-    public JettyHandler(JettyRouter router) {
+    public JettyHandler(Routing.Router router) {
         this.router = router;
     }
 
@@ -35,7 +35,7 @@ public class JettyHandler extends AbstractHandler {
 
             //search router
             try {
-                Routing.Search route = router.search(target, aRequest);
+                Routing.Search route = ((JettyRouter) router).search(target, aRequest);
                 if (route.result != null) {
                     LOG.info("matched route -> {}", route.result.toString());
                     aRequest.route(route);
@@ -46,11 +46,11 @@ public class JettyHandler extends AbstractHandler {
                     //handle request
                     try {
                         LOG.debug("Delegating request to handler function with completion promise");
-                        route.result.handler.handle(aRequest, aResponse, promise);
+                        route.result.handler.handle(null, aRequest, aResponse, promise);
                     } catch (Exception e) {
                         LOG.warn("Uncaught Exception in the promise resolver. Completing promise with failure: {}", e.getMessage());
                         e.printStackTrace(System.err);
-                        promise.resolve(CompletableFuture.failedFuture(e));
+                        promise.resolve(() -> e);
                     } finally {
                         baseRequest.setHandled(true);
                     }

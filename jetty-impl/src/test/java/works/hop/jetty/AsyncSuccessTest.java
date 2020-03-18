@@ -1,6 +1,5 @@
 package works.hop.jetty;
 
-import com.ctc.wstx.shaded.msv_core.verifier.IVerifier;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -8,10 +7,11 @@ import org.mockito.MockitoAnnotations;
 import works.hop.handler.HandlerResult;
 
 import javax.servlet.AsyncContext;
+import javax.servlet.ServletOutputStream;
+import java.io.IOException;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.*;
 
 public class AsyncSuccessTest {
 
@@ -24,11 +24,16 @@ public class AsyncSuccessTest {
     private JettyRequest request;
     @Mock
     private JettyResponse response;
+    @Mock
+    private ServletOutputStream out;
 
     @Before
-    public void setUp(){
+    public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
         this.success = new AsyncSuccess(async, target, request, response);
+        doNothing().when(out).write(anyInt());
+        when(response.getContent()).thenReturn("Some great content".getBytes());
+        when(response.getOutputStream()).thenReturn(out);
     }
 
     @Test

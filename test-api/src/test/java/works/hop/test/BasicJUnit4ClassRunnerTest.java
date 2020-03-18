@@ -17,10 +17,10 @@ import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import works.hop.core.JsonSupplier;
-import works.hop.core.RestfulImpl;
 import works.hop.jetty.JettyStartable;
-import works.hop.jetty.UploadHandler;
-import works.hop.jetty.websocket.JettyWsAdapter;
+import works.hop.jetty.handler.UploadHandler;
+import works.hop.jetty.websocket.JettyWsEcho;
+import works.hop.jetty.websocket.JettyWsPolicy;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,46 +45,47 @@ public class BasicJUnit4ClassRunnerTest {
     public static final String BASE = "/";
 
     @BasicProvider
-    public RestfulImpl provider() throws Exception {
+    public JettyStartable provider() throws Exception {
         Map<String, String> props = applyDefaults(new Options(), new String[]{});
         JettyStartable server = createServer(props);
-        server.get("/", (request, response, promise) -> {
-            response.ok(request.requestLine());
-            promise.complete();
-        });
-        server.get("/two", (request, response, promise) -> {
-            response.ok("get two");
-            promise.complete();
-        });
-        server.get("/two/{id}", (request, response, promise) -> {
-            Long id = request.longParam("id");
-            response.ok("get two with param " + id);
-            promise.complete();
-        });
-        server.get("/two/{id}/one/{name}", (request, response, promise) -> {
-            Long id = request.longParam("id");
-            String name = request.param("name");
-            response.ok("get two with 2 params " + id + " and " + name);
-            promise.complete();
-        });
-        server.post("/", "application/json", "application/json", (request, response, promise) -> {
-            Content content = request.body(Content.class);
-            assertEquals("Expecting Posted Hello", "Posted Hello", content.message);
-            response.send("Post Ok");
-            promise.complete();
-        });
-        server.post("/file", new UploadHandler(Path.of("target"), UploadHandler.defaultConfig()));
-        server.put("/", "application/json", "application/json", emptyMap(), (request, response, promise) -> {
-            Content content = request.body(Content.class);
-            assertEquals("Expecting Put Hello", "Put Hello", content.message);
-            response.send("Put Ok");
-            promise.complete();
-        });
-        server.delete("/", (request, response, promise) -> {
-            response.send("Delete Ok");
-            promise.complete();
-        });
-        server.websocket("/events/*", () -> new JettyWsAdapter());
+        server.context(props.get("appctx"))
+                .get("/", (auth, request, response, promise) -> {
+                    response.ok(request.requestLine());
+                    promise.complete();
+                })
+                .get("/two", (auth, request, response, promise) -> {
+                    response.ok("get two");
+                    promise.complete();
+                })
+                .get("/two/{id}", (auth, request, response, promise) -> {
+                    Long id = request.longParam("id");
+                    response.ok("get two with param " + id);
+                    promise.complete();
+                })
+                .get("/two/{id}/one/{name}", (auth, request, response, promise) -> {
+                    Long id = request.longParam("id");
+                    String name = request.param("name");
+                    response.ok("get two with 2 params " + id + " and " + name);
+                    promise.complete();
+                })
+                .post("/", "application/json", "application/json", (auth, request, response, promise) -> {
+                    Content content = request.body(Content.class);
+                    assertEquals("Expecting Posted Hello", "Posted Hello", content.message);
+                    response.send("Post Ok");
+                    promise.complete();
+                })
+                .post("/file", new UploadHandler(Path.of("target"), UploadHandler.defaultConfig()))
+                .put("/", "application/json", "application/json", emptyMap(), (auth, request, response, promise) -> {
+                    Content content = request.body(Content.class);
+                    assertEquals("Expecting Put Hello", "Put Hello", content.message);
+                    response.send("Put Ok");
+                    promise.complete();
+                })
+                .delete("/", (auth, request, response, promise) -> {
+                    response.send("Delete Ok");
+                    promise.complete();
+                });
+        server.rest().websocket("/events/*", () -> new JettyWsEcho(), JettyWsPolicy.defaultPolicy());
         server.listen(PORT, HOST);
         return server;
     }
@@ -106,7 +107,7 @@ public class BasicJUnit4ClassRunnerTest {
                 .uri(URI.create(uri))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals("Contains 'Error 404 Not Found'", true, response.body().contains("Error 404 Not Found"));
+        assertEquals("Contains '404 Not Found'", true, response.body().contains("404 Not Found"));
     }
 
     @Test

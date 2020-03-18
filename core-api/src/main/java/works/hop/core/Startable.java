@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 public interface Startable {
 
-    Restful rest();
+    <R extends Restful> R rest();
 
     String status();
 

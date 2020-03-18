@@ -13,15 +13,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.concurrent.CompletableFuture;
 
-public class ServletHandler extends HttpServlet {
+public class JettyServlet extends HttpServlet {
 
-    private final Logger LOG = LoggerFactory.getLogger(ServletHandler.class);
+    private final Logger LOG = LoggerFactory.getLogger(JettyServlet.class);
 
-    private final JettyRouter router;
+    private final Routing.Router router;
 
-    public ServletHandler(JettyRouter router) {
+    public JettyServlet(Routing.Router router) {
         this.router = router;
     }
 
@@ -49,30 +48,22 @@ public class ServletHandler extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        JettyRequest request = (JettyRequest) req;
-        JettyResponse response = (JettyResponse) resp;
-        doProcess(request, response);
+        doProcess(new JettyRequest(req), new JettyResponse(resp));
     }
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        JettyRequest request = (JettyRequest) req;
-        JettyResponse response = (JettyResponse) resp;
-        doProcess(request, response);
+        doProcess(new JettyRequest(req), new JettyResponse(resp));
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        JettyRequest request = (JettyRequest) req;
-        JettyResponse response = (JettyResponse) resp;
-        doProcess(request, response);
+        doProcess(new JettyRequest(req), new JettyResponse(resp));
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        JettyRequest request = (JettyRequest) req;
-        JettyResponse response = (JettyResponse) resp;
-        doProcess(request, response);
+        doProcess(new JettyRequest(req), new JettyResponse(resp));
     }
 
     protected void doProcess(JettyRequest request, JettyResponse response) {
@@ -87,7 +78,7 @@ public class ServletHandler extends HttpServlet {
 
                 //search route
                 try {
-                    Routing.Search route = router.search(request);
+                    Routing.Search route = ((JettyRouter) router).search(target, aRequest);
                     if (route.result != null) {
                         LOG.info("matched route -> {}", route.result.toString());
                         aRequest.route(route);
@@ -98,11 +89,11 @@ public class ServletHandler extends HttpServlet {
                         //handle request
                         try {
                             LOG.debug("Delegating request to handler function with completion promise");
-                            route.result.handler.handle(aRequest, aResponse, promise);
+                            route.result.handler.handle(null, aRequest, aResponse, promise);
                         } catch (Exception e) {
                             LOG.warn("Uncaught Exception in the promise resolver. Completing promise with failure: {}", e.getMessage());
                             e.printStackTrace(System.err);
-                            promise.resolve(CompletableFuture.failedFuture(e));
+                            promise.resolve(() -> e);
                         } finally {
                             //baseRequest.setHandled(true);
                         }
@@ -138,7 +129,7 @@ public class ServletHandler extends HttpServlet {
             } catch (Exception e) {
                 LOG.warn("Uncaught Exception in the promise resolver. Completing promise with failure: {}", e.getMessage());
                 e.printStackTrace(System.err);
-                promise.resolve(CompletableFuture.failedFuture(e));
+                promise.resolve(() -> e);
             }
         }
     }

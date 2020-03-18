@@ -11,7 +11,16 @@ public interface JettyWsPolicy {
     String MAX_TEXT_MESSAGE_BUFFER_SIZE = "MAX_TEXT_MESSAGE_BUFFER_SIZE";
     String MAX_BINARY_MESSAGE_BUFFER_SIZE = "MAX_BINARY_MESSAGE_BUFFER_SIZE";
 
-    static Map<String, Long> defaultConfig() {
+    static JettyWsPolicy defaultPolicy() {
+        return new JettyWsPolicy() {
+            @Override
+            public Map<String, Long> getPolicy() {
+                return defaultConfig();
+            }
+        };
+    }
+
+    default Map<String, Long> defaultConfig() {
         Map<String, Long> props = new HashMap<>();
         props.put(IDLE_TIMEOUT, 300000L);
         props.put(MAX_TEXT_MESSAGE_SIZE, Double.valueOf(0.5 * 1024 * 1024).longValue());
