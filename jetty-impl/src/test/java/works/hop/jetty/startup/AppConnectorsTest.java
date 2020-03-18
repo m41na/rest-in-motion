@@ -31,12 +31,11 @@ public class AppConnectorsTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        connectors = new AppConnectors();
     }
 
     @Test
     public void createHttpConfiguration() {
-        HttpConfiguration http = connectors.createHttpConfiguration(properties);
+        HttpConfiguration http = AppConnectors.createHttpConfiguration(properties);
         assertNotNull(http);
         assertEquals(8443, http.getSecurePort());
         assertEquals(30000, http.getIdleTimeout());

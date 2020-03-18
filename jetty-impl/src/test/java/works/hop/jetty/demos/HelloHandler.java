@@ -1,4 +1,4 @@
-package works.hop.jetty.hello;
+package works.hop.jetty.demos;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;

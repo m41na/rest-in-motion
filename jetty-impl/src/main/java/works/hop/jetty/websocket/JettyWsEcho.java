@@ -5,7 +5,7 @@ import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 
 import java.io.IOException;
 
-public class JettyWsAdapter extends WebSocketAdapter {
+public class JettyWsEcho extends WebSocketAdapter {
 
     @Override
     public void onWebSocketClose(int statusCode, String reason) {

@@ -4,56 +4,49 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import works.hop.core.RestMethods;
 import works.hop.core.Restful;
 import works.hop.core.StartableRest;
-import works.hop.jetty.session.SessionUtil;
 import works.hop.jetty.startup.AppConnectors;
-import works.hop.jetty.startup.AppFcgiHandler;
 import works.hop.jetty.startup.AppThreadPool;
 import works.hop.route.MethodRouter;
+import works.hop.route.Routing;
+import works.hop.traverse.Visitor;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-import java.util.Properties;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class JettyStartable extends JettyRestful implements StartableRest {
+public class JettyStartable implements StartableRest {
 
     public static final Logger LOG = LoggerFactory.getLogger(JettyStartable.class);
 
-    private final ContextHandlerCollection contexts;
-    private final Function<String, String> properties;
+    private final Restful restful;
     private String status = "stopped";
     private Consumer<Boolean> shutdown;
 
-    public JettyStartable(Function<String, String> properties, ContextHandlerCollection contexts, JettyRouter router, Properties locals) {
-        super(properties, router, locals);
-        this.properties = properties;
-        this.contexts = contexts;
+    public JettyStartable(Restful restful) {
+        this.restful = restful;
     }
 
     public static JettyStartable createServer(Map<String, String> props) {
-        Properties locals = new Properties();
-        props.forEach((key, value) -> locals.setProperty(key, value));
-        Function<String, String> properties = key -> locals.getProperty(key);
-        ContextHandlerCollection contexts = new ContextHandlerCollection();
+        Function<String, String> properties = key -> props.get(key);
         JettyRouter router = new JettyRouter(new MethodRouter());
-        JettyStartable server = new JettyStartable(properties, contexts, router, new Properties());
+        Restful restful = new JettyRestful(properties, router);
+        JettyStartable server = new JettyStartable(restful);
         return server;
     }
 
     @Override
-    public Restful rest() {
-        return this;
+    public JettyRestful rest() {
+        return (JettyRestful) this.restful;
     }
 
     @Override
@@ -63,7 +56,7 @@ public class JettyStartable extends JettyRestful implements StartableRest {
 
     @Override
     public void banner() {
-        try (InputStream is = getClass().getResourceAsStream(properties.apply("splash"))) {
+        try (InputStream is = getClass().getResourceAsStream(restful.properties().apply("splash"))) {
             if (is != null) {
                 int maxSize = 1024;
                 byte[] bytes = new byte[maxSize];
@@ -93,50 +86,25 @@ public class JettyStartable extends JettyRestful implements StartableRest {
 
     @Override
     public void listen(Integer port, String host, Consumer<String> result) {
-        AppConnectors connectors = new AppConnectors();
-        AppThreadPool threadPools = new AppThreadPool();
-        AppFcgiHandler fcgiHandler = new AppFcgiHandler();
-
         try {
             status = "starting";
             // splash banner
             banner();
             // create server with thread pool
-            QueuedThreadPool threadPool = threadPools.createThreadPool(this.properties);
+            QueuedThreadPool threadPool = AppThreadPool.createThreadPool(restful.properties());
             Server server = new Server(threadPool);
 
             // Scheduler
             server.addBean(new ScheduledExecutorScheduler());
             // HTTP Configuration
-            HttpConfiguration httpConfig = connectors.createHttpConfiguration(this.properties);
-            ServerConnector http2Connector = connectors.configureHttpsConnector(this.properties, server, host, port, httpConfig);
+            HttpConfiguration httpConfig = AppConnectors.createHttpConfiguration(restful.properties());
+            ServerConnector http2Connector = AppConnectors.configureHttpsConnector(restful.properties(), server, host, port, httpConfig);
             server.addConnector(http2Connector);
 
-            //configure appctx context handler
-            String appctx = this.properties.apply("appctx");
-            contexts.addHandler(createRoutesHandler(appctx.endsWith("/*") ? appctx.substring(0, appctx.length() - 1) : appctx.endsWith("/") ? appctx : appctx.concat("/")));
-
-            // add activated context handler (say, fcgi for php)
-            if (Boolean.parseBoolean(this.fcgiContext.get("fcgi"))) {
-                handlers.add(fcgiHandler.createFcgiHandler(this.fcgiContext));
-            }
-
-            //configure session handler if necessary
-            SessionHandler sessionHandler = null;
-            if (Boolean.parseBoolean(this.properties.apply("session.jdbc.enable"))) {
-                String url = this.properties.apply("session.jdbc.url");
-                String driver = this.properties.apply("session.jdbc.driver");
-                sessionHandler = SessionUtil.sqlSessionHandler(driver, url);
-                handlers.add(sessionHandler);
-            }
-
-            //finally add the context handlers
-            handlers.add(servlets);
-            handlers.add(contexts);
-
             // Add the ResourceHandler to the server.
+            rest().rootHandlers.add(rest().contextHandlers);
             HandlerList handlerList = new HandlerList();
-            handlerList.setHandlers(handlers.toArray(new Handler[0]));
+            handlerList.setHandlers(rest().rootHandlers.toArray(new Handler[0]));
             server.setHandler(handlerList);
 
             // add shutdown handler
@@ -180,5 +148,50 @@ public class JettyStartable extends JettyRestful implements StartableRest {
                 }
             }
         }));
+    }
+
+    @Override
+    public Function<String, String> properties() {
+        return restful.properties();
+    }
+
+    @Override
+    public Restful context(String path) {
+        return restful.context(path);
+    }
+
+    @Override
+    public Restful session(Function<String, String> properties) {
+        return this.restful.session(properties);
+    }
+
+    @Override
+    public Restful fcgi(String context, String home, String proxyTo) {
+        return this.restful.fcgi(context, home, proxyTo);
+    }
+
+    @Override
+    public void traverse(Visitor<Routing.Router> visitor) {
+        this.restful.traverse(visitor);
+    }
+
+    @Override
+    public RestMethods assets(String folder) {
+        return this.restful.assets(folder);
+    }
+
+    @Override
+    public RestMethods assets(String mapping, String folder) {
+        return this.restful.assets(mapping, folder);
+    }
+
+    @Override
+    public Routing.Router getRouter() {
+        return this.restful.getRouter();
+    }
+
+    @Override
+    public String getContext() {
+        return this.restful.getContext();
     }
 }

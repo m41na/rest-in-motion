@@ -1,7 +1,6 @@
 package works.hop.jetty.startup;
 
 import org.eclipse.jetty.servlet.FilterHolder;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -22,15 +21,10 @@ public class AppCorsFilterTest {
         }
     };
 
-    @Before
-    public void setUp() {
-        corsFilter = new AppCorsFilter();
-    }
-
     @Test
     public void configCorsFilter() {
-        FilterHolder filterHolder = corsFilter.configCorsFilter(map);
+        FilterHolder filterHolder = AppCorsFilter.configCorsFilter(map);
         assertNotNull(filterHolder);
-        assertEquals("rest-api-cors-filter", filterHolder.getRegistration().getName());
+        assertEquals("rim-cors-filter", filterHolder.getRegistration().getName());
     }
 }

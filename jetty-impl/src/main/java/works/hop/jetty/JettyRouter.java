@@ -1,6 +1,5 @@
 package works.hop.jetty;
 
-import org.eclipse.jetty.server.Request;
 import works.hop.route.Routing;
 
 import java.util.Enumeration;
@@ -15,11 +14,11 @@ public class JettyRouter implements Routing.Router {
         this.routeTree = routeTree;
     }
 
-    public Routing.Search search(Request request) {
+    public Routing.Search search(JettyRequest request) {
         return search(request.getRequestURI(), request);
     }
 
-    public Routing.Search search(String target, Request request) {
+    public Routing.Search search(String target, JettyRequest request) {
         Routing.Attributes search = new Routing.Attributes();
         search.url = target;
         search.method = request.getMethod();

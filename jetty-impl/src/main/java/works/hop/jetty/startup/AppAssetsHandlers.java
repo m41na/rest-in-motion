@@ -8,7 +8,11 @@ import java.util.function.Function;
 
 public class AppAssetsHandlers {
 
-    public ResourceHandler createResourceHandler(Function<String, String> properties, String resourceBase) {
+    private AppAssetsHandlers() {
+        throw new UnsupportedOperationException("You should not instantiate this class");
+    }
+
+    public static ResourceHandler createResourceHandler(Function<String, String> properties, String resourceBase) {
         ResourceHandler appResources = new ResourceHandler();
         appResources.setResourceBase(resourceBase);
         appResources.setDirectoriesListed(Boolean.parseBoolean(properties.apply("assets.dirAllowed")));
@@ -20,7 +24,7 @@ public class AppAssetsHandlers {
         return appResources;
     }
 
-    public ServletHolder createResourceServlet(Function<String, String> properties, String resourceBase) {
+    public static ServletHolder createResourceServlet(Function<String, String> properties, String resourceBase) {
         // DefaultServlet should be named 'default-${resourceBase}'
         ServletHolder defaultServlet = new ServletHolder("default-" + resourceBase, DefaultServlet.class);
         defaultServlet.setInitParameter("resourceBase", resourceBase);

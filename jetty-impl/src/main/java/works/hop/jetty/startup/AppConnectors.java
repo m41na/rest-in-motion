@@ -12,7 +12,11 @@ import static org.eclipse.jetty.util.resource.Resource.newClassPathResource;
 
 public class AppConnectors {
 
-    public HttpConfiguration createHttpConfiguration(Function<String, String> properties) {
+    private AppConnectors() {
+        throw new UnsupportedOperationException("You should not instantiate this class");
+    }
+
+    public static HttpConfiguration createHttpConfiguration(Function<String, String> properties) {
         Integer securePort = Integer.parseInt(properties.apply("https.port"));
         Long idleTimeOut = Long.parseLong(properties.apply("https.idleTimeout"));
         // HTTP Configuration
@@ -24,14 +28,14 @@ public class AppConnectors {
         return http_config;
     }
 
-    public SecureRequestCustomizer createHttpsCustomizer(Function<String, String> properties) {
+    public static SecureRequestCustomizer createHttpsCustomizer(Function<String, String> properties) {
         SecureRequestCustomizer customizer = new SecureRequestCustomizer();
         customizer.setStsMaxAge(Long.parseLong(properties.apply("https.ssl.stsMaxAge")));
         customizer.setStsIncludeSubDomains(Boolean.parseBoolean(properties.apply("https.ssl.includeSubDomains")));
         return customizer;
     }
 
-    public ServerConnector configureHttpConnector(Function<String, String> properties, Server server, String host, Integer port, HttpConfiguration http_config) {
+    public static ServerConnector configureHttpConnector(Function<String, String> properties, Server server, String host, Integer port, HttpConfiguration http_config) {
         //add http connector (http_1.1 connection factory)
         ServerConnector httpConnector = new ServerConnector(server, new HttpConnectionFactory(http_config));
         httpConnector.setHost(host);
@@ -40,7 +44,7 @@ public class AppConnectors {
         return httpConnector;
     }
 
-    public ServerConnector configureHttpsConnector(Function<String, String> properties, Server server, String host, Integer port, HttpConfiguration http_config) {
+    public static ServerConnector configureHttpsConnector(Function<String, String> properties, Server server, String host, Integer port, HttpConfiguration http_config) {
         //add http connector (http_1.1 connection factory)
         ServerConnector httpConnector = configureHttpConnector(properties, server, host, port, http_config);
         server.addConnector(httpConnector);
@@ -72,7 +76,7 @@ public class AppConnectors {
         return http2Connector;
     }
 
-    private SslContextFactory createSslContextFactory(String keyFile, String keyPass) {
+    private static SslContextFactory createSslContextFactory(String keyFile, String keyPass) {
         // SSL Context Factory for HTTPS and HTTP/2
         SslContextFactory sslContextFactory = new SslContextFactory.Server();
         sslContextFactory.setKeyStoreResource(newClassPathResource(keyFile));

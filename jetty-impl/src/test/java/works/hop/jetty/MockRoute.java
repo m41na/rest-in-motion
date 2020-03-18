@@ -1,19 +1,17 @@
 package works.hop.jetty;
 
-import org.eclipse.jetty.server.HttpChannel;
-import org.eclipse.jetty.server.HttpInput;
-import org.eclipse.jetty.server.Request;
 import works.hop.route.Routing;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 import java.util.Vector;
 
-public class MockRoute extends Request {
+public class MockRoute extends JettyRequest {
 
     private final Routing.Route route;
 
-    public MockRoute(HttpChannel channel, HttpInput input, Routing.Route route) {
-        super(channel, input);
+    public MockRoute(HttpServletRequest request, Routing.Route route) {
+        super(request);
         this.route = route;
         if (route.accept != null && route.accept.trim().length() > 0) {
             this.route.headers.put("Accept", route.accept);

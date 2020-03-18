@@ -1,7 +1,6 @@
 package works.hop.jetty.startup;
 
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -23,14 +22,9 @@ public class AppThreadPoolTest {
     };
     private Function<String, String> properties = s -> map.getOrDefault(s, s);
 
-    @Before
-    public void setUp() {
-        threadPool = new AppThreadPool();
-    }
-
     @Test
     public void createThreadPool() {
-        QueuedThreadPool pool = threadPool.createThreadPool(properties);
+        QueuedThreadPool pool = AppThreadPool.createThreadPool(properties);
         assertNotNull(pool);
         assertEquals(20, pool.getMaxThreads());
         assertEquals(10, pool.getMinThreads());

@@ -13,16 +13,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertTrue;
-import static works.hop.core.RestfulImpl.APP_CTX_KEY;
 
-public class RestfulImplTest {
+public class RestfulTest {
 
-    private RestfulImpl server;
+    private Restful server;
     @Mock
     private ARequest request;
     @Mock
@@ -34,8 +32,7 @@ public class RestfulImplTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        props.put(APP_CTX_KEY, "/");
-        server = new BasicRestfulImpl((key) -> props.get(key));
+        server = new BasicRestful((key) -> props.get(key));
         promise = new HandlerPromise();
         promise.OnSuccess(new Function<HandlerResult, HandlerResult>() {
             @Override
@@ -54,10 +51,10 @@ public class RestfulImplTest {
     @Test
     public void getRequestOnContextPathShouldReturn200Ok() {
         server.get("/", "", "", Collections.emptyMap(),
-                (request, response, done) -> done.resolve(CompletableFuture.completedFuture("get request")));
+                (auth, request, response, done) -> done.resolve(() -> "get request"));
         Routing.Search search = new Routing.Search(null);
         server.getRouter().search(search);
-        search.result.handler.handle(request, response, promise);
+        search.result.handler.handle(null, request, response, promise);
         HandlerResult result = promise.complete();
         assertTrue(result.isSuccess());
     }
@@ -65,10 +62,10 @@ public class RestfulImplTest {
     @Test
     public void postRequestOnContextPathShouldReturn200Ok() {
         server.post("/", "", "", Collections.emptyMap(),
-                (request, response, done) -> done.resolve(CompletableFuture.completedFuture("post request")));
+                (auth, request, response, done) -> done.resolve(() -> "post request"));
         Routing.Search search = new Routing.Search(null);
         server.getRouter().search(search);
-        search.result.handler.handle(request, response, promise);
+        search.result.handler.handle(null, request, response, promise);
         HandlerResult result = promise.complete();
         assertTrue(result.isSuccess());
     }
@@ -76,10 +73,10 @@ public class RestfulImplTest {
     @Test
     public void putRequestOnContextPathShouldReturn200Ok() {
         server.put("/", "", "", Collections.emptyMap(),
-                (request, response, done) -> done.resolve(CompletableFuture.completedFuture("put request")));
+                (auth, request, response, done) -> done.resolve(() -> "put request"));
         Routing.Search search = new Routing.Search(null);
         server.getRouter().search(search);
-        search.result.handler.handle(request, response, promise);
+        search.result.handler.handle(null, request, response, promise);
         HandlerResult result = promise.complete();
         assertTrue(result.isSuccess());
     }
@@ -87,20 +84,21 @@ public class RestfulImplTest {
     @Test
     public void deleteRequestOnContextPathShouldReturn200Ok() {
         server.delete("/", "", "", Collections.emptyMap(),
-                (request, response, done) -> done.resolve(CompletableFuture.completedFuture("delete request")));
+                (auth, request, response, done) -> done.resolve(() -> "delete request"));
         Routing.Search search = new Routing.Search(null);
         server.getRouter().search(search);
-        search.result.handler.handle(request, response, promise);
+        search.result.handler.handle(null, request, response, promise);
         HandlerResult result = promise.complete();
         assertTrue(result.isSuccess());
     }
 
-    class BasicRestfulImpl extends RestfulImpl {
+    class BasicRestful implements Restful {
 
         BasicRouter router = new BasicRouter();
+        Function<String, String> properties;
 
-        public BasicRestfulImpl(Function<String, String> properties) {
-            super(properties);
+        public BasicRestful(Function<String, String> properties) {
+            this.properties = properties;
         }
 
         @Override
@@ -114,13 +112,27 @@ public class RestfulImplTest {
         }
 
         @Override
-        public Restful cors(Map<String, String> cors) {
+        public Function<String, String> properties() {
+            return properties;
+        }
+
+        @Override
+        public Restful context(String path) {
             return null;
         }
 
         @Override
-        public Restful fcgi(String home, String proxyTo) {
+        public Restful session(Function<String, String> properties) {
             return null;
+        }
+
+        @Override
+        public Restful fcgi(String context, String home, String proxyTo) {
+            return null;
+        }
+
+        @Override
+        public void traverse(Visitor<Routing.Router> visitor) {
         }
 
         @Override
@@ -129,7 +141,8 @@ public class RestfulImplTest {
         }
 
         @Override
-        public void traverse(Visitor<Routing.Router, Routing.Route> visitor) {
+        public String getContext() {
+            return "/";
         }
     }
 

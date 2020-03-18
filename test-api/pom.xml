@@ -40,6 +40,13 @@
             <artifactId>junit</artifactId>
             <version>4.12</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-alpn-server</artifactId>
+            <version>9.4.27.v20200227</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

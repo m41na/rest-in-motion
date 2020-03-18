@@ -1,8 +1,6 @@
 package works.hop.traverse;
 
-public interface Visitor<PARENT, CHILD> {
+public interface Visitor<R> {
 
-    void visitParent(PARENT visitable);
-
-    void visitChild(CHILD visitable);
+    void visit(R visitable);
 }
