@@ -56,7 +56,7 @@ public class RestfulTest {
         server.getRouter().search(search);
         search.result.handler.handle(null, request, response, promise);
         HandlerResult result = promise.complete();
-        assertTrue(result.isSuccess());
+        assertTrue(result.success());
     }
 
     @Test
@@ -67,7 +67,7 @@ public class RestfulTest {
         server.getRouter().search(search);
         search.result.handler.handle(null, request, response, promise);
         HandlerResult result = promise.complete();
-        assertTrue(result.isSuccess());
+        assertTrue(result.success());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class RestfulTest {
         server.getRouter().search(search);
         search.result.handler.handle(null, request, response, promise);
         HandlerResult result = promise.complete();
-        assertTrue(result.isSuccess());
+        assertTrue(result.success());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class RestfulTest {
         server.getRouter().search(search);
         search.result.handler.handle(null, request, response, promise);
         HandlerResult result = promise.complete();
-        assertTrue(result.isSuccess());
+        assertTrue(result.success());
     }
 
     class BasicRestful implements Restful {

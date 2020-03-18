@@ -52,7 +52,7 @@ public class JettyRestful implements Restful {
     }
 
     public Restful websocket(String path, JettyWsProvider provider, JettyWsPolicy policy) {
-        String pathSpec = path.endsWith("/*") ? path : (path.endsWith("/")? path.substring(0, path.length() - 1) : path.concat("/*"));
+        String pathSpec = path.endsWith("/*") ? path : (path.endsWith("/") ? path.substring(0, path.length() - 1) : path.concat("/*"));
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath(path);
         ServletHolder handlerHolder = new ServletHolder("websocket-".concat(path), new JettyWsServlet(provider, policy.getPolicy()));

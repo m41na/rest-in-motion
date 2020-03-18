@@ -52,7 +52,7 @@ public class ContextHandlerBuilder {
     }
 
     public ContextHandlerBuilder websocket(String path, JettyWsProvider provider, JettyWsPolicy policy) {
-        String pathSpec = path.endsWith("/*") ? path : (path.endsWith("/")? path.substring(0, path.length() - 1) : path.concat("/*"));
+        String pathSpec = path.endsWith("/*") ? path : (path.endsWith("/") ? path.substring(0, path.length() - 1) : path.concat("/*"));
         ServletHolder handlerHolder = new ServletHolder("websocket-".concat(path), new JettyWsServlet(provider, policy.getPolicy()));
         servletContext.addServlet(handlerHolder, pathSpec);
         return this;
