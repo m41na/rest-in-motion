@@ -14,9 +14,11 @@ nbproject
 
 # npm artifacts
 **/node_modules
+**/.next
 
 # Log file
 *.log
+**/.history
 
 # Package Files #
 *.jar

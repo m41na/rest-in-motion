@@ -2,8 +2,8 @@ package works.hop.handler;
 
 public class BasicHandlerPromise extends HandlerPromise {
 
-    public BasicHandlerPromise() {
-        this.OnSuccess(new OnSuccessPromise());
-        this.OnFailure(new OnFailurePromise());
+    public BasicHandlerPromise(OnSuccessPromise onSuccess, OnFailurePromise onFailure) {
+        this.OnSuccess(onSuccess);
+        this.OnFailure(onFailure);
     }
 }

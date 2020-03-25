@@ -51,7 +51,7 @@ public class RestfulTest {
     @Test
     public void getRequestOnContextPathShouldReturn200Ok() {
         server.get("/", "", "", Collections.emptyMap(),
-                (auth, request, response, done) -> done.resolve(() -> "get request"));
+                (auth, request, response, done) -> done.resolve(() -> System.out.println("get request")));
         Routing.Search search = new Routing.Search(null);
         server.getRouter().search(search);
         search.result.handler.handle(null, request, response, promise);
@@ -62,7 +62,7 @@ public class RestfulTest {
     @Test
     public void postRequestOnContextPathShouldReturn200Ok() {
         server.post("/", "", "", Collections.emptyMap(),
-                (auth, request, response, done) -> done.resolve(() -> "post request"));
+                (auth, request, response, done) -> done.resolve(() -> System.out.println("post request")));
         Routing.Search search = new Routing.Search(null);
         server.getRouter().search(search);
         search.result.handler.handle(null, request, response, promise);
@@ -73,7 +73,7 @@ public class RestfulTest {
     @Test
     public void putRequestOnContextPathShouldReturn200Ok() {
         server.put("/", "", "", Collections.emptyMap(),
-                (auth, request, response, done) -> done.resolve(() -> "put request"));
+                (auth, request, response, done) -> done.resolve(() -> System.out.println("put request")));
         Routing.Search search = new Routing.Search(null);
         server.getRouter().search(search);
         search.result.handler.handle(null, request, response, promise);
@@ -84,7 +84,7 @@ public class RestfulTest {
     @Test
     public void deleteRequestOnContextPathShouldReturn200Ok() {
         server.delete("/", "", "", Collections.emptyMap(),
-                (auth, request, response, done) -> done.resolve(() -> "delete request"));
+                (auth, request, response, done) -> done.resolve(() -> System.out.println("delete request")));
         Routing.Search search = new Routing.Search(null);
         server.getRouter().search(search);
         search.result.handler.handle(null, request, response, promise);
@@ -117,7 +117,7 @@ public class RestfulTest {
         }
 
         @Override
-        public Restful context(String path) {
+        public Restful mount(String path) {
             return null;
         }
 

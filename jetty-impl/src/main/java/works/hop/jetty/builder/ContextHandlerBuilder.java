@@ -3,6 +3,7 @@ package works.hop.jetty.builder;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import works.hop.jetty.filter.HandlerFilter;
 import works.hop.jetty.servlet.JettyServlet;
 import works.hop.jetty.servlet.ServletConfig;
 import works.hop.jetty.startup.AppAssetsHandlers;
@@ -13,6 +14,7 @@ import works.hop.jetty.websocket.JettyWsServlet;
 import works.hop.route.Routing;
 
 import javax.servlet.DispatcherType;
+import javax.servlet.http.HttpServlet;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.function.Function;
@@ -48,6 +50,24 @@ public class ContextHandlerBuilder {
         String pathSpec = mapping.endsWith("/*") ? mapping : (mapping.endsWith("/") ? mapping.concat("*") : mapping.concat("/*"));
         ServletHolder defaultServlet = AppAssetsHandlers.createResourceServlet(properties, folder);
         servletContext.addServlet(defaultServlet, pathSpec);
+        return this;
+    }
+
+    public ContextHandlerBuilder filter(HandlerFilter filter) {
+        return filter("/*", filter);
+    }
+
+    public ContextHandlerBuilder filter(String context, HandlerFilter filter) {
+        FilterHolder holder = new FilterHolder(filter);
+        servletContext.addFilter(holder, context, EnumSet.of(DispatcherType.REQUEST));
+        return this;
+    }
+
+    public ContextHandlerBuilder servlet(String mapping, ServletConfig config, HttpServlet handler) {
+        String pathSpec = mapping.endsWith("/*") ? mapping : (mapping.endsWith("/") ? mapping.concat("*") : mapping.concat("/*"));
+        ServletHolder holder = new ServletHolder(handler);
+        if (config != null) config.configure(holder);
+        servletContext.addServlet(holder, pathSpec);
         return this;
     }
 

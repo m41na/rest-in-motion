@@ -9,7 +9,7 @@ public interface Restful extends RestMethods {
 
     Function<String, String> properties();
 
-    Restful context(String path);
+    Restful mount(String path);
 
     Restful session(Function<String, String> properties);
 

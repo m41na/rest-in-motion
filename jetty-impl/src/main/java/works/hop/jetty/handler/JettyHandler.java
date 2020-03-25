@@ -35,7 +35,7 @@ public class JettyHandler extends AbstractHandler {
 
             //search router
             try {
-                Routing.Search route = ((JettyRouter) router).search(target, aRequest);
+                Routing.Search route = ((JettyRouter) router).search(target, aRequest); //should return a HandlerChain object
                 if (route.result != null) {
                     LOG.info("matched route -> {}", route.result.toString());
                     aRequest.route(route);
@@ -50,7 +50,7 @@ public class JettyHandler extends AbstractHandler {
                     } catch (Exception e) {
                         LOG.warn("Uncaught Exception in the promise resolver. Completing promise with failure: {}", e.getMessage());
                         e.printStackTrace(System.err);
-                        promise.resolve(() -> e);
+                        promise.resolve(() -> {});
                     } finally {
                         baseRequest.setHandled(true);
                     }

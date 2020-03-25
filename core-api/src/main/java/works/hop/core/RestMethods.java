@@ -96,6 +96,15 @@ public interface RestMethods {
         return this;
     }
 
+    // ************* BEFORE/AFTER *****************//
+    default RestMethods before(String method, String path, HandlerFunction handler) {
+        return route("before:" + method, path, handler);
+    }
+
+    default RestMethods after(String method, String path, HandlerFunction handler) {
+        return route("after:" + method, path, handler);
+    }
+
     // ************* Static Resources *****************//
     RestMethods assets(String folder);
 

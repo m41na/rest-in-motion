@@ -2,11 +2,13 @@ package works.hop.handler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import works.hop.core.ARequest;
+import works.hop.core.AResponse;
+import works.hop.core.AuthInfo;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class HandlerPromise<R> {
 
@@ -15,9 +17,9 @@ public class HandlerPromise<R> {
     private Function<HandlerResult, HandlerResult> success;
     private BiFunction<HandlerResult, Throwable, HandlerResult> failure;
 
-    public HandlerResult resolve(Supplier<R> action) {
+    public HandlerResult resolve(Runnable action) {
         LOG.info("Now will resolve promise");
-        return CompletableFuture.supplyAsync(action).handle((res, th) -> {
+        return CompletableFuture.runAsync(action).handle((res, th) -> {
             if (th != null) {
                 if (th.getCause() != null) {
                     if (HandlerException.class.isAssignableFrom(th.getCause().getClass())) {
@@ -34,9 +36,18 @@ public class HandlerPromise<R> {
         }).join();
     }
 
+    public HandlerResult failed(String message) {
+        LOG.info("Now will complete promise with failure");
+        return failure.apply(result.failed(), new HandlerException(500, message));
+    }
+
     public HandlerResult complete() {
-        LOG.info("Now will complete promise");
+        LOG.info("Now will complete promise successfully");
         return success.apply(result.succeeded());
+    }
+
+    public HandlerResult next(AuthInfo auth, ARequest request, AResponse response, HandlerPromise promise) {
+        return null;
     }
 
     public void OnSuccess(Function<HandlerResult, HandlerResult> completer) {

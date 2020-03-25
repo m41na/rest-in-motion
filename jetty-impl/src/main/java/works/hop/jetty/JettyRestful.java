@@ -37,7 +37,7 @@ public class JettyRestful implements Restful {
     }
 
     @Override
-    public Restful context(String path) {
+    public Restful mount(String path) {
         JettyHandler routeHandler = new JettyHandler(router);
         ContextHandler context = new ContextHandler();
         context.setContextPath(path);
@@ -46,7 +46,7 @@ public class JettyRestful implements Restful {
         return this;
     }
 
-    public Restful context(String path, Function<ContextHandlerBuilder, ServletContextHandler> builder) {
+    public Restful mount(String path, Function<ContextHandlerBuilder, ServletContextHandler> builder) {
         contextHandlers.addHandler(builder.apply(ContextHandlerBuilder.newBuilder(path, router, null)));
         return this;
     }

@@ -48,7 +48,7 @@ public class BasicJUnit4ClassRunnerTest {
     public JettyStartable provider() throws Exception {
         Map<String, String> props = applyDefaults(new Options(), new String[]{});
         JettyStartable server = createServer(props);
-        server.context(props.get("appctx"))
+        server.mount(props.get("appctx"))
                 .get("/", (auth, request, response, promise) -> {
                     response.ok(request.requestLine());
                     promise.complete();
@@ -71,7 +71,7 @@ public class BasicJUnit4ClassRunnerTest {
                 .post("/", "application/json", "application/json", (auth, request, response, promise) -> {
                     Content content = request.body(Content.class);
                     assertEquals("Expecting Posted Hello", "Posted Hello", content.message);
-                    response.send("Post Ok");
+                    response.send("Crawler Ok");
                     promise.complete();
                 })
                 .post("/file", new UploadHandler(Path.of("target"), UploadHandler.defaultConfig()))
@@ -153,7 +153,7 @@ public class BasicJUnit4ClassRunnerTest {
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals("Contains 'Post Ok'", true, response.body().contains("Post Ok"));
+        assertEquals("Contains 'Crawler Ok'", true, response.body().contains("Crawler Ok"));
     }
 
     @Test

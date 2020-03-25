@@ -93,7 +93,7 @@ public class JettyServlet extends HttpServlet {
                         } catch (Exception e) {
                             LOG.warn("Uncaught Exception in the promise resolver. Completing promise with failure: {}", e.getMessage());
                             e.printStackTrace(System.err);
-                            promise.resolve(() -> e);
+                            promise.resolve(() -> {});
                         } finally {
                             //baseRequest.setHandled(true);
                         }
@@ -129,7 +129,7 @@ public class JettyServlet extends HttpServlet {
             } catch (Exception e) {
                 LOG.warn("Uncaught Exception in the promise resolver. Completing promise with failure: {}", e.getMessage());
                 e.printStackTrace(System.err);
-                promise.resolve(() -> e);
+                promise.resolve(() -> {});
             }
         }
     }

@@ -5,6 +5,7 @@ import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import works.hop.core.RestMethods;
 import works.hop.core.Restful;
 import works.hop.core.StartableRest;
+import works.hop.jetty.builder.ContextHandlerBuilder;
 import works.hop.jetty.startup.AppConnectors;
 import works.hop.jetty.startup.AppThreadPool;
 import works.hop.route.MethodRouter;
@@ -41,6 +43,12 @@ public class JettyStartable implements StartableRest {
         JettyRouter router = new JettyRouter(new MethodRouter());
         Restful restful = new JettyRestful(properties, router);
         JettyStartable server = new JettyStartable(restful);
+        return server;
+    }
+
+    public static JettyStartable createServer(String context, Map<String, String> props) {
+        JettyStartable server = createServer(props);
+        server.mount(context);
         return server;
     }
 
@@ -156,8 +164,12 @@ public class JettyStartable implements StartableRest {
     }
 
     @Override
-    public Restful context(String path) {
-        return restful.context(path);
+    public Restful mount(String path) {
+        return restful.mount(path);
+    }
+
+    public Restful mount(String path, Function<ContextHandlerBuilder, ServletContextHandler> builder) {
+        return ((JettyRestful) restful).mount(path, builder);
     }
 
     @Override

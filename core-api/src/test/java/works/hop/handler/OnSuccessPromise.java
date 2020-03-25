@@ -4,9 +4,12 @@ import java.util.function.Function;
 
 public class OnSuccessPromise implements Function<HandlerResult, HandlerResult> {
 
+    public HandlerResult result;
+
     @Override
     public HandlerResult apply(HandlerResult handlerResult) {
-        System.out.println("success -> duration = " + handlerResult.duration());
+        this.result = handlerResult;
+        System.out.println(this.getClass().getSimpleName() + " - success -> duration = " + handlerResult.duration());
         return handlerResult;
     }
 }
