@@ -48,9 +48,9 @@ public class BasicHandlerChain implements HandlerChain {
     }
 
     @Override
-    public CompletableFuture<HandlerResult> intercept(HandlerFunction handler, AuthInfo auth, ARequest request, AResponse response, HandlerPromise promise) {
+    public void intercept(HandlerFunction handler, AuthInfo auth, ARequest request, AResponse response, HandlerPromise promise) {
         if (root != null) {
-            return root.intercept(handler, auth, request, response, promise);
+            root.intercept(handler, auth, request, response, promise);
         } else {
             throw new HandlerException(500, "There is no interceptors available.");
         }
