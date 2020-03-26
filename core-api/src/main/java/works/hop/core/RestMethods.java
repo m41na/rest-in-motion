@@ -9,7 +9,7 @@ import static java.util.Collections.emptyMap;
 
 public interface RestMethods {
 
-    // ************* GET *****************//
+    // ******************** GET ******************** //
     default RestMethods get(String path, HandlerFunction handler) {
         return route("get", path, "*", "*", handler);
     }
@@ -22,7 +22,7 @@ public interface RestMethods {
         return route("get", url, accept, type, headers, handler);
     }
 
-    // ************* POST *****************//
+    // ******************** POST ******************** //
     default RestMethods post(String path, HandlerFunction handler) {
         return route("post", path, "*", "*", handler);
     }
@@ -35,7 +35,7 @@ public interface RestMethods {
         return route("post", url, accept, type, headers, handler);
     }
 
-    // ************* PUT *****************//
+    // ******************** PUT ******************** //
     default RestMethods put(String path, HandlerFunction handler) {
         return route("put", path, "*", "*", handler);
     }
@@ -48,7 +48,7 @@ public interface RestMethods {
         return route("put", path, accept, type, headers, handler);
     }
 
-    // ************* DELETE *****************//
+    // ******************** DELETE ******************** //
     default RestMethods delete(String path, HandlerFunction handler) {
         return route("delete", path, "*", "*", handler);
     }
@@ -61,20 +61,7 @@ public interface RestMethods {
         return route("delete", url, accept, type, headers, handler);
     }
 
-    // ************* ALL *****************//
-    default RestMethods all(String path, HandlerFunction handler) {
-        return route("all", path, "*", "*", handler);
-    }
-
-    default RestMethods all(String path, String accept, String type, HandlerFunction handler) {
-        return route("all", path, accept, type, emptyMap(), handler);
-    }
-
-    default RestMethods all(String url, String accept, String type, Map<String, String> headers, HandlerFunction handler) {
-        return route("all", url, accept, type, headers, handler);
-    }
-
-    // ************* GENERIC *****************//
+    // ******************** GENERIC ******************** //
     default RestMethods route(String method, String path, HandlerFunction handler) {
         return route(method, path, "*", "*", handler);
     }
@@ -96,13 +83,13 @@ public interface RestMethods {
         return this;
     }
 
-    // ************* BEFORE/AFTER *****************//
-    default RestMethods before(String method, String path, HandlerFunction handler) {
-        return before(method, path, "*", "*", handler);
+    // ******************** BEFORE/AFTER ******************** //
+    default RestMethods before(HandlerFunction handler) {
+        return before("all", "*", "*", "*", handler);
     }
 
-    default RestMethods before(String method, String path, String accept, HandlerFunction handler) {
-        return before(method, path, accept, "*", handler);
+    default RestMethods before(String method, String path, HandlerFunction handler) {
+        return before(method, path, "*", "*", handler);
     }
 
     default RestMethods before(String method, String path, String accept, String contentType, HandlerFunction handler) {
@@ -118,12 +105,12 @@ public interface RestMethods {
         return this;
     }
 
-    default RestMethods after(String method, String path, HandlerFunction handler) {
-        return after(method, path, "*", "*", handler);
+    default RestMethods after(HandlerFunction handler) {
+        return before("all", "*", "*", "*", handler);
     }
 
-    default RestMethods after(String method, String path, String accept, HandlerFunction handler) {
-        return after(method, path, accept, "*", handler);
+    default RestMethods after(String method, String path, HandlerFunction handler) {
+        return after(method, path, "*", "*", handler);
     }
 
     default RestMethods after(String method, String path, String accept, String contentType, HandlerFunction handler) {
@@ -139,17 +126,17 @@ public interface RestMethods {
         return this;
     }
 
-    // ************* Static Resources *****************//
+    // ******************** Static Resources ******************** //
     RestMethods assets(String folder);
 
     RestMethods assets(String mapping, String folder);
 
-    // ************* ROUTES ************** //
+    // ******************** ROUTES ******************** //
     Routing.Router getRouter();
 
     String getContext();
 
-    // ************* UTILITIES ************** //
+    // ******************** UTILITIES ******************** //
 
     default String resolve(String path, String context) {
         String path1 = !context.startsWith("/") ? "/" + context : context;

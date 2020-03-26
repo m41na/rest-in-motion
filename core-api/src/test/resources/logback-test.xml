@@ -6,7 +6,7 @@
     </appender>
 
     <logger name="com.mchange.v2" level="warn"/>
-    <logger name="io.vertx" level="info"/>
+    <logger name="org.eclipse.jetty" level="warn"/>
     <logger name="works.hop" level="debug"/>
 
     <root level="debug">
