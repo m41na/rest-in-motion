@@ -97,7 +97,6 @@ public interface RestMethods {
     }
 
     // ************* BEFORE/AFTER *****************//
-    // ************* BEFORE/AFTER *****************//
     default RestMethods before(String method, String path, HandlerFunction handler) {
         return before(method, path, "*", "*", handler);
     }

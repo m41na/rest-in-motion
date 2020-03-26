@@ -10,6 +10,8 @@ public interface HandlerChain {
 
     HandlerIntercept root();
 
+    void reset();
+
     void addLast(HandlerFunction intercept);
 
     void addFirst(HandlerFunction intercept);
