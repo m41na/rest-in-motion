@@ -1,7 +1,12 @@
 package works.hop;
 
+import org.apache.http.HttpException;
+import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
+import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.apache.http.impl.nio.reactor.SessionInputBufferImpl;
 import org.apache.http.impl.nio.reactor.SessionOutputBufferImpl;
+import org.apache.http.nio.reactor.IOReactor;
+import org.apache.http.nio.reactor.IOSession;
 import org.apache.http.nio.reactor.SessionInputBuffer;
 import org.apache.http.nio.reactor.SessionOutputBuffer;
 import org.apache.http.util.CharArrayBuffer;
@@ -16,9 +21,19 @@ public class App {
 
     static String sampleFile = "./htcore-impl/target/sample.txt";
 
-    public static void main(String[] args) {
-        writeToByteChannel(sampleFile, "this is some boring text");
-        readFromByteChannel(sampleFile);
+    public static void main(String[] args) throws IOException, HttpException {
+        //writeToByteChannel(sampleFile, "this is some boring text");
+        //readFromByteChannel(sampleFile);
+        httpCoreStuff();
+    }
+
+    public static void httpCoreStuff() throws IOException, HttpException {
+        IOReactorConfig config = IOReactorConfig.DEFAULT;
+        IOReactor ioreactor = new DefaultConnectingIOReactor(config);
+        IOSession iosession = null; // = <...>
+        ReadableByteChannel ch = (ReadableByteChannel) iosession.channel();
+        ByteBuffer dst = ByteBuffer.allocate(2048);
+        ch.read(dst);
     }
 
     public static void playWithChannels() {

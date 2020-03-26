@@ -52,6 +52,12 @@ public class JettyStartable implements StartableRest {
         return server;
     }
 
+    public static JettyStartable createServer(String context, Map<String, String> props, Function<ContextHandlerBuilder, ServletContextHandler> builder) {
+        JettyStartable server = createServer(props);
+        server.mount(context, builder);
+        return server;
+    }
+
     @Override
     public JettyRestful rest() {
         return (JettyRestful) this.restful;

@@ -38,6 +38,8 @@ public interface ARequest {
 
     String header(String name);
 
+    void attribute(String name, Object value);
+
     <T> T attribute(String name, Class<T> type);
 
     boolean error();

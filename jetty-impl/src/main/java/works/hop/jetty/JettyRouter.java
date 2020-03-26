@@ -49,7 +49,7 @@ public class JettyRouter implements Routing.Router {
     public void info(List<String> nodes, String prefix) {
         String indent = prefix + "|-";
         nodes.add(indent + "root");
-        routeTree.info(nodes, indent);
+        routeTree.info(nodes, "\n\t" + indent);
     }
 
     @Override

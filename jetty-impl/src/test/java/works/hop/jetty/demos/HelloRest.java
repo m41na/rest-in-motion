@@ -38,12 +38,16 @@ public class HelloRest {
 //                });
 //            }
 //        });
+        app.before("get", "/", (auth, req, res, done) -> {
+            System.out.println("PRINT BEFORE GET /");
+            AuthInfo user = mock(AuthInfo.class);
+            req.attribute("authUser", user);
+            done.next();
+        });
         app.get("/", (auth, req, res, done) -> done.resolve(() -> {
-            res.ok("hello " + auth.user());
+            res.send("ALL THE GOODNESS INCLUDED");
         }));
-//        app.after("*", "/", (auth, req, res, done) -> {
-//            System.out.println("after handler");
-//        });
+        app.after("get", "/", (auth, req, res, done) -> System.out.println("PRINT AFTER GET /"));
         app.listen(8090, "localhost");
     };
 
@@ -171,6 +175,6 @@ public class HelloRest {
         targets.put(5, Rest_2_AssetsFolder_Multiple_Contexts_EchoWebSocket_Wordpress);
 
         //execute from map
-        targets.get(3).accept(args);
+        targets.get(1).accept(args);
     }
 }

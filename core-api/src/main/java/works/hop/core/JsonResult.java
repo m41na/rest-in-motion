@@ -24,6 +24,22 @@ public class JsonResult<T> {
         this.error = error;
     }
 
+    public static <B> JsonResult<B> ok(int status, B body) {
+        return new JsonResult<B>(status, body, null);
+    }
+
+    public static <B> JsonResult<B> ok(B body) {
+        return new JsonResult<B>(201, body, null);
+    }
+
+    public static <B> JsonResult<B> err(int status, String error) {
+        return new JsonResult<B>(status, null, error);
+    }
+
+    public static <B> JsonResult<B> err(String error) {
+        return new JsonResult<B>(400, null, error);
+    }
+
     public int getStatus() {
         return status;
     }
@@ -46,21 +62,5 @@ public class JsonResult<T> {
 
     public void setError(String error) {
         this.error = error;
-    }
-
-    public static <B> JsonResult<B> ok(int status, B body){
-        return new JsonResult<B>(status, body, null);
-    }
-
-    public static <B> JsonResult<B> ok(B body){
-        return new JsonResult<B>(201, body, null);
-    }
-
-    public static <B> JsonResult<B> err(int status, String error){
-        return new JsonResult<B>(status, null, error);
-    }
-
-    public static <B> JsonResult<B> err(String error){
-        return new JsonResult<B>(400, null, error);
     }
 }

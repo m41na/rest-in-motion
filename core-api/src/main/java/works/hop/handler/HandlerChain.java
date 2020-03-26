@@ -6,11 +6,13 @@ import works.hop.core.AuthInfo;
 
 public interface HandlerChain {
 
+    void reset();
+
     HandlerIntercept root();
 
-    void addLast(HandlerIntercept intercept);
+    void addLast(HandlerFunction intercept);
 
-    void addFirst(HandlerIntercept intercept);
+    void addFirst(HandlerFunction intercept);
 
     void intercept(HandlerFunction handler, AuthInfo auth, ARequest request, AResponse response, HandlerPromise promise);
 }

@@ -26,12 +26,12 @@ public class MethodRouter implements Routing.Router {
         if (type != null) {
             this.routers.get(type).search(input);
             //if no match if found for the specific request method, look into 'all' methods
-            if (input.result == null) {
+            if (input.route == null) {
                 this.routers.get(Method.ALL).search(input);
             }
             //if a matching route is found, set the method value in the result
-            if (input.result != null) {
-                input.result.method = type.name();
+            if (input.route != null) {
+                input.route.method = type.name();
             }
         }
     }
@@ -44,7 +44,7 @@ public class MethodRouter implements Routing.Router {
     @Override
     public void info(List<String> nodes, String prefix) {
         String indent = prefix + "|-";
-        routers.entrySet().stream().forEach(entry -> entry.getValue().info(nodes, indent));
+        routers.entrySet().stream().forEach(entry -> entry.getValue().info(nodes, (indent)));
     }
 
     @Override

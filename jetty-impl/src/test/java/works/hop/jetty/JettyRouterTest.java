@@ -30,10 +30,14 @@ public class JettyRouterTest {
         router = new JettyRouter(new MethodRouter());
         //add todo routes
         router.add(Routing.RouteBuilder.create(handler, "/todos", "get", null, "application/json"));
+        router.add(Routing.RouteBuilder.create(handler, Routing.RouteType.BEFORE, "/todos", "get"));
         router.add(Routing.RouteBuilder.create(handler, "/todos", "post", "application/x-www-form-urlencoded", "application/json"));
+        router.add(Routing.RouteBuilder.create(handler, Routing.RouteType.BEFORE, "/todos", "post", "application/x-www-form-urlencoded", "application/json"));
+        router.add(Routing.RouteBuilder.create(handler, Routing.RouteType.AFTER, "/todos", "post", "application/x-www-form-urlencoded", "application/json"));
         router.add(Routing.RouteBuilder.create(handler, "/todos/{id}", "get", "application/json", null));
         router.add(Routing.RouteBuilder.create(handler, "/todos/{id}/status", "get", "application/json", null));
         router.add(Routing.RouteBuilder.create(handler, "/todos/{id}/name", "put", "application/x-www-form-urlencoded", "application/json"));
+        router.add(Routing.RouteBuilder.create(handler, Routing.RouteType.AFTER, "/todos/{id}/name", "put"));
         router.add(Routing.RouteBuilder.create(handler, "/todos/{id}/done", "put", "application/x-www-form-urlencoded", "application/json"));
         router.add(Routing.RouteBuilder.create(handler, "/todos/{id}", "delete"));
         //add blog routes
@@ -87,8 +91,8 @@ public class JettyRouterTest {
         getTodo.headers.put("Accept", "application/json");
         //search
         Routing.Search getTodoFound = router.searchRoute(getTodo);
-        assertNotNull("Expecting result found", getTodoFound.result);
-        assertEquals("Exxpecting 1 param", 1, getTodoFound.pathParams.size());
+        assertNotNull("Expecting result found", getTodoFound.chain);
+        assertEquals("Expecting 1 param", 1, getTodoFound.pathParams.size());
 
         Routing.Attributes getStatus = new Routing.Attributes();
         getStatus.method = "get";
@@ -96,8 +100,8 @@ public class JettyRouterTest {
         getStatus.headers.put("Accept", "application/json");
         //search
         Routing.Search getStatusFound = router.searchRoute(getStatus);
-        assertNotNull("Expecting result found", getStatusFound.result);
-        assertEquals("Exxpecting 1 param", 1, getStatusFound.pathParams.size());
+        assertNotNull("Expecting result found", getStatusFound.chain);
+        assertEquals("Expecting 1 param", 1, getStatusFound.pathParams.size());
 
         Routing.Attributes getAuthor = new Routing.Attributes();
         getAuthor.method = "get";
@@ -105,8 +109,8 @@ public class JettyRouterTest {
         getAuthor.headers.put("Accept", "application/json");
         //search
         Routing.Search getAuthorFound = router.searchRoute(getAuthor);
-        assertNotNull("Expecting result found", getAuthorFound.result);
-        assertEquals("Exxpecting 2 param", 2, getAuthorFound.pathParams.size());
+        assertNotNull("Expecting result found", getAuthorFound.chain);
+        assertEquals("Expecting 2 param", 2, getAuthorFound.pathParams.size());
 
         Routing.Attributes delAuthor = new Routing.Attributes();
         delAuthor.method = "delete";
@@ -114,8 +118,8 @@ public class JettyRouterTest {
         delAuthor.headers.put("Accept", "application/json");
         //search
         Routing.Search delAuthorFound = router.searchRoute(delAuthor);
-        assertNotNull("Expecting result found", delAuthorFound.result);
-        assertEquals("Exxpecting 2 param", 2, delAuthorFound.pathParams.size());
+        assertNotNull("Expecting result found", delAuthorFound.chain);
+        assertEquals("Expecting 2 param", 2, delAuthorFound.pathParams.size());
     }
 
     @Test
@@ -145,19 +149,19 @@ public class JettyRouterTest {
         JettyRequest request = new MockRoute(servletRequest, incoming);
         Routing.Search match = router.search(request);
         assertTrue(match != null);
-        assertEquals("Expecting 'get'", "get", match.result.method.toLowerCase());
+        assertEquals("Expecting 'get'", "get", match.route.method.toLowerCase());
 
         incoming = new Routing.Route(handler, "/book", "post", "application/json", "application/json");
         request = new MockRoute(servletRequest, incoming);
         match = router.search(request);
         assertTrue(match != null);
-        assertEquals("Expecting 'post'", "post", match.result.method.toLowerCase());
+        assertEquals("Expecting 'post'", "post", match.route.method.toLowerCase());
 
         incoming = new Routing.Route(handler, "/book", "put", "application/json", "application/json");
         request = new MockRoute(servletRequest, incoming);
         match = router.search(request);
         assertTrue(match != null);
-        assertEquals("Expecting 'put'", "put", match.result.method.toLowerCase());
+        assertEquals("Expecting 'put'", "put", match.route.method.toLowerCase());
     }
 
     @Test

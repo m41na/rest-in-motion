@@ -5,11 +5,14 @@ import works.hop.core.AResponse;
 import works.hop.core.AuthInfo;
 import works.hop.handler.*;
 
-import java.util.concurrent.CompletableFuture;
-
 public class DefaultHandlerChain implements HandlerChain {
 
     private HandlerIntercept root;
+
+    @Override
+    public void reset() {
+        this.root = null;
+    }
 
     @Override
     public HandlerIntercept root() {
@@ -17,17 +20,19 @@ public class DefaultHandlerChain implements HandlerChain {
     }
 
     @Override
-    public void addFirst(HandlerIntercept intercept) {
+    public void addFirst(HandlerFunction handler) {
+        HandlerIntercept intercept = new DefaultHandlerIntercept(handler);
         intercept.next(root);
         this.root = intercept;
     }
 
     @Override
-    public void addLast(HandlerIntercept intercept) {
+    public void addLast(HandlerFunction handler) {
+        HandlerIntercept intercept = new DefaultHandlerIntercept(handler);
         if (root == null) {
             root = intercept;
         } else if (cycleDetected(intercept)) {
-            throw new HandlerException(500, "This interceptor already exists and would form a cycle");
+            throw new HandlerException(500, "This interceptor already exists");
         } else {
             HandlerIntercept head = root;
             while (head.next() != null) {
@@ -40,7 +45,8 @@ public class DefaultHandlerChain implements HandlerChain {
     private boolean cycleDetected(HandlerIntercept intercept) {
         HandlerIntercept head = root;
         while (head != null) {
-            if (head != intercept) {
+            System.out.println("DETECTING CYCLE - " + head.toString());
+            if (head.handler() != intercept.handler()) {
                 head = head.next();
             } else {
                 return true;

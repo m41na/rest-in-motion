@@ -7,6 +7,13 @@ import java.util.*;
 public class HeadersRouter implements Routing.Router {
 
     private List<Routing.Route> routes = new ArrayList<>();
+    private Map<Routing.RouteType, Vector<Routing.Route>> interceptors = new EnumMap<>(Routing.RouteType.class);
+
+    public HeadersRouter() {
+        super();
+        interceptors.put(Routing.RouteType.AFTER, new Vector<>());
+        interceptors.put(Routing.RouteType.BEFORE, new Vector<>());
+    }
 
     @Override
     public void search(Routing.Search input) {
@@ -74,7 +81,15 @@ public class HeadersRouter implements Routing.Router {
         } else if (pool.size() == 0) {
             throw new HandlerException(404, "No match was matched for against incoming inputs -> " + input.attributes.toString());
         } else {
-            input.result = pool.get(0);
+            for (Routing.Route route : interceptors.get(Routing.RouteType.BEFORE)) {
+                input.chain.addLast(route.handler);
+            }
+            Routing.Route found = pool.get(0);
+            input.route = found;
+            input.chain.addLast(found.handler);
+            for (Routing.Route route : interceptors.get(Routing.RouteType.AFTER)) {
+                input.chain.addLast(route.handler);
+            }
         }
     }
 
@@ -86,8 +101,8 @@ public class HeadersRouter implements Routing.Router {
      */
     @Override
     public boolean contains(Routing.Search criteria) {
-        for (Iterator<Routing.Route> iter = routes.iterator(); iter.hasNext(); ) {
-            Routing.Route next = iter.next();
+        for (Iterator<Routing.Route> iterator = routes.iterator(); iterator.hasNext(); ) {
+            Routing.Route next = iterator.next();
             if (next.contentType.equalsIgnoreCase(criteria.attributes.getHeader("content-type")) &&
                     next.accept.equalsIgnoreCase(criteria.attributes.getHeader("accept"))) {
                 return true;
@@ -104,7 +119,17 @@ public class HeadersRouter implements Routing.Router {
 
     @Override
     public void add(Routing.Route route) {
-        this.routes.add(route);
+        switch (route.type) {
+            case BEFORE:
+                this.interceptors.get(Routing.RouteType.BEFORE).add(route);
+                break;
+            case AFTER:
+                this.interceptors.get(Routing.RouteType.AFTER).add(route);
+                break;
+            default:
+                this.routes.add(route);
+                break;
+        }
     }
 
     /**

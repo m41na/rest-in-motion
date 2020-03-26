@@ -15,12 +15,10 @@ public class DefaultHandlerChainTest {
 
     HandlerChain chain;
     HandlerPromise promise;
-    HandlerIntercept successHandler;
-    HandlerIntercept failureHandler;
-    HandlerIntercept successInterceptor1;
-    HandlerIntercept successInterceptor2;
-    HandlerIntercept failingInterceptor1;
-    HandlerIntercept failureInterceptor2;
+    HandlerFunction successHandler;
+    HandlerFunction failureHandler;
+    HandlerFunction successInterceptor;
+    HandlerFunction failureInterceptor;
     OnSuccessPromise onSuccessPromise;
     OnFailurePromise onFailurePromise;
     @Mock
@@ -31,25 +29,35 @@ public class DefaultHandlerChainTest {
     AResponse response;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         chain = new DefaultHandlerChain();
         onSuccessPromise = new OnSuccessPromise();
         onFailurePromise = new OnFailurePromise();
         promise = new BasicHandlerPromise(onSuccessPromise, onFailurePromise);
-        successHandler = new SuccessHandlerFunction();
-        failureHandler = new FailureHandlerFunction();
-        successInterceptor1 = new HandlerInterceptSuccess1();
-        successInterceptor2 = new HandlerInterceptSuccess2();
-        failingInterceptor1 = new HandlerInterceptFailure1();
-        failureInterceptor2 = new HandlerInterceptFailure2();
+        successHandler = (auth, req, res, done) -> {
+            String output = "Handler Function Success - simulate successful handler";
+            promise.resolve(() -> System.out.println(output));
+        };
+        failureHandler = (auth, req, res, done) -> {
+            String output = "Handler Function Failure - simulate failure handler";
+            throw new HandlerException(500, output);
+        };
+        successInterceptor = (auth, req, res, done) -> {
+            System.out.println("Handler Intercept Success - simulate successful interceptor");
+            promise.next();
+        };
+        failureInterceptor = (auth, req, res, done) -> {
+            String output = "Handler Intercept Failure - simulate failure interceptor";
+            promise.failed(output + " - failed to continue chain");
+        };
     }
 
     @Test(expected = HandlerException.class)
     public void interceptorsCreatingALoop() {
-        chain.addLast(successInterceptor1);
-        chain.addLast(failingInterceptor1);
-        chain.addLast(successInterceptor1);
+        chain.addLast(successInterceptor);
+        chain.addLast(failureInterceptor);
+        chain.addLast(successInterceptor);
     }
 
     @Test
@@ -67,7 +75,7 @@ public class DefaultHandlerChainTest {
 
     @Test
     public void successInterceptorsBeforeSuccessHandler() {
-        chain.addLast(successInterceptor1);
+        chain.addLast(successInterceptor);
         chain.addLast(successHandler);
         chain.intercept(successHandler, authInfo, request, response, promise);
         HandlerResult result = onSuccessPromise.result;
@@ -76,9 +84,9 @@ public class DefaultHandlerChainTest {
         assertNull(result2);
     }
 
-    @Test(expected = HandlerException.class)
+    @Test
     public void failingInterceptorsBeforeSuccessHandler() {
-        chain.addLast(failingInterceptor1);
+        chain.addLast(failureInterceptor);
         chain.addLast(successHandler);
         chain.intercept(successHandler, authInfo, request, response, promise);
         HandlerResult result = onSuccessPromise.result;
@@ -87,22 +95,22 @@ public class DefaultHandlerChainTest {
         assertNotNull(result2);
         Throwable failure = onFailurePromise.failure;
         assertNotNull(failure);
-        assertEquals("HandlerInterceptFailure1 - failed to continue chain", failure.getMessage());
+        assertEquals("Handler Intercept Failure - simulate failure interceptor - failed to continue chain", failure.getMessage());
     }
 
-    @Test(expected = HandlerException.class)
+    @Test
     public void failingInterceptorsWithFailureHandler() {
-        chain.addLast(failingInterceptor1);
+        chain.addLast(failureInterceptor);
         chain.addLast(failureHandler);
         chain.intercept(failureHandler, authInfo, request, response, promise);
         Throwable failure = onFailurePromise.failure;
         assertNotNull(failure);
-        assertEquals("HandlerInterceptFailure1 - failed to continue chain", failure.getMessage());
+        assertEquals("Handler Intercept Failure - simulate failure interceptor - failed to continue chain", failure.getMessage());
     }
 
     @Test
     public void successInterceptorsWithSuccessHandler() {
-        chain.addLast(successInterceptor1);
+        chain.addLast(successInterceptor);
         chain.addLast(successHandler);
         chain.intercept(successHandler, authInfo, request, response, promise);
         HandlerResult result = onSuccessPromise.result;
@@ -115,16 +123,16 @@ public class DefaultHandlerChainTest {
 
     @Test(expected = HandlerException.class)
     public void successInterceptorsWithFailureHandler() {
-        chain.addLast(successInterceptor1);
+        chain.addLast(successInterceptor);
         chain.addLast(failureHandler);
         chain.intercept(failureHandler, authInfo, request, response, promise);
     }
 
-    @Test(expected = HandlerException.class)
+    @Test
     public void successInterceptorsWithFailureInterceptorAfterSuccessHandler() {
-        chain.addLast(successInterceptor1);
+        chain.addLast(successInterceptor);
         chain.addLast(successHandler);
-        chain.addLast(failingInterceptor1);
+        chain.addLast(failureInterceptor);
         chain.intercept(successHandler, authInfo, request, response, promise);
         HandlerResult result = onSuccessPromise.result;
         assertNotNull(result);

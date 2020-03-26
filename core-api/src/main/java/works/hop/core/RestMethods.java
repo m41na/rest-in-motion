@@ -97,12 +97,47 @@ public interface RestMethods {
     }
 
     // ************* BEFORE/AFTER *****************//
+    // ************* BEFORE/AFTER *****************//
     default RestMethods before(String method, String path, HandlerFunction handler) {
-        return route("before:" + method, path, handler);
+        return before(method, path, "*", "*", handler);
+    }
+
+    default RestMethods before(String method, String path, String accept, HandlerFunction handler) {
+        return before(method, path, accept, "*", handler);
+    }
+
+    default RestMethods before(String method, String path, String accept, String contentType, HandlerFunction handler) {
+        Routing.Route route = Routing.RouteBuilder.newRoute()
+                .handler(handler)
+                .accept(accept)
+                .contentType(contentType)
+                .path(resolve(path, getContext()))
+                .method(method)
+                .type(Routing.RouteType.BEFORE)
+                .build();
+        getRouter().add(route);
+        return this;
     }
 
     default RestMethods after(String method, String path, HandlerFunction handler) {
-        return route("after:" + method, path, handler);
+        return after(method, path, "*", "*", handler);
+    }
+
+    default RestMethods after(String method, String path, String accept, HandlerFunction handler) {
+        return after(method, path, accept, "*", handler);
+    }
+
+    default RestMethods after(String method, String path, String accept, String contentType, HandlerFunction handler) {
+        Routing.Route route = Routing.RouteBuilder.newRoute()
+                .handler(handler)
+                .accept(accept)
+                .contentType(contentType)
+                .path(resolve(path, getContext()))
+                .method(method)
+                .type(Routing.RouteType.AFTER)
+                .build();
+        getRouter().add(route);
+        return this;
     }
 
     // ************* Static Resources *****************//

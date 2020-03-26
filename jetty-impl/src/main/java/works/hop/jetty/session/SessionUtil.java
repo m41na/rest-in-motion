@@ -19,7 +19,7 @@ public class SessionUtil {
     public static FileSessionDataStore fileSessionDataStore() {
         FileSessionDataStore fileSessionDataStore = new FileSessionDataStore();
         File baseDir = new File(System.getProperty("java.io.tmpdir"));
-        File storeDir = new File(baseDir, "javalin-session-store");
+        File storeDir = new File(baseDir, "rest-session-store");
         storeDir.mkdir();
         fileSessionDataStore.setStoreDir(storeDir);
         return fileSessionDataStore;

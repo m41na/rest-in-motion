@@ -6,6 +6,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import works.hop.handler.HandlerPromise;
 import works.hop.handler.HandlerResult;
+import works.hop.handler.impl.DefaultHandlerChain;
 import works.hop.route.Routing;
 import works.hop.traverse.Visitor;
 
@@ -53,19 +54,25 @@ public class RestfulTest {
         server.get("/", "", "", Collections.emptyMap(),
                 (auth, request, response, done) -> done.resolve(() -> System.out.println("get request")));
         Routing.Search search = new Routing.Search(null);
+        search.chain = new DefaultHandlerChain();
         server.getRouter().search(search);
-        search.result.handler.handle(null, request, response, promise);
+        search.chain.intercept(search.route.handler, null, request, response, promise);
         HandlerResult result = promise.complete();
         assertTrue(result.success());
     }
 
     @Test
     public void postRequestOnContextPathShouldReturn200Ok() {
+        server.before("post", "/", (auth, request, response, done) -> {
+            System.out.println("before post, do some magic!!");
+            done.next();
+        });
         server.post("/", "", "", Collections.emptyMap(),
                 (auth, request, response, done) -> done.resolve(() -> System.out.println("post request")));
         Routing.Search search = new Routing.Search(null);
+        search.chain = new DefaultHandlerChain();
         server.getRouter().search(search);
-        search.result.handler.handle(null, request, response, promise);
+        search.chain.intercept(search.route.handler, null, request, response, promise);
         HandlerResult result = promise.complete();
         assertTrue(result.success());
     }
@@ -75,8 +82,9 @@ public class RestfulTest {
         server.put("/", "", "", Collections.emptyMap(),
                 (auth, request, response, done) -> done.resolve(() -> System.out.println("put request")));
         Routing.Search search = new Routing.Search(null);
+        search.chain = new DefaultHandlerChain();
         server.getRouter().search(search);
-        search.result.handler.handle(null, request, response, promise);
+        search.chain.intercept(search.route.handler, null, request, response, promise);
         HandlerResult result = promise.complete();
         assertTrue(result.success());
     }
@@ -86,8 +94,9 @@ public class RestfulTest {
         server.delete("/", "", "", Collections.emptyMap(),
                 (auth, request, response, done) -> done.resolve(() -> System.out.println("delete request")));
         Routing.Search search = new Routing.Search(null);
+        search.chain = new DefaultHandlerChain();
         server.getRouter().search(search);
-        search.result.handler.handle(null, request, response, promise);
+        search.chain.intercept(search.route.handler, null, request, response, promise);
         HandlerResult result = promise.complete();
         assertTrue(result.success());
     }
@@ -152,7 +161,7 @@ public class RestfulTest {
 
         @Override
         public void search(Routing.Search criteria) {
-            criteria.result = route;
+            criteria.route = route;
         }
 
         @Override

@@ -1,17 +1,22 @@
 package works.hop.route;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import works.hop.handler.HandlerChain;
 import works.hop.handler.HandlerFunction;
+import works.hop.handler.impl.DefaultHandlerChain;
 import works.hop.traverse.Visitable;
 import works.hop.traverse.Visitor;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import static java.util.Collections.emptyMap;
+
 public interface Routing {
+
+    enum RouteType {BEFORE, HANDLE, AFTER}
 
     interface Searchable<S, E> {
 
@@ -41,7 +46,9 @@ public interface Routing {
         //result attributes
         public final Map<String, String> pathParams = new HashMap<>();
         @JsonIgnore
-        public Route result;
+        public Route route;
+        @JsonIgnore
+        public HandlerChain chain = new DefaultHandlerChain();
 
         public Search(Attributes attributes) {
             super();
@@ -67,6 +74,7 @@ public interface Routing {
 
     class Route implements Visitable {
 
+        public final RouteType type;
         public final String path;
         public final String accept;
         public final String contentType;
@@ -74,7 +82,8 @@ public interface Routing {
         public final HandlerFunction handler;
         public String method;
 
-        public Route(HandlerFunction handler, String path, String method, String accept, String contentType, Map<String, String> headers) {
+        public Route(HandlerFunction handler, RouteType type, String path, String method, String accept, String contentType, Map<String, String> headers) {
+            this.type = type;
             this.path = path;
             this.method = method;
             this.accept = accept;
@@ -83,22 +92,23 @@ public interface Routing {
             this.handler = handler;
         }
 
-        public Route(HandlerFunction handler, String... args) {
-            this(handler,
+        public Route(HandlerFunction handler, RouteType type, String... args) {
+            this(handler, type,
                     args.length > 0 ? args[0] : null,
                     args.length > 1 ? args[1] : null,
                     args.length > 2 ? args[2] : null,
                     args.length > 3 ? args[3] : null,
-                    Collections.emptyMap());
+                    emptyMap());
         }
 
         public Route(HandlerFunction handler, String path, String method, String accept, String contentType) {
             this(handler,
+                    RouteType.HANDLE,
                     path,
                     method,
                     accept,
                     contentType,
-                    Collections.emptyMap());
+                    emptyMap());
         }
 
         @Override
@@ -116,6 +126,7 @@ public interface Routing {
     class RouteBuilder {
 
         private HandlerFunction handler;
+        private RouteType type;
         private String path;
         private String method;
         private String accept;
@@ -133,20 +144,37 @@ public interface Routing {
             return newRoute().handler(handler).path(path).method(method).accept(accept).contentType(contentType).headers(() -> headers).build();
         }
 
+        public static Route create(HandlerFunction handler, RouteType type, String path, String method, String accept, String contentType) {
+            return newRoute().type(type).handler(handler).path(path).method(method).accept(accept).contentType(contentType).headers(() -> emptyMap()).build();
+        }
+
         public static Route create(HandlerFunction handler, String path, String method, String accept, String contentType) {
-            return create(handler, path, method, accept, contentType, Collections.emptyMap());
+            return create(handler, path, method, accept, contentType, emptyMap());
+        }
+
+        public static Route create(HandlerFunction handler, RouteType type, String path, String method, String accept) {
+            return create(handler, type, path, method, accept, null);
         }
 
         public static Route create(HandlerFunction handler, String path, String method, String accept) {
-            return create(handler, path, method, accept, null, Collections.emptyMap());
+            return create(handler, path, method, accept, null, emptyMap());
+        }
+
+        public static Route create(HandlerFunction handler, RouteType type, String path, String method) {
+            return create(handler, type, path, method, null, null);
         }
 
         public static Route create(HandlerFunction handler, String path, String method) {
-            return create(handler, path, method, null, null, Collections.emptyMap());
+            return create(handler, path, method, null, null, emptyMap());
         }
 
         public RouteBuilder handler(HandlerFunction handler) {
             this.handler = handler;
+            return this;
+        }
+
+        public RouteBuilder type(RouteType type) {
+            this.type = type;
             return this;
         }
 
@@ -177,11 +205,12 @@ public interface Routing {
 
         public Route build() {
             return new Route(handler,
+                    type != null ? type : RouteType.HANDLE,
                     path,
                     method,
                     accept = accept != null && accept.trim().length() > 0 ? accept : null,
                     contentType != null && contentType.trim().length() > 0 ? contentType : null,
-                    headers);
+                    headers != null ? headers : emptyMap());
         }
     }
 }

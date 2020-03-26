@@ -32,10 +32,10 @@ public class PathRegexRouter implements Routing.Router {
             if (matcher.matches()) {
                 routers.get(pathRegex).search(input);
                 //if a matching route is found, extract path params from the input's url and get the values path params if any
-                if (input.result != null) {
+                if (input.chain != null) {
                     if (matcher.groupCount() > 0) {
                         Pattern paramsPattern = pathRegex.paramsPattern;
-                        Matcher routeMatcher = paramsPattern.matcher(input.result.path);
+                        Matcher routeMatcher = paramsPattern.matcher(input.route.path);
                         if (routeMatcher.matches()) {
                             for (int i = 1; i <= matcher.groupCount(); i++) {
                                 String paramVal = null;

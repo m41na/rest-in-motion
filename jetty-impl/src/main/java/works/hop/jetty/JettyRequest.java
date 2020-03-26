@@ -155,6 +155,11 @@ public class JettyRequest extends HttpServletRequestWrapper implements ARequest 
     }
 
     @Override
+    public void attribute(String name, Object value) {
+        setAttribute(name, value);
+    }
+
+    @Override
     public <T> T attribute(String name, Class<T> type) {
         Object obj = getAttribute(name);
         if (obj != null && type.isAssignableFrom(obj.getClass())) {

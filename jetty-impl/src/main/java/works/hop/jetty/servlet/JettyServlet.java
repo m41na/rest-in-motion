@@ -78,10 +78,10 @@ public class JettyServlet extends HttpServlet {
 
                 //search route
                 try {
-                    Routing.Search route = ((JettyRouter) router).search(target, aRequest);
-                    if (route.result != null) {
-                        LOG.info("matched route -> {}", route.result.toString());
-                        aRequest.route(route);
+                    Routing.Search search = ((JettyRouter) router).search(target, aRequest);
+                    if (search.route != null) {
+                        LOG.info("matched route -> {}", search.route.toString());
+                        aRequest.route(search);
                         HandlerPromise promise = new HandlerPromise();
                         promise.OnSuccess(new AsyncSuccess(async, target, aRequest, aResponse));
                         promise.OnFailure(new AsyncFailure(async, target, aResponse));
@@ -89,11 +89,12 @@ public class JettyServlet extends HttpServlet {
                         //handle request
                         try {
                             LOG.debug("Delegating request to handler function with completion promise");
-                            route.result.handler.handle(null, aRequest, aResponse, promise);
+                            search.chain.intercept(search.route.handler, null, aRequest, aResponse, promise);
                         } catch (Exception e) {
                             LOG.warn("Uncaught Exception in the promise resolver. Completing promise with failure: {}", e.getMessage());
                             e.printStackTrace(System.err);
-                            promise.resolve(() -> {});
+                            promise.resolve(() -> {
+                            });
                         } finally {
                             //baseRequest.setHandled(true);
                         }
@@ -129,7 +130,8 @@ public class JettyServlet extends HttpServlet {
             } catch (Exception e) {
                 LOG.warn("Uncaught Exception in the promise resolver. Completing promise with failure: {}", e.getMessage());
                 e.printStackTrace(System.err);
-                promise.resolve(() -> {});
+                promise.resolve(() -> {
+                });
             }
         }
     }
