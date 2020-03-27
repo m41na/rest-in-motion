@@ -8,7 +8,7 @@ public interface HandlerFunction {
 
     void handle(AuthInfo auth, ARequest request, AResponse response, HandlerPromise promise);
 
-    default void handle(AuthInfo auth, ARequest request, AResponse response){
+    default void handle(AuthInfo auth, ARequest request, AResponse response) {
         handle(auth, request, response, null);
     }
 }

@@ -2,17 +2,17 @@ package works.hop.route;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PathRegexRouter implements Routing.Router {
 
     public static final String CHAR_ENCODING = "UTF-8";
-    private Map<PathPattern, Routing.Router> routers = new HashMap<>();
+    private Map<PathPattern, Routing.Router> routers = new ConcurrentHashMap<>();
 
     public static void main(String... args) {
         String regex = "\\/todo\\/(\\{.+?\\})";
@@ -32,7 +32,7 @@ public class PathRegexRouter implements Routing.Router {
             if (matcher.matches()) {
                 routers.get(pathRegex).search(input);
                 //if a matching route is found, extract path params from the input's url and get the values path params if any
-                if (input.chain != null) {
+                if (input.route != null) {
                     if (matcher.groupCount() > 0) {
                         Pattern paramsPattern = pathRegex.paramsPattern;
                         Matcher routeMatcher = paramsPattern.matcher(input.route.path);
@@ -88,12 +88,12 @@ public class PathRegexRouter implements Routing.Router {
     }
 
     @Override
-    public void remove(Routing.Route entity) {
+    public void remove(Routing.Route route) {
         for (PathPattern pathRegex : routers.keySet()) {
             Pattern valuesPattern = pathRegex.valuesPattern;
-            Matcher matcher = valuesPattern.matcher(entity.path);
+            Matcher matcher = valuesPattern.matcher(route.path);
             if (matcher.matches()) {
-                routers.get(pathRegex).remove(entity);
+                routers.get(pathRegex).remove(route);
                 break;
             }
         }

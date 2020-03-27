@@ -174,12 +174,12 @@ public class RestfulTest {
         }
 
         @Override
-        public void add(Routing.Route entity) {
-            this.route = entity;
+        public void add(Routing.Route route) {
+            this.route = route;
         }
 
         @Override
-        public void remove(Routing.Route entity) {
+        public void remove(Routing.Route route) {
         }
     }
 }

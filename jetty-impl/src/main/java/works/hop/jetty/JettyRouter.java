@@ -36,8 +36,8 @@ public class JettyRouter implements Routing.Router {
     }
 
     @Override
-    public void search(Routing.Search input) {
-        routeTree.search(input);
+    public void search(Routing.Search criteria) {
+        routeTree.search(criteria);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class JettyRouter implements Routing.Router {
     }
 
     @Override
-    public void remove(Routing.Route entity) {
-        routeTree.remove(entity);
+    public void remove(Routing.Route route) {
+        routeTree.remove(route);
     }
 }

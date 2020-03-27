@@ -20,18 +20,16 @@ public class MethodRouter implements Routing.Router {
     }
 
     @Override
-    public void search(Routing.Search input) {
-        String method = input.attributes.method;
+    public void search(Routing.Search criteria) {
+        String method = criteria.attributes.method;
         Method type = method != null ? Method.valueOf(method.toUpperCase()) : null;
         if (type != null) {
-            this.routers.get(type).search(input);
-            //if no match if found for the specific request method, look into 'all' methods
-            if (input.route == null) {
-                this.routers.get(Method.ALL).search(input);
-            }
+            this.routers.get(type).search(criteria);
             //if a matching route is found, set the method value in the result
-            if (input.route != null) {
-                input.route.method = type.name();
+            if (criteria.route != null) {
+                criteria.route.method = type.name();
+                //now find interceptors if they exist
+                //this.routers.get(Method.ALL).search(criteria);
             }
         }
     }
@@ -57,9 +55,9 @@ public class MethodRouter implements Routing.Router {
     }
 
     @Override
-    public void remove(Routing.Route entity) {
-        if (routers.containsKey(entity.method)) {
-            routers.get(entity.method).remove(entity);
+    public void remove(Routing.Route route) {
+        if (routers.containsKey(route.method)) {
+            routers.get(route.method).remove(route);
         }
     }
 

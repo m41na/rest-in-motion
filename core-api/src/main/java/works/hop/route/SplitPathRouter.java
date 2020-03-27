@@ -1,12 +1,12 @@
 package works.hop.route;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SplitPathRouter implements Routing.Router {
 
-    private Map<Integer, Routing.Router> routers = new HashMap<>();
+    private Map<Integer, Routing.Router> routers = new ConcurrentHashMap<>();
 
     @Override
     public void search(Routing.Search input) {
@@ -55,13 +55,13 @@ public class SplitPathRouter implements Routing.Router {
     }
 
     @Override
-    public void remove(Routing.Route entity) {
-        String inputPath = entity.path;
+    public void remove(Routing.Route route) {
+        String inputPath = route.path;
         String path = inputPath != null ? (inputPath.startsWith("/") ? inputPath.substring(1) : inputPath) : null;
         String[] parts = path != null ? path.split("/") : null;
         if (parts != null) {
             Integer length = Integer.valueOf(parts.length);
-            routers.get(length).remove(entity);
+            routers.get(length).remove(route);
         }
     }
 }

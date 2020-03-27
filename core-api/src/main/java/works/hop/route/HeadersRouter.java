@@ -3,16 +3,17 @@ package works.hop.route;
 import works.hop.handler.HandlerException;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class HeadersRouter implements Routing.Router {
 
-    private List<Routing.Route> routes = new ArrayList<>();
-    private Map<Routing.RouteType, Vector<Routing.Route>> interceptors = new EnumMap<>(Routing.RouteType.class);
+    private List<Routing.Route> routes = new CopyOnWriteArrayList<>();
+    private Map<Routing.RouteType, List<Routing.Route>> interceptors = new EnumMap<>(Routing.RouteType.class);
 
     public HeadersRouter() {
         super();
-        interceptors.put(Routing.RouteType.AFTER, new Vector<>());
-        interceptors.put(Routing.RouteType.BEFORE, new Vector<>());
+        interceptors.put(Routing.RouteType.BEFORE, new LinkedList<>());
+        interceptors.put(Routing.RouteType.AFTER, new LinkedList<>());
     }
 
     @Override
@@ -81,24 +82,14 @@ public class HeadersRouter implements Routing.Router {
         } else if (pool.size() == 0) {
             throw new HandlerException(404, "No match was matched for against incoming inputs -> " + input.attributes.toString());
         } else {
-            for (Routing.Route route : interceptors.get(Routing.RouteType.BEFORE)) {
-                input.chain.addLast(route.handler);
-            }
+            interceptors.get(Routing.RouteType.BEFORE).forEach(route -> input.chain.addLast(route.handler));
             Routing.Route found = pool.get(0);
             input.route = found;
-            input.chain.addLast(found.handler);
-            for (Routing.Route route : interceptors.get(Routing.RouteType.AFTER)) {
-                input.chain.addLast(route.handler);
-            }
+            interceptors.get(Routing.RouteType.AFTER).forEach(route -> input.chain.addLast(route.handler));
         }
     }
 
-    /**
-     * return true on the first route that matches on 'accept' and 'content-type' headers, else false
-     *
-     * @param criteria
-     * @return
-     */
+    // return true on the first route that matches on 'accept' and 'content-type' headers, else false
     @Override
     public boolean contains(Routing.Search criteria) {
         for (Iterator<Routing.Route> iterator = routes.iterator(); iterator.hasNext(); ) {
@@ -121,10 +112,8 @@ public class HeadersRouter implements Routing.Router {
     public void add(Routing.Route route) {
         switch (route.type) {
             case BEFORE:
-                this.interceptors.get(Routing.RouteType.BEFORE).add(route);
-                break;
             case AFTER:
-                this.interceptors.get(Routing.RouteType.AFTER).add(route);
+                interceptors.get(route.type).add(route);
                 break;
             default:
                 this.routes.add(route);
@@ -132,17 +121,13 @@ public class HeadersRouter implements Routing.Router {
         }
     }
 
-    /**
-     * removes first route that matches on 'accept' and 'content-type' headers
-     *
-     * @param entity
-     */
+    // remove first route that matches on 'accept' and 'content-type' headers
     @Override
-    public void remove(Routing.Route entity) {
+    public void remove(Routing.Route route) {
         for (Iterator<Routing.Route> iter = routes.iterator(); iter.hasNext(); ) {
             Routing.Route next = iter.next();
-            if (next.contentType.equalsIgnoreCase(entity.contentType) &&
-                    next.accept.equalsIgnoreCase(entity.accept)) {
+            if (next.contentType.equalsIgnoreCase(route.contentType) &&
+                    next.accept.equalsIgnoreCase(route.accept)) {
                 iter.remove();
                 break;
             }

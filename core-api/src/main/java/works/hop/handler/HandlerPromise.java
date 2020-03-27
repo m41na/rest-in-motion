@@ -2,9 +2,6 @@ package works.hop.handler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import works.hop.core.ARequest;
-import works.hop.core.AResponse;
-import works.hop.core.AuthInfo;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;

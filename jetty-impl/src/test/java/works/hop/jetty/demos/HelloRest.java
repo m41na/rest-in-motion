@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static java.util.Collections.emptyMap;
 import static org.mockito.Mockito.mock;
@@ -38,7 +37,7 @@ public class HelloRest {
 //                });
 //            }
 //        });
-        app.before("get", "/", (auth, req, res, done) -> {
+        app.before((auth, req, res, done) -> {
             System.out.println("PRINT BEFORE GET /");
             AuthInfo user = mock(AuthInfo.class);
             req.attribute("authUser", user);
@@ -47,7 +46,7 @@ public class HelloRest {
         app.get("/", (auth, req, res, done) -> done.resolve(() -> {
             res.send("ALL THE GOODNESS INCLUDED");
         }));
-        app.after("get", "/", (auth, req, res, done) -> System.out.println("PRINT AFTER GET /"));
+        app.after((auth, req, res, done) -> System.out.println("PRINT AFTER GET /"));
         app.listen(8090, "localhost");
     };
 

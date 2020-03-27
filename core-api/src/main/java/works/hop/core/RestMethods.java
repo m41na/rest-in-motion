@@ -85,7 +85,7 @@ public interface RestMethods {
 
     // ******************** BEFORE/AFTER ******************** //
     default RestMethods before(HandlerFunction handler) {
-        return before("all", "*", "*", "*", handler);
+        return before("all", "_BEFORE_ALL_", "*", "*", handler);
     }
 
     default RestMethods before(String method, String path, HandlerFunction handler) {
@@ -97,7 +97,7 @@ public interface RestMethods {
                 .handler(handler)
                 .accept(accept)
                 .contentType(contentType)
-                .path(resolve(path, getContext()))
+                .path(path)
                 .method(method)
                 .type(Routing.RouteType.BEFORE)
                 .build();
@@ -106,7 +106,7 @@ public interface RestMethods {
     }
 
     default RestMethods after(HandlerFunction handler) {
-        return before("all", "*", "*", "*", handler);
+        return after("all", "_AFTER_ALL_", "*", "*", handler);
     }
 
     default RestMethods after(String method, String path, HandlerFunction handler) {
@@ -118,7 +118,7 @@ public interface RestMethods {
                 .handler(handler)
                 .accept(accept)
                 .contentType(contentType)
-                .path(resolve(path, getContext()))
+                .path(path)
                 .method(method)
                 .type(Routing.RouteType.AFTER)
                 .build();
