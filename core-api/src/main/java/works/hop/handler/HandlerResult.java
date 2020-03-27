@@ -3,7 +3,8 @@ package works.hop.handler;
 public class HandlerResult {
 
     private final Long startInMillis;
-    private Boolean success;
+    private volatile Boolean success;
+    private volatile Boolean completed = Boolean.FALSE;
 
     public HandlerResult() {
         this(Boolean.TRUE);
@@ -30,13 +31,19 @@ public class HandlerResult {
         return this.success;
     }
 
+    public Boolean completed() {
+        return this.completed;
+    }
+
     public HandlerResult succeeded() {
         this.success = Boolean.TRUE;
+        this.completed = Boolean.TRUE;
         return this;
     }
 
     public HandlerResult failed() {
         this.success = Boolean.FALSE;
+        this.completed = Boolean.TRUE;
         return this;
     }
 }

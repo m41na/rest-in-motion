@@ -59,7 +59,7 @@ public class DefaultHandlerChain implements HandlerChain {
         if (root != null) {
             root.intercept(handler, auth, request, response, promise);
         } else {
-            handler.handle(auth, request, response, promise);
+            handler.handle(request, response, promise);
         }
     }
 }

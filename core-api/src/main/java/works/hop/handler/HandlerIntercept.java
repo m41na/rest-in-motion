@@ -26,14 +26,13 @@ public interface HandlerIntercept {
 
     default void intercept(HandlerFunction handler, AuthInfo auth, ARequest request, AResponse response, HandlerPromise promise) {
         //intercept before handler
-        handler().handle(auth, request, response, promise);
+        handler().handle(request, response, promise);
         if (promise.canProceed()) {
-            promise.reset();
             //check next handler
             HandlerIntercept next = next();
             if (next != null) {
                 if (next.handler() == handler) {
-                    next.handler().handle(auth, request, response, promise);
+                    next.handler().handle(request, response, promise);
                     next.interceptAfter(handler, auth, request, response, promise);
                 } else {
                     next.intercept(handler, auth, request, response, promise);
@@ -46,7 +45,7 @@ public interface HandlerIntercept {
         //intercept after handler
         HandlerIntercept next = next();
         if (next != null) {
-            next.handler().handle(auth, request, response, promise);
+            next.handler().handle(request, response, promise);
             next.interceptAfter(handler, auth, request, response, promise);
         }
     }

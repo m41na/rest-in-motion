@@ -4,6 +4,8 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import static works.hop.core.RestMethods.INTERCEPT_ALL_URL;
+
 public class MethodRouter implements Routing.Router {
 
     private Map<Method, Routing.Router> routers = new EnumMap<>(Method.class);
@@ -28,8 +30,10 @@ public class MethodRouter implements Routing.Router {
             //if a matching route is found, set the method value in the result
             if (criteria.route != null) {
                 criteria.route.method = type.name();
-                //now find interceptors if they exist
-                //this.routers.get(Method.ALL).search(criteria);
+                //now apply interceptors if they exist
+                criteria.attributes.url = INTERCEPT_ALL_URL;
+                criteria.attributes.method = Method.ALL.toString();
+                this.routers.get(Method.ALL).search(criteria);
             }
         }
     }

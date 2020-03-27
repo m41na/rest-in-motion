@@ -7,16 +7,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
-
 public class HandlerPromise {
 
     private static final Logger LOG = LoggerFactory.getLogger(HandlerPromise.class);
     private final HandlerResult result = new HandlerResult();
     private Function<HandlerResult, HandlerResult> success;
     private BiFunction<HandlerResult, Throwable, HandlerResult> failure;
-    private volatile Boolean proceed = TRUE;
 
     public HandlerResult resolve(Runnable action) {
         LOG.info("Now will resolve promise");
@@ -39,7 +35,6 @@ public class HandlerPromise {
 
     public HandlerResult failed(String message) {
         LOG.info("Now will complete promise with failure");
-        reset();
         return failure.apply(result.failed(), new HandlerException(500, message));
     }
 
@@ -48,16 +43,8 @@ public class HandlerPromise {
         return success.apply(result.succeeded());
     }
 
-    public void next() {
-        this.proceed = TRUE;
-    }
-
-    public void reset() {
-        this.proceed = FALSE;
-    }
-
     public Boolean canProceed() {
-        return this.proceed;
+        return !this.result.completed();
     }
 
     public void OnSuccess(Function<HandlerResult, HandlerResult> completer) {

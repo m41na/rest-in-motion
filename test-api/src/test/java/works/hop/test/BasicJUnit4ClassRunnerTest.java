@@ -49,39 +49,39 @@ public class BasicJUnit4ClassRunnerTest {
         Map<String, String> props = applyDefaults(new Options(), new String[]{});
         JettyStartable server = createServer(props);
         server.mount(props.get("appctx"))
-                .get("/", (auth, request, response, promise) -> {
+                .get("/", (request, response, promise) -> {
                     response.ok(request.requestLine());
                     promise.complete();
                 })
-                .get("/two", (auth, request, response, promise) -> {
+                .get("/two", (request, response, promise) -> {
                     response.ok("get two");
                     promise.complete();
                 })
-                .get("/two/{id}", (auth, request, response, promise) -> {
+                .get("/two/{id}", (request, response, promise) -> {
                     Long id = request.longParam("id");
                     response.ok("get two with param " + id);
                     promise.complete();
                 })
-                .get("/two/{id}/one/{name}", (auth, request, response, promise) -> {
+                .get("/two/{id}/one/{name}", (request, response, promise) -> {
                     Long id = request.longParam("id");
                     String name = request.param("name");
                     response.ok("get two with 2 params " + id + " and " + name);
                     promise.complete();
                 })
-                .post("/", "application/json", "application/json", (auth, request, response, promise) -> {
+                .post("/", "application/json", "application/json", (request, response, promise) -> {
                     Content content = request.body(Content.class);
                     assertEquals("Expecting Posted Hello", "Posted Hello", content.message);
                     response.send("Crawler Ok");
                     promise.complete();
                 })
                 .post("/file", new UploadHandler(Path.of("target"), UploadHandler.defaultConfig()))
-                .put("/", "application/json", "application/json", emptyMap(), (auth, request, response, promise) -> {
+                .put("/", "application/json", "application/json", emptyMap(), (request, response, promise) -> {
                     Content content = request.body(Content.class);
                     assertEquals("Expecting Put Hello", "Put Hello", content.message);
                     response.send("Put Ok");
                     promise.complete();
                 })
-                .delete("/", (auth, request, response, promise) -> {
+                .delete("/", (request, response, promise) -> {
                     response.send("Delete Ok");
                     promise.complete();
                 });
