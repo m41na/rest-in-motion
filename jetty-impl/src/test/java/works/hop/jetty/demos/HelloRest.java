@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static java.util.Collections.emptyMap;
 import static org.mockito.Mockito.mock;
@@ -26,28 +25,25 @@ public class HelloRest {
     public static Consumer<String[]> Rest_Hello_BareBones = args -> {
         Map<String, String> properties = applyDefaults(new Options(), args);
         var app = createServer(properties.get("appctx"), properties);
-//        app.before("*", "/", (auth, req, res, done) -> {
-//            AuthInfo user = mock(AuthInfo.class); //fetch a valid user
-//            if(user != null){
-//                done.next(user, req, res, done);
-//            }
-//            else{
-//                //create response by resolving/completing done
-//                done.resolve(() -> {
-//                    res.send(500, "major errors here");
-//                });
-//            }
-//        });
-        app.before("get", "/", (auth, req, res, done) -> {
+        app.before((req, res, done) -> {
+            AuthInfo user = mock(AuthInfo.class); //fetch a valid user
+            if (user == null) {
+                //create response by resolving/completing done
+                done.resolve(() -> {
+                    res.send(500, "major errors here");
+                });
+            }
+        });
+        app.before("get", "/", (req, res, done) -> {
             System.out.println("PRINT BEFORE GET /");
             AuthInfo user = mock(AuthInfo.class);
             req.attribute("authUser", user);
-            done.next();
         });
-        app.get("/", (auth, req, res, done) -> done.resolve(() -> {
+        app.get("/", (req, res, done) -> done.resolve(() -> {
             res.send("ALL THE GOODNESS INCLUDED");
         }));
-        app.after("get", "/", (auth, req, res, done) -> System.out.println("PRINT AFTER GET /"));
+        //app.after("get", "/", (auth, req, res, done) -> System.out.println("PRINT AFTER GET /"));
+        app.after((req, res, done) -> System.out.println("PRINT AFTER GET /"));
         app.listen(8090, "localhost");
     };
 
@@ -64,11 +60,11 @@ public class HelloRest {
             @Override
             public Function<Map<String, String>, JettyStartable> build(JettyStartable server) {
                 return props -> {
-                    server.get("/", (auth, request, response, promise) -> {
+                    server.get("/", (request, response, promise) -> {
                         response.ok(new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z").format(new Date()));
                         promise.complete();
                     });
-                    server.get("/2", "*", "", emptyMap(), (auth, request, response, promise) -> {
+                    server.get("/2", "*", "", emptyMap(), (request, response, promise) -> {
                         response.ok(new SimpleDateFormat("HH:mm:ss z").format(new Date()));
                         promise.complete();
                     });
@@ -94,7 +90,7 @@ public class HelloRest {
             @Override
             public Function<Map<String, String>, JettyStartable> build(JettyStartable server) {
                 return props -> {
-                    server.get("/3", "*", "", emptyMap(), (auth, request, response, promise) -> {
+                    server.get("/3", "*", "", emptyMap(), (request, response, promise) -> {
                         response.ok(new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z").format(new Date()));
                         promise.complete();
                     });
@@ -120,11 +116,11 @@ public class HelloRest {
             @Override
             public Function<Map<String, String>, JettyStartable> build(JettyStartable server) {
                 return props -> {
-                    server.get("/4", (auth, req, res, done) -> {
+                    server.get("/4", (req, res, done) -> {
                         res.ok(new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z").format(new Date()));
                         done.complete();
                     });
-                    server.get("/5/", (auth, req, res, done) -> done.resolve(() -> {
+                    server.get("/5/", (req, res, done) -> done.resolve(() -> {
                         res.ok("Yes from servlet");
                     }));
                     server.assets(Paths.get(System.getProperty("user.dir"), "src/test/resources/dist").toString());
@@ -149,11 +145,11 @@ public class HelloRest {
             @Override
             public Function<Map<String, String>, JettyStartable> build(JettyStartable server) {
                 return props -> {
-                    server.get("/", "*", "*", (auth, req, res, done) -> {
+                    server.get("/", "*", "*", (req, res, done) -> {
                         res.ok(new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z").format(new Date()));
                         done.complete();
                     });
-                    server.get("/6/", (auth, req, res, done) -> done.resolve(() -> {
+                    server.get("/6/", (req, res, done) -> done.resolve(() -> {
                         res.ok("Yes from servlet");
                     }));
                     server.assets("/dist", Paths.get(System.getProperty("user.dir"), "src/test/resources/dist2").toString());

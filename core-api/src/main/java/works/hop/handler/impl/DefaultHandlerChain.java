@@ -45,7 +45,6 @@ public class DefaultHandlerChain implements HandlerChain {
     private boolean cycleDetected(HandlerIntercept intercept) {
         HandlerIntercept head = root;
         while (head != null) {
-            System.out.println("DETECTING CYCLE - " + head.toString());
             if (head.handler() != intercept.handler()) {
                 head = head.next();
             } else {
@@ -60,7 +59,7 @@ public class DefaultHandlerChain implements HandlerChain {
         if (root != null) {
             root.intercept(handler, auth, request, response, promise);
         } else {
-            handler.handle(auth, request, response, promise);
+            handler.handle(request, response, promise);
         }
     }
 }

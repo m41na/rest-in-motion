@@ -5,7 +5,6 @@ import org.eclipse.jetty.util.IO;
 import org.eclipse.jetty.util.StringUtil;
 import works.hop.core.ARequest;
 import works.hop.core.AResponse;
-import works.hop.core.AuthInfo;
 import works.hop.handler.HandlerException;
 import works.hop.handler.HandlerFunction;
 import works.hop.handler.HandlerPromise;
@@ -83,7 +82,7 @@ public class UploadHandler implements HandlerFunction {
     }
 
     @Override
-    public void handle(AuthInfo auth, ARequest request, AResponse response, HandlerPromise promise) {
+    public void handle(ARequest request, AResponse response, HandlerPromise promise) {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         try {

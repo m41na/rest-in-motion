@@ -4,6 +4,8 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import static works.hop.core.RestMethods.INTERCEPT_ALL_URL;
+
 public class MethodRouter implements Routing.Router {
 
     private Map<Method, Routing.Router> routers = new EnumMap<>(Method.class);
@@ -20,18 +22,18 @@ public class MethodRouter implements Routing.Router {
     }
 
     @Override
-    public void search(Routing.Search input) {
-        String method = input.attributes.method;
+    public void search(Routing.Search criteria) {
+        String method = criteria.attributes.method;
         Method type = method != null ? Method.valueOf(method.toUpperCase()) : null;
         if (type != null) {
-            this.routers.get(type).search(input);
-            //if no match if found for the specific request method, look into 'all' methods
-            if (input.route == null) {
-                this.routers.get(Method.ALL).search(input);
-            }
+            this.routers.get(type).search(criteria);
             //if a matching route is found, set the method value in the result
-            if (input.route != null) {
-                input.route.method = type.name();
+            if (criteria.route != null) {
+                criteria.route.method = type.name();
+                //now apply interceptors if they exist
+                criteria.attributes.url = INTERCEPT_ALL_URL;
+                criteria.attributes.method = Method.ALL.toString();
+                this.routers.get(Method.ALL).search(criteria);
             }
         }
     }
@@ -57,9 +59,9 @@ public class MethodRouter implements Routing.Router {
     }
 
     @Override
-    public void remove(Routing.Route entity) {
-        if (routers.containsKey(entity.method)) {
-            routers.get(entity.method).remove(entity);
+    public void remove(Routing.Route route) {
+        if (routers.containsKey(route.method)) {
+            routers.get(route.method).remove(route);
         }
     }
 

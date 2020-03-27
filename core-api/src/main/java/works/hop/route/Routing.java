@@ -26,9 +26,9 @@ public interface Routing {
 
         void info(List<String> nodes, String prefix);
 
-        void add(E entity);
+        void add(E route);
 
-        void remove(E entity);
+        void remove(E route);
     }
 
     interface Router extends Searchable<Search, Route>, Visitable {

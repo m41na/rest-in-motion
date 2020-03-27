@@ -9,6 +9,8 @@ import static java.util.Collections.emptyMap;
 
 public interface RestMethods {
 
+    String INTERCEPT_ALL_URL = "_INTERCEPT_ALL_";
+
     // ******************** GET ******************** //
     default RestMethods get(String path, HandlerFunction handler) {
         return route("get", path, "*", "*", handler);
@@ -85,7 +87,7 @@ public interface RestMethods {
 
     // ******************** BEFORE/AFTER ******************** //
     default RestMethods before(HandlerFunction handler) {
-        return before("all", "*", "*", "*", handler);
+        return before("all", INTERCEPT_ALL_URL, "*", "*", handler);
     }
 
     default RestMethods before(String method, String path, HandlerFunction handler) {
@@ -97,7 +99,7 @@ public interface RestMethods {
                 .handler(handler)
                 .accept(accept)
                 .contentType(contentType)
-                .path(resolve(path, getContext()))
+                .path(path)
                 .method(method)
                 .type(Routing.RouteType.BEFORE)
                 .build();
@@ -106,7 +108,7 @@ public interface RestMethods {
     }
 
     default RestMethods after(HandlerFunction handler) {
-        return before("all", "*", "*", "*", handler);
+        return after("all", INTERCEPT_ALL_URL, "*", "*", handler);
     }
 
     default RestMethods after(String method, String path, HandlerFunction handler) {
@@ -118,7 +120,7 @@ public interface RestMethods {
                 .handler(handler)
                 .accept(accept)
                 .contentType(contentType)
-                .path(resolve(path, getContext()))
+                .path(path)
                 .method(method)
                 .type(Routing.RouteType.AFTER)
                 .build();

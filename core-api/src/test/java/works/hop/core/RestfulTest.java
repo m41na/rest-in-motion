@@ -52,7 +52,7 @@ public class RestfulTest {
     @Test
     public void getRequestOnContextPathShouldReturn200Ok() {
         server.get("/", "", "", Collections.emptyMap(),
-                (auth, request, response, done) -> done.resolve(() -> System.out.println("get request")));
+                (request, response, done) -> done.resolve(() -> System.out.println("get request")));
         Routing.Search search = new Routing.Search(null);
         search.chain = new DefaultHandlerChain();
         server.getRouter().search(search);
@@ -63,12 +63,11 @@ public class RestfulTest {
 
     @Test
     public void postRequestOnContextPathShouldReturn200Ok() {
-        server.before("post", "/", (auth, request, response, done) -> {
+        server.before("post", "/", (request, response, done) -> {
             System.out.println("before post, do some magic!!");
-            done.next();
         });
         server.post("/", "", "", Collections.emptyMap(),
-                (auth, request, response, done) -> done.resolve(() -> System.out.println("post request")));
+                (request, response, done) -> done.resolve(() -> System.out.println("post request")));
         Routing.Search search = new Routing.Search(null);
         search.chain = new DefaultHandlerChain();
         server.getRouter().search(search);
@@ -80,7 +79,7 @@ public class RestfulTest {
     @Test
     public void putRequestOnContextPathShouldReturn200Ok() {
         server.put("/", "", "", Collections.emptyMap(),
-                (auth, request, response, done) -> done.resolve(() -> System.out.println("put request")));
+                (request, response, done) -> done.resolve(() -> System.out.println("put request")));
         Routing.Search search = new Routing.Search(null);
         search.chain = new DefaultHandlerChain();
         server.getRouter().search(search);
@@ -92,7 +91,7 @@ public class RestfulTest {
     @Test
     public void deleteRequestOnContextPathShouldReturn200Ok() {
         server.delete("/", "", "", Collections.emptyMap(),
-                (auth, request, response, done) -> done.resolve(() -> System.out.println("delete request")));
+                (request, response, done) -> done.resolve(() -> System.out.println("delete request")));
         Routing.Search search = new Routing.Search(null);
         search.chain = new DefaultHandlerChain();
         server.getRouter().search(search);
@@ -174,12 +173,12 @@ public class RestfulTest {
         }
 
         @Override
-        public void add(Routing.Route entity) {
-            this.route = entity;
+        public void add(Routing.Route route) {
+            this.route = route;
         }
 
         @Override
-        public void remove(Routing.Route entity) {
+        public void remove(Routing.Route route) {
         }
     }
 }

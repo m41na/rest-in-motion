@@ -35,19 +35,18 @@ public class DefaultHandlerChainTest {
         onSuccessPromise = new OnSuccessPromise();
         onFailurePromise = new OnFailurePromise();
         promise = new BasicHandlerPromise(onSuccessPromise, onFailurePromise);
-        successHandler = (auth, req, res, done) -> {
+        successHandler = (req, res, done) -> {
             String output = "Handler Function Success - simulate successful handler";
             promise.resolve(() -> System.out.println(output));
         };
-        failureHandler = (auth, req, res, done) -> {
+        failureHandler = (req, res, done) -> {
             String output = "Handler Function Failure - simulate failure handler";
             throw new HandlerException(500, output);
         };
-        successInterceptor = (auth, req, res, done) -> {
+        successInterceptor = (req, res, done) -> {
             System.out.println("Handler Intercept Success - simulate successful interceptor");
-            promise.next();
         };
-        failureInterceptor = (auth, req, res, done) -> {
+        failureInterceptor = (req, res, done) -> {
             String output = "Handler Intercept Failure - simulate failure interceptor";
             promise.failed(output + " - failed to continue chain");
         };
