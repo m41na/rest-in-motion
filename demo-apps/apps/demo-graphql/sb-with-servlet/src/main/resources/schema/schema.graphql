@@ -1,0 +1,50 @@
+type Talk {
+    id: ID!
+    title: String
+    description: String
+    speakers: [Speaker]
+}
+
+input TalkInput {
+    id: ID!
+    title: String
+    description: String
+}
+
+type Attendee {
+    id: ID!
+    name: String
+}
+
+input AttendeeInput {
+    id: ID!
+    name: String
+}
+
+type Speaker {
+    id: ID!
+    name: String
+}
+
+input SpeakerInput {
+    id: ID!
+    name: String
+}
+
+type Query {
+    allTalks: [Talk]
+    allSpeakers: [Speaker]
+    allAttendees: [Attendee]
+}
+
+type Mutation {
+    addTalk(talk: TalkInput): Talk
+    addSpeaker(speaker: SpeakerInput): Speaker
+    addAttendee(attendee: AttendeeInput): Attendee
+}
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+

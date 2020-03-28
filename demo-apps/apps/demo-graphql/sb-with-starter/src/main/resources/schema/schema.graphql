@@ -1,0 +1,26 @@
+type Talk {
+    id: ID!
+    title: String
+    description: String
+}
+
+type Attendee {
+    id: ID!
+    name: String
+}
+
+type Speaker {
+    id: ID!
+    name: String
+}
+
+type Query {
+    allTalks: [Talk]
+    allSpeakers: [Speaker]
+    allAttendees: [Attendee]
+}
+
+schema {
+    query: Query
+}
+
