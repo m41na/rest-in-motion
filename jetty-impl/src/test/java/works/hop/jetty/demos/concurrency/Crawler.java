@@ -22,7 +22,7 @@ import static java.util.Collections.emptySet;
 public class Crawler {
 
     private static Logger LOG = LoggerFactory.getLogger(Crawler.class);
-    private static String[] startUrls = {"https://en.wikipedia.org/", "https://www.cnn.com", "https://www.msn.com"};
+    private static String[] startUrls = {"https://en.wikipedia.org/", "https://www.cnn.com", "https://www.msn.com" };
     private static LongAdder visitedCount = new LongAdder();
 
     public static Boolean isHttpUrl(String url) {

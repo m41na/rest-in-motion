@@ -47,7 +47,7 @@ public class ContextHandlerBuilder {
     }
 
     public ContextHandlerBuilder assets(String mapping, String folder, Function<String, String> properties) {
-        String pathSpec = mapping.endsWith("/*") ? mapping : (mapping.endsWith("/") ? mapping.concat("*") : mapping.concat("/*"));
+        String pathSpec = mapping.endsWith("/*") ? mapping.substring(0, mapping.length() - 1) : (mapping.endsWith("/") ? mapping : mapping.concat("/"));
         ServletHolder defaultServlet = AppAssetsHandlers.createResourceServlet(properties, folder);
         servletContext.addServlet(defaultServlet, pathSpec);
         return this;

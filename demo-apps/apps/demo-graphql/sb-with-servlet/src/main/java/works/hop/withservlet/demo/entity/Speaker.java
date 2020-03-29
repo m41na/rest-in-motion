@@ -10,7 +10,7 @@ import javax.persistence.Id;
 
 @Entity
 @Data
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler" })
 public class Speaker {
 
     @Id

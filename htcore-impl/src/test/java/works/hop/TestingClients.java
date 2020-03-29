@@ -7,6 +7,7 @@ import org.apache.http.impl.DefaultBHttpServerConnection;
 import org.apache.http.message.BasicHttpRequest;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.net.Socket;
 public class TestingClients {
 
     @Test
+    @Ignore("only enable when testing manually")
     public void testBasicServer() throws IOException {
         Socket socket = new Socket("localhost", 9090);
         DefaultBHttpClientConnection conn = new DefaultBHttpClientConnection(8 * 1024);
@@ -27,6 +29,7 @@ public class TestingClients {
     }
 
     @Test
+    @Ignore("only enable when testing manually")
     public void testBlockingServer() throws IOException, HttpException {
         Socket socket = new Socket("localhost", 9090);
         DefaultBHttpClientConnection conn = new DefaultBHttpClientConnection(8 * 1024);
@@ -45,6 +48,7 @@ public class TestingClients {
     }
 
     @Test
+    @Ignore("only enable when testing manually")
     public void testSimpleClient() throws IOException, HttpException {
         Socket socket = new Socket("localhost", 9090);
         DefaultBHttpServerConnection conn = new DefaultBHttpServerConnection(8 * 1024);

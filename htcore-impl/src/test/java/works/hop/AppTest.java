@@ -10,12 +10,7 @@ import org.apache.http.protocol.*;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Map;
 
 public class AppTest {
