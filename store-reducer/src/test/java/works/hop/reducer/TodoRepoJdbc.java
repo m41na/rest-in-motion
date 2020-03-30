@@ -10,12 +10,12 @@ import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.util.List;
 
-@Repository("todo-repo")
-public class TodoRepository implements TodoService {
+@Repository("todo-jdbc")
+public class TodoRepoJdbc implements TodoService {
 
     private final JdbcTemplate template;
 
-    public TodoRepository(@Autowired DataSource dataSource) {
+    public TodoRepoJdbc(@Autowired DataSource dataSource) {
         this.template = new JdbcTemplate(dataSource);
     }
 

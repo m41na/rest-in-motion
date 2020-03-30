@@ -14,7 +14,6 @@ import works.hop.reducer.state.Store;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 
 import static works.hop.jetty.JettyStartable.createServer;
@@ -26,7 +25,7 @@ public class TodoWebApp {
 
     public static void main(String[] args) {
         ApplicationContext ctx = new AnnotationConfigApplicationContext(TodoConfig.class);
-        TodoService repo = ctx.getBean("todo-repo", TodoService.class);
+        TodoService repo = ctx.getBean("todo-jdbc", TodoService.class);
 
         final String TODO_LIST = "TODO_LIST";
         ActionCreator actions = new ActionCreator();

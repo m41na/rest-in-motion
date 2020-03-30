@@ -123,7 +123,7 @@ public class JettyUsage {
         contextIT.setHandler(new HelloHandler("Buongiorno"));
 
         ContextHandler contextV = new ContextHandler("/");
-        contextV.setVirtualHosts(new String[]{"127.0.0.2" });
+        contextV.setVirtualHosts(new String[]{"127.0.0.2"});
         contextV.setHandler(new HelloHandler("Virtual Hello"));
 
         ContextHandlerCollection contexts = new ContextHandlerCollection(
@@ -158,7 +158,7 @@ public class JettyUsage {
         contextIT.setHandler(new HelloHandler("Buongiorno"));
 
         ContextHandler contextV = new ContextHandler("/");
-        contextV.setVirtualHosts(new String[]{"127.0.0.2" });
+        contextV.setVirtualHosts(new String[]{"127.0.0.2"});
         contextV.setHandler(new HelloHandler("Virtual Hello"));
 
         ContextHandlerCollection contexts = new ContextHandlerCollection(
@@ -330,7 +330,7 @@ public class JettyUsage {
         // Configure the ResourceHandler. Setting the resource base indicates where the files should be served out of.
         // In this example it is the current directory but it can be configured to anything that the jvm has access to.
         resourceHandler.setDirectoriesListed(true);
-        resourceHandler.setWelcomeFiles(new String[]{"index.html" });
+        resourceHandler.setWelcomeFiles(new String[]{"index.html"});
         resourceHandler.setBaseResource(pathResource);
         return resourceHandler;
     }

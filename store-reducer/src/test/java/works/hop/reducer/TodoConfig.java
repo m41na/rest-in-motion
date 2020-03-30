@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import redis.clients.jedis.Jedis;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
@@ -46,5 +47,10 @@ public class TodoConfig {
         dataSource.setUsername(user);
         dataSource.setPassword(pass);
         return dataSource;
+    }
+
+    @Bean
+    public Jedis redisClient() {
+        return new Jedis();
     }
 }
