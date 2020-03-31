@@ -6,11 +6,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import works.hop.core.JsonResult;
+import works.hop.reducer.config.PersistTestConfig;
+import works.hop.reducer.persist.JdbcReducer;
+import works.hop.reducer.persist.RecordCriteria;
+import works.hop.reducer.persist.RecordValue;
 import works.hop.reducer.state.Action;
 import works.hop.reducer.state.ActionCreator;
 import works.hop.reducer.state.DefaultStore;
 import works.hop.reducer.state.Store;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,58 +29,62 @@ public class TodoWebApp {
     private static final Logger LOGGER = LoggerFactory.getLogger(TodoWebApp.class);
 
     public static void main(String[] args) {
-        ApplicationContext ctx = new AnnotationConfigApplicationContext(TodoConfig.class);
-        TodoService repo = ctx.getBean("todo-jdbc", TodoService.class);
+        ApplicationContext ctx = new AnnotationConfigApplicationContext(PersistTestConfig.class);
+        DataSource dataSource = ctx.getBean(DataSource.class);
 
         final String TODO_LIST = "TODO_LIST";
         ActionCreator actions = new ActionCreator();
-        Function<Void, Action<Todo>> allTodo = actions.create(() -> "ALL_TODO");
-        Function<Todo, Action<Todo>> addTodo = actions.create(() -> "ADD_TODO");
-        Function<String, Action<Todo>> removeTodo = actions.create(() -> "REMOVE_TODO");
-        Function<String, Action<Todo>> completeTodo = actions.create(() -> "COMPLETE_TODO");
+        //available actions
+        Function<RecordCriteria, Action<List<Todo>>> fetchAllRecords = actions.create(() -> JdbcReducer.FETCH_ALL);
+        Function<RecordValue, Action<List<RecordValue>>> createRecord = actions.create(() -> JdbcReducer.CREATE_RECORD);
+        Function<RecordCriteria, Action<List<RecordValue>>> deleteRecord = actions.create(() -> JdbcReducer.DELETE_RECORD);
+        Function<RecordValue, Action<List<RecordValue>>> updateRecord = actions.create(() -> JdbcReducer.UPDATE_RECORD);
+        //create reducer
         Store store = new DefaultStore();
-        store.reducer(TODO_LIST, new TodoReducer(new ArrayList<>()));
+        store.reducer(TODO_LIST, new JdbcReducer<List<Todo>, Todo>(dataSource, new ArrayList<>()));
         store.subscribe(TODO_LIST, new TodoObserver());
         store.state().forEach(state -> LOGGER.info("updated state - {}", state.get()));
 
         Map<String, String> properties = applyDefaults(new Options(), args);
         var app = createServer(properties.get("appctx"), properties);
-        app.before((req, res, done) -> {
-            List<Todo> todos = repo.fetchAll();
-            todos.stream().forEach(todo -> store.dispatch(addTodo.apply(todo)));
-            System.out.println("PRINT BEFORE ALL /");
-        });
-        app.before("get", "/", (req, res, done) -> {
-            System.out.println("PRINT BEFORE GET /");
-        });
+        app.before((req, res, done) -> System.out.println("PRINT BEFORE ALL /"));
+        app.before("get", "/", (req, res, done) -> System.out.println("PRINT BEFORE GET /"));
         app.get("/", (req, res, done) -> done.resolve(() -> {
-            var future = store.dispatch(allTodo.apply(null), result -> res.json(JsonResult.ok(result.get())));
-            future.join();
+            res.send("TODO web app using jdbc reducer");
         }));
-        app.post("/{name}", (req, res, done) -> done.resolve(() -> {
-            String task = req.param("name");
-            Todo todo = repo.save(task);
-            store.dispatch(addTodo.apply(todo));
-            res.json(JsonResult.ok(todo));
-        }));
-        app.put("/{name}", (req, res, done) -> done.resolve(() -> {
-            String task = req.param("name");
-            int updated = repo.update(task);
-            assert updated == 1;
-            store.dispatch(completeTodo.apply(task));
-            var future = store.dispatch(allTodo.apply(null), result -> res.json(JsonResult.ok(result.get())));
-            future.join();
-        }));
-        app.delete("/{name}", (req, res, done) -> done.resolve(() -> {
-            String task = req.param("name");
-            int deleted = repo.remove(task);
-            assert deleted == 1;
-            store.dispatch(removeTodo.apply(task));
-            var future = store.dispatch(allTodo.apply(null), result -> res.json(JsonResult.ok(result.get())));
-            future.join();
-        }));
-        //app.after("get", "/", (auth, req, res, done) -> System.out.println("PRINT AFTER GET /"));
-        app.after((req, res, done) -> System.out.println("PRINT AFTER GET /"));
+        app.get("/{user}", (req, res, done) -> {
+            String userKey = req.param("user");
+            RecordCriteria criteria = RecordCriteria.builder().collectionKey(TODO_LIST).userKey(userKey).build();
+            done.resolve(store.dispatch(fetchAllRecords.apply(criteria), state -> {
+                res.json(JsonResult.ok(state.get()));
+            }));
+        });
+        app.post("/{user}", "application/json", "application/json", (req, res, done) -> {
+            String userKey = req.param("user");
+            Todo todo = req.body(Todo.class);
+            RecordValue recordValue = RecordValue.builder().userKey(userKey).collectionKey(TODO_LIST).dataValue(todo).build();
+            done.resolve(store.dispatch(createRecord.apply(recordValue), state -> {
+                res.json(JsonResult.ok(state.get()));
+            }));
+        });
+        app.put("/{user}", (req, res, done) -> {
+            String userKey = req.param("user");
+            Todo todo = req.body(Todo.class);
+            RecordValue recordValue = RecordValue.builder().userKey(userKey).collectionKey(TODO_LIST).dataValue(todo).build();
+            done.resolve(store.dispatch(updateRecord.apply(recordValue), state -> {
+                res.json(JsonResult.ok(state.get()));
+            }));
+        });
+        app.delete("/{user}/{id}", (req, res, done) -> {
+            String userKey = req.param("user");
+            Long todoId = req.longParam("id");
+            RecordCriteria deleteId = RecordCriteria.builder().id(todoId).userKey(userKey).collectionKey(TODO_LIST).build();
+            done.resolve(store.dispatch(deleteRecord.apply(deleteId), state -> {
+                res.json(JsonResult.ok(state.get()));
+            }));
+        });
+        app.after("get", "/", (req, res, done) -> System.out.println("PRINT AFTER GET /"));
+        app.after((req, res, done) -> System.out.println("PRINT AFTER ALL /"));
         app.listen(8090, "localhost");
     }
 }

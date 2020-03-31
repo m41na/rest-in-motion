@@ -77,7 +77,7 @@ public class AppOptions {
                 .addOption("assetsWelcomeFile", true, "Name of static resource file to serve when no resource name is provided")
                 .addOption("assetsAcceptRanges", true, "Set accept ranges attribute for the default servlet")
                 .addOption("assetsEtags", true, "Set the etags attribute for the default servlet")
-                .addOption("assetsCacheControl", true, "Set the cache control header the default servlet should use")
+                .addOption("assetsCacheControl", true, "Set the persist control header the default servlet should use")
 
                 .addOption("poolSize", true, "The initial size of the server's thread pool")
                 .addOption("maxPoolSize", true, "The maximum size of the server's thread pool")

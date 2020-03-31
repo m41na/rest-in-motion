@@ -1,13 +1,10 @@
-package works.hop.reducer.cache;
+package works.hop.reducer.persist;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import redis.clients.jedis.Jedis;
-import works.hop.reducer.json.FlatJson;
 import works.hop.reducer.state.Reducer;
 import works.hop.reducer.state.State;
-
-import java.util.Map;
 
 public abstract class RedisReducer<S> implements Reducer<S> {
 
@@ -18,8 +15,7 @@ public abstract class RedisReducer<S> implements Reducer<S> {
 
     public RedisReducer(Jedis client, S initialState) {
         this.client = client;
-        Map<String, String> flatJson = FlatJson.flatten(initialState);
-        this.state = () -> (S) client.get("");
+        this.state = () -> initialState;
     }
 
     @Override

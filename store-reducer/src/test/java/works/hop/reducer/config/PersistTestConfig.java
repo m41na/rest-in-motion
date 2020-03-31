@@ -1,4 +1,4 @@
-package works.hop.reducer;
+package works.hop.reducer.config;
 
 import org.h2.tools.RunScript;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import java.sql.SQLException;
 @Configuration
 @ComponentScan("works.hop.reducer")
 @PropertySource("jdbc-test.properties")
-public class TodoConfig {
+public class PersistTestConfig {
 
     @Autowired
     Environment env;

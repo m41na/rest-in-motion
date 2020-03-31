@@ -23,13 +23,13 @@ public class TodoReducer extends AbstractReducer<List<Todo>> {
                 return () -> added;
             case "REMOVE_TODO":
                 String toRemove = (String) action.getBody();
-                List<Todo> removed = state.get().stream().filter(todo1 -> !todo1.name.equalsIgnoreCase(toRemove)).collect(Collectors.toList());
+                List<Todo> removed = state.get().stream().filter(todo1 -> !todo1.task.equalsIgnoreCase(toRemove)).collect(Collectors.toList());
                 return () -> removed;
             case "COMPLETE_TODO":
                 String toComplete = (String) action.getBody();
                 List<Todo> updated = state.get().stream().map(todo -> {
-                    if (todo.name.equalsIgnoreCase(toComplete)) {
-                        return Todo.builder().id(todo.id).name(todo.name).completed(!todo.completed).build();
+                    if (todo.task.equalsIgnoreCase(toComplete)) {
+                        return Todo.builder().id(todo.id).task(todo.task).completed(!todo.completed).build();
                     } else {
                         return todo;
                     }

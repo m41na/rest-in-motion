@@ -11,7 +11,7 @@ public class FileMap {
 
     public static void main(String[] args) throws IOException {
         byte[] text = "This is a fixed length string".getBytes();
-        Path p = Path.of(System.getProperty("user.dir"), "core-api/target", "cache.dat");
+        Path p = Path.of(System.getProperty("user.dir"), "core-api/target", "persist.dat");
         File f = p.toFile();
         try (RandomAccessFile raf = new RandomAccessFile(f, "rw")) {
             FileChannel fc = raf.getChannel();

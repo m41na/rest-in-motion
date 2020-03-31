@@ -24,7 +24,7 @@ public class TodoRepoJdbc implements TodoService {
         String FETCH_ALL_TODO = "select * from tbl_todos";
         return template.query(FETCH_ALL_TODO, (rs, rowNum) ->
                 Todo.builder().id(rs.getLong("id"))
-                        .name(rs.getString("task"))
+                        .task(rs.getString("task"))
                         .completed(rs.getBoolean("completed"))
                         .build());
     }
@@ -38,7 +38,7 @@ public class TodoRepoJdbc implements TodoService {
             ps.setString(1, task);
             return ps;
         }, keyHolder);
-        return Todo.builder().id(keyHolder.getKey().longValue()).name(task).completed(false).build();
+        return Todo.builder().id(keyHolder.getKey().longValue()).task(task).completed(false).build();
     }
 
     @Override

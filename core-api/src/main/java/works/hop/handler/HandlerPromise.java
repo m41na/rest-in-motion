@@ -15,8 +15,12 @@ public class HandlerPromise {
     private BiFunction<HandlerResult, Throwable, HandlerResult> failure;
 
     public HandlerResult resolve(Runnable action) {
+        return resolve(CompletableFuture.runAsync(action));
+    }
+
+    public <T> HandlerResult resolve(CompletableFuture<T> future) {
         LOG.info("Now will resolve promise");
-        return CompletableFuture.runAsync(action).handle((res, th) -> {
+        return future.handle((res, th) -> {
             if (th != null) {
                 if (th.getCause() != null) {
                     if (HandlerException.class.isAssignableFrom(th.getCause().getClass())) {

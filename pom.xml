@@ -18,7 +18,7 @@
         <module>graphql-api</module>
         <module>demo-apps</module>
         <module>store-reducer</module>
-<!--        <module>demo-apps/apps/demo-graphql</module>-->
+        <!--        <module>demo-apps/apps/demo-graphql</module>-->
     </modules>
 
     <name>rest-in-motion</name>
