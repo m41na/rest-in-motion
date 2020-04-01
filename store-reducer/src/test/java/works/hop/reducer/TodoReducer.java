@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 
 public class TodoReducer extends AbstractReducer<List<Todo>> {
 
-    public TodoReducer(List<Todo> initialState) {
-        super(initialState);
+    public TodoReducer(String name, List<Todo> initialState) {
+        super(name, initialState);
     }
 
     @Override

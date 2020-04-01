@@ -7,6 +7,8 @@ import java.util.function.Function;
 
 public interface Reducer<S> extends Function<Action, State<S>> {
 
+    String key();
+
     State<S> state();
 
     void nextState(State<S> state);

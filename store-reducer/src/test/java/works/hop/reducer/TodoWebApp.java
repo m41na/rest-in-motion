@@ -41,7 +41,7 @@ public class TodoWebApp {
         Function<RecordValue, Action<List<RecordValue>>> updateRecord = actions.create(() -> JdbcReducer.UPDATE_RECORD);
         //create reducer
         Store store = new DefaultStore();
-        store.reducer(TODO_LIST, new JdbcReducer<List<Todo>, Todo>(dataSource, new ArrayList<>()));
+        store.reducer(TODO_LIST, new JdbcReducer<List<Todo>, Todo>(dataSource, TODO_LIST, new ArrayList<>()));
         store.subscribe(TODO_LIST, new TodoObserver());
         store.state().forEach(state -> LOGGER.info("updated state - {}", state.get()));
 

@@ -1,7 +1,5 @@
 package works.hop.reducer.persist;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -23,11 +21,10 @@ public class JdbcReducer<S, T> extends AbstractReducer<S> implements Crud<T> {
     public static final String UPDATE_RECORD = "UPDATE_RECORD";
     public static final String DELETE_RECORD = "DELETE_RECORD";
 
-    private static final Logger LOG = LoggerFactory.getLogger(JdbcReducer.class);
     private final JdbcTemplate template;
 
-    public JdbcReducer(DataSource ds, S initialState) {
-        super(initialState);
+    public JdbcReducer(DataSource ds, String name, S initialState) {
+        super(name, initialState);
         this.template = new JdbcTemplate(ds);
     }
 

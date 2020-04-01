@@ -5,12 +5,19 @@ import io.reactivex.ObservableEmitter;
 
 public abstract class AbstractReducer<S> implements Reducer<S> {
 
+    private String name;
     private State<S> state;
     private Observable<State<S>> observable;
     private ObservableEmitter<State<S>> publisher;
 
-    public AbstractReducer(S initialState) {
+    public AbstractReducer(String name, S initialState) {
+        this.name = name;
         this.state = () -> initialState;
+    }
+
+    @Override
+    public String key() {
+        return this.name;
     }
 
     @Override
