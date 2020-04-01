@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan("works.hop.reducer")
-@PropertySource("jdbc-test.properties")
+@PropertySource("jdbc.properties")
 public class PersistConfig {
 
     @Autowired
