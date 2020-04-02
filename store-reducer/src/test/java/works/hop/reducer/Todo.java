@@ -1,24 +1,18 @@
 package works.hop.reducer;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-
-import java.io.Serializable;
+import lombok.NoArgsConstructor;
+import works.hop.reducer.persist.RecordValue;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class Todo implements Serializable {
+public class Todo implements RecordValue {
 
-    public final Long id;
-    public final String task;
-    public final Boolean completed;
-
-    @JsonCreator
-    public Todo(@JsonProperty("id") Long id, @JsonProperty("task") String task, @JsonProperty("completed") Boolean completed) {
-        this.id = id;
-        this.task = task;
-        this.completed = completed;
-    }
+    public Long id;
+    public String task;
+    public Boolean completed;
 }

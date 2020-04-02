@@ -9,7 +9,7 @@ import works.hop.core.JsonResult;
 import works.hop.reducer.config.PersistTestConfig;
 import works.hop.reducer.persist.JdbcReducer;
 import works.hop.reducer.persist.RecordCriteria;
-import works.hop.reducer.persist.RecordValue;
+import works.hop.reducer.persist.RecordEntity;
 import works.hop.reducer.state.Action;
 import works.hop.reducer.state.ActionCreator;
 import works.hop.reducer.state.DefaultStore;
@@ -36,12 +36,12 @@ public class TodoWebApp {
         ActionCreator actions = new ActionCreator();
         //available actions
         Function<RecordCriteria, Action<List<Todo>>> fetchAllRecords = actions.create(() -> JdbcReducer.FETCH_ALL);
-        Function<RecordValue, Action<List<RecordValue>>> createRecord = actions.create(() -> JdbcReducer.CREATE_RECORD);
-        Function<RecordCriteria, Action<List<RecordValue>>> deleteRecord = actions.create(() -> JdbcReducer.DELETE_RECORD);
-        Function<RecordValue, Action<List<RecordValue>>> updateRecord = actions.create(() -> JdbcReducer.UPDATE_RECORD);
+        Function<RecordEntity, Action<List<RecordEntity>>> createRecord = actions.create(() -> JdbcReducer.CREATE_RECORD);
+        Function<RecordCriteria, Action<List<RecordEntity>>> deleteRecord = actions.create(() -> JdbcReducer.DELETE_RECORD);
+        Function<RecordEntity, Action<List<RecordEntity>>> updateRecord = actions.create(() -> JdbcReducer.UPDATE_RECORD);
         //create reducer
         Store store = new DefaultStore();
-        store.reducer(TODO_LIST, new JdbcReducer<List<Todo>, Todo>(dataSource, TODO_LIST, new ArrayList<>()));
+        store.reducer(TODO_LIST, new JdbcReducer<List<Todo>>(dataSource, TODO_LIST, new ArrayList<>()));
         store.subscribe(TODO_LIST, new TodoObserver());
         store.state().forEach(state -> LOGGER.info("updated state - {}", state.get()));
 
@@ -62,16 +62,16 @@ public class TodoWebApp {
         app.post("/{user}", "application/json", "application/json", (req, res, done) -> {
             String userKey = req.param("user");
             Todo todo = req.body(Todo.class);
-            RecordValue recordValue = RecordValue.builder().userKey(userKey).collectionKey(TODO_LIST).dataValue(todo).build();
-            done.resolve(store.dispatch(createRecord.apply(recordValue), state -> {
+            RecordEntity recordEntity = RecordEntity.builder().userKey(userKey).collectionKey(TODO_LIST).dataValue(todo).build();
+            done.resolve(store.dispatch(createRecord.apply(recordEntity), state -> {
                 res.json(JsonResult.ok(state.get()));
             }));
         });
         app.put("/{user}", (req, res, done) -> {
             String userKey = req.param("user");
             Todo todo = req.body(Todo.class);
-            RecordValue recordValue = RecordValue.builder().userKey(userKey).collectionKey(TODO_LIST).dataValue(todo).build();
-            done.resolve(store.dispatch(updateRecord.apply(recordValue), state -> {
+            RecordEntity recordEntity = RecordEntity.builder().userKey(userKey).collectionKey(TODO_LIST).dataValue(todo).build();
+            done.resolve(store.dispatch(updateRecord.apply(recordEntity), state -> {
                 res.json(JsonResult.ok(state.get()));
             }));
         });

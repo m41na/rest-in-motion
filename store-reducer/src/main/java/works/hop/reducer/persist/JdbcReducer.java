@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class JdbcReducer<S, T> extends AbstractReducer<S> implements Crud<T> {
+public class JdbcReducer<S> extends AbstractReducer<S> implements Crud<RecordValue> {
 
     public static final String FETCH_ALL = "FETCH_ALL";
     public static final String CREATE_RECORD = "CREATE_RECORD";
@@ -29,33 +29,37 @@ public class JdbcReducer<S, T> extends AbstractReducer<S> implements Crud<T> {
     }
 
     @Override
-    public List<T> fetchAll(String userKey, String collectionKey) {
+    public List<RecordValue> fetchAll(String userKey, String collectionKey) {
         String FETCH_ALL = "select * from tbl_red_store";
-        List<RecordValue> rows = template.query(FETCH_ALL, (rs, rowNum) ->
-                RecordValue.builder().id(rs.getLong("data_id")).userKey(rs.getString("user_key"))
+        List<RecordEntity> rows = template.query(FETCH_ALL, (rs, rowNum) ->
+                RecordEntity.builder().id(rs.getLong("data_id")).userKey(rs.getString("user_key"))
                         .collectionKey(rs.getString("collection_key"))
-                        .dataValue(SerializationUtils.deserialize(rs.getBytes("data_value")))
+                        .dataValue((RecordValue) SerializationUtils.deserialize(rs.getBytes("data_value")))
                         .dateCreated(new Date(rs.getDate("date_created").getTime()))
                         .build());
-        return rows.stream().map(row -> (T) row.getDataValue()).collect(Collectors.toList());
+        return rows.stream().map(row -> {
+            RecordValue data = row.getDataValue();
+            data.setId(row.getId());
+            return data;
+        }).collect(Collectors.toList());
     }
 
     @Override
-    public int save(String userKey, String collectionKey, T record) {
+    public long save(String userKey, String collectionKey, RecordValue record) {
         String CREATE_RECORD = "insert into tbl_red_store (user_key, collection_key, data_value, date_created) values (?, ?, ?, current_timestamp)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         int result = template.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(CREATE_RECORD);
+            PreparedStatement ps = connection.prepareStatement(CREATE_RECORD, new String[]{"data_id"}); //or Statement.RETURN_GENERATED_KEYS
             ps.setString(1, userKey);
             ps.setString(2, collectionKey);
             ps.setBytes(3, SerializationUtils.serialize(record));
             return ps;
         }, keyHolder);
-        return result;
+        return keyHolder.getKey().longValue();
     }
 
     @Override
-    public int update(String userKey, String collectionKey, T record) {
+    public int update(String userKey, String collectionKey, RecordValue record) {
         String UPDATE_RECORD = "update tbl_red_store set data_type = ? where user_key = ? and collection_key = ? and data_value = ?";
         return template.update(UPDATE_RECORD, userKey, collectionKey, SerializationUtils.serialize(record));
     }
@@ -71,12 +75,12 @@ public class JdbcReducer<S, T> extends AbstractReducer<S> implements Crud<T> {
         switch (action.getType().get()) {
             case "FETCH_ALL":
                 RecordCriteria toFetch = (RecordCriteria) action.getBody();
-                List<T> records = fetchAll(toFetch.getUserKey(), toFetch.getCollectionKey());
+                List<RecordValue> records = fetchAll(toFetch.getUserKey(), toFetch.getCollectionKey());
                 return () -> (S) records;
             case "CREATE_RECORD":
-                RecordValue toCreate = (RecordValue) action.getBody();
-                int added = save(toCreate.getUserKey(), toCreate.getCollectionKey(), (T) toCreate.getDataValue());
-                assert added == 1;
+                RecordEntity toCreate = (RecordEntity) action.getBody();
+                long added = save(toCreate.getUserKey(), toCreate.getCollectionKey(), toCreate.getDataValue());
+                assert added > 0;
                 return () -> (S) fetchAll(toCreate.getUserKey(), toCreate.getCollectionKey());
             case "REMOVE_TODO":
                 RecordCriteria toDelete = (RecordCriteria) action.getBody();
@@ -84,8 +88,8 @@ public class JdbcReducer<S, T> extends AbstractReducer<S> implements Crud<T> {
                 assert deleted == 1;
                 return () -> (S) fetchAll(toDelete.getUserKey(), toDelete.getCollectionKey());
             case "UPDATE_RECORD":
-                RecordValue toUpdate = (RecordValue) action.getBody();
-                int updated = update(toUpdate.getUserKey(), toUpdate.getCollectionKey(), (T) toUpdate.getDataValue());
+                RecordEntity toUpdate = (RecordEntity) action.getBody();
+                int updated = update(toUpdate.getUserKey(), toUpdate.getCollectionKey(), toUpdate.getDataValue());
                 assert updated == 1;
                 return () -> (S) fetchAll(toUpdate.getUserKey(), toUpdate.getCollectionKey());
             default:

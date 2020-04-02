@@ -2,11 +2,11 @@ package works.hop.reducer.persist;
 
 import java.util.List;
 
-public interface Crud<T> {
+public interface Crud<T extends RecordValue> {
 
     List<T> fetchAll(String userKey, String collectionKey);
 
-    int save(String userKey, String collectionKey, T record);
+    long save(String userKey, String collectionKey, T record);
 
     int update(String userKey, String collectionKey, T record);
 
