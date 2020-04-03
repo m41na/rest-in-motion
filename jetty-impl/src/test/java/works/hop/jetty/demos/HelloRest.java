@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static java.util.Collections.binarySearch;
 import static java.util.Collections.emptyMap;
 import static org.mockito.Mockito.mock;
 import static works.hop.jetty.JettyStartable.createServer;
@@ -82,7 +83,7 @@ public class HelloRest {
             public JettyStartable provide(Map<String, String> properties) {
                 var server = createServer(properties);
                 server.rest().mount(properties.get("appctx"), builder ->
-                        builder.websocket("/echo/*", () -> new JettyWsEcho(), JettyWsPolicy.defaultPolicy()).build()
+                        builder.websocket("/echo/*", JettyWsPolicy.defaultPolicy(), () -> new JettyWsEcho()).build()
                 );
                 return server;
             }
@@ -109,7 +110,7 @@ public class HelloRest {
             public JettyStartable provide(Map<String, String> properties) {
                 JettyStartable server = createServer(properties);
                 server.mount(properties.get("appctx"));
-                server.rest().mount("/ws", builder -> builder.websocket("/echo/*", () -> new JettyWsEcho(), JettyWsPolicy.defaultPolicy()).build());
+                server.rest().mount("/ws", builder -> builder.websocket("/echo/*", JettyWsPolicy.defaultPolicy(), () -> new JettyWsEcho()).build());
                 return server;
             }
 
@@ -153,7 +154,7 @@ public class HelloRest {
                         res.ok("Yes from servlet");
                     }));
                     server.assets("/dist", Paths.get(System.getProperty("user.dir"), "src/test/resources/dist2").toString());
-                    server.rest().websocket("/echo/*", () -> new JettyWsEcho(), JettyWsPolicy.defaultPolicy());
+                    server.mount("/echo", builder -> builder.websocket("/", JettyWsPolicy.defaultPolicy(), () -> new JettyWsEcho()).build());
                     server.fcgi("/", "/home/mainas/projects/wordpress", "http://localhost:9000");
                     return server;
                 };

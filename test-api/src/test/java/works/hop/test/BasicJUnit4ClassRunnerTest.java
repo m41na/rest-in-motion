@@ -85,7 +85,7 @@ public class BasicJUnit4ClassRunnerTest {
                     response.send("Delete Ok");
                     promise.complete();
                 });
-        server.rest().websocket("/events/*", () -> new JettyWsEcho(), JettyWsPolicy.defaultPolicy());
+        server.mount("/events", builder -> builder.websocket("/", JettyWsPolicy.defaultPolicy(), () -> new JettyWsEcho()).build());
         server.listen(PORT, HOST);
         return server;
     }

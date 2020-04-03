@@ -7,8 +7,8 @@ public abstract class AbstractReducer<S> implements Reducer<S> {
 
     private String name;
     private State<S> state;
-    private Observable<State<S>> observable;
-    private ObservableEmitter<State<S>> publisher;
+    private Observable<Action> observable;
+    private ObservableEmitter<Action> publisher;
 
     public AbstractReducer(String name, S initialState) {
         this.name = name;
@@ -31,22 +31,22 @@ public abstract class AbstractReducer<S> implements Reducer<S> {
     }
 
     @Override
-    public Observable<State<S>> observable() {
+    public Observable<Action> observable() {
         return this.observable;
     }
 
     @Override
-    public void observable(Observable<State<S>> observable) {
+    public void observable(Observable<Action> observable) {
         this.observable = observable;
     }
 
     @Override
-    public ObservableEmitter<State<S>> publisher() {
+    public ObservableEmitter<Action> publisher() {
         return this.publisher;
     }
 
     @Override
-    public void publisher(ObservableEmitter<State<S>> emitter) {
+    public void publisher(ObservableEmitter<Action> emitter) {
         this.publisher = emitter;
     }
 }

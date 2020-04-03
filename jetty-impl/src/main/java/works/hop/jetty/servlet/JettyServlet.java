@@ -94,6 +94,7 @@ public class JettyServlet extends HttpServlet {
                             LOG.warn("Uncaught Exception in the promise resolver. Completing promise with failure: {}", e.getMessage());
                             e.printStackTrace(System.err);
                             promise.resolve(() -> {
+                                response.send(500, e.getMessage());
                             });
                         } finally {
                             //baseRequest.setHandled(true);

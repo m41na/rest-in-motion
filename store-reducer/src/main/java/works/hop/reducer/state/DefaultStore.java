@@ -49,7 +49,7 @@ public class DefaultStore implements Store {
     }
 
     @Override
-    public void subscribe(String key, Observer<State> observer) {
+    public void subscribe(String key, Observer<Action> observer) {
         this.reducers.get(key).observable().subscribe(observer);
     }
 

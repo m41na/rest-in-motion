@@ -2,9 +2,9 @@ package works.hop.reducer;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-import works.hop.reducer.state.State;
+import works.hop.reducer.state.Action;
 
-public class TodoObserver implements Observer<State> {
+public class TodoObserver implements Observer<Action> {
 
     @Override
     public void onSubscribe(Disposable disposable) {
@@ -12,8 +12,8 @@ public class TodoObserver implements Observer<State> {
     }
 
     @Override
-    public void onNext(State state) {
-        System.out.println("observer: " + state.get());
+    public void onNext(Action action) {
+        System.out.println("observer: " + action);
     }
 
     @Override

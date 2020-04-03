@@ -15,13 +15,13 @@ public interface Reducer<S> extends Function<Action, State<S>> {
 
     State<S> reduce(State<S> state, Action action);
 
-    Observable<State<S>> observable();
+    Observable<Action> observable();
 
-    void observable(Observable<State<S>> observable);
+    void observable(Observable<Action> observable);
 
-    ObservableEmitter<State<S>> publisher();
+    ObservableEmitter<Action> publisher();
 
-    void publisher(ObservableEmitter<State<S>> emitter);
+    void publisher(ObservableEmitter<Action> emitter);
 
     @Override
     default State<S> apply(Action action) {
@@ -29,7 +29,7 @@ public interface Reducer<S> extends Function<Action, State<S>> {
             State<S> before = state();
             State<S> after = reduce(before, action);
             nextState(after);
-            publisher().onNext(after);
+            publisher().onNext(action);
             return after;
         }
     }

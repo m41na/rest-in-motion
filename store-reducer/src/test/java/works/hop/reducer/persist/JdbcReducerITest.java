@@ -1,6 +1,7 @@
 package works.hop.reducer.persist;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = PersistTestConfig.class)
+@Ignore("use for integration testing")
 public class JdbcReducerITest {
 
     @Autowired

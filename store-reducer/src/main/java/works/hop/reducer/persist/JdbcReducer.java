@@ -54,7 +54,7 @@ public class JdbcReducer<S> extends AbstractReducer<Map<String, Map<String, S>>>
             PreparedStatement ps = connection.prepareStatement(CREATE_QUERY, new String[]{"data_id"}); //or Statement.RETURN_GENERATED_KEYS
             ps.setString(1, record.getKey().getUserKey());
             ps.setString(2, record.getKey().getCollectionKey());
-            ps.setBytes(3, SerializationUtils.serialize(record));
+            ps.setBytes(3, SerializationUtils.serialize(record.getValue()));
             return ps;
         }, keyHolder);
         return keyHolder.getKey().longValue();
@@ -63,13 +63,13 @@ public class JdbcReducer<S> extends AbstractReducer<Map<String, Map<String, S>>>
     @Override
     public int update(RecordEntity record) {
         String UPDATE_QUERY = "update tbl_red_store set data_value = ? where data_id = ?";
-        return template.update(UPDATE_QUERY, record.getKey().getId(), SerializationUtils.serialize(record));
+        return template.update(UPDATE_QUERY, SerializationUtils.serialize(record.getValue()), record.getKey().getId());
     }
 
     @Override
     public int delete(RecordKey key) {
         String DELETE_QUERY = "delete from tbl_red_store where data_id = ?";
-        return template.update(DELETE_QUERY, key);
+        return template.update(DELETE_QUERY, key.getId());
     }
 
     @Override

@@ -17,7 +17,7 @@ public interface Store {
 
     CompletableFuture<Boolean> dispatch(Action action, Consumer<State> state);
 
-    void subscribe(String key, Observer<State> observer);
+    void subscribe(String key, Observer<Action> observer);
 
     void unsubscribe(String key);
 }

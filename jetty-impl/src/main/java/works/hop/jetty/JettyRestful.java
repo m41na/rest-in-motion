@@ -6,10 +6,16 @@ import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlets.EventSource;
+import org.eclipse.jetty.servlets.EventSourceServlet;
 import works.hop.core.Restful;
 import works.hop.jetty.builder.ContextHandlerBuilder;
+import works.hop.jetty.builder.ObjectMapperSupplier;
 import works.hop.jetty.handler.JettyHandler;
+import works.hop.jetty.servlet.ServletConfig;
 import works.hop.jetty.session.SessionUtil;
+import works.hop.jetty.sse.AppEventSource;
+import works.hop.jetty.sse.EventsEmitter;
 import works.hop.jetty.startup.AppAssetsHandlers;
 import works.hop.jetty.startup.AppFcgiHandler;
 import works.hop.jetty.websocket.JettyWsPolicy;
@@ -18,6 +24,8 @@ import works.hop.jetty.websocket.JettyWsServlet;
 import works.hop.route.Routing;
 import works.hop.traverse.Visitor;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -48,16 +56,6 @@ public class JettyRestful implements Restful {
 
     public Restful mount(String path, Function<ContextHandlerBuilder, ServletContextHandler> builder) {
         contextHandlers.addHandler(builder.apply(ContextHandlerBuilder.newBuilder(path, router, null)));
-        return this;
-    }
-
-    public Restful websocket(String path, JettyWsProvider provider, JettyWsPolicy policy) {
-        String pathSpec = path.endsWith("/*") ? path : (path.endsWith("/") ? path.substring(0, path.length() - 1) : path.concat("/*"));
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.setContextPath(path);
-        ServletHolder handlerHolder = new ServletHolder("websocket-".concat(path), new JettyWsServlet(provider, policy.getPolicy()));
-        context.addServlet(handlerHolder, pathSpec);
-        contextHandlers.addHandler(context);
         return this;
     }
 

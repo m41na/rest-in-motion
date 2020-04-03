@@ -2,9 +2,9 @@ package works.hop.reducer.persist;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-import works.hop.reducer.state.State;
+import works.hop.reducer.state.Action;
 
-public class RedisObserver implements Observer<State> {
+public class RedisObserver implements Observer<Action> {
 
     @Override
     public void onSubscribe(Disposable disposable) {
@@ -12,8 +12,8 @@ public class RedisObserver implements Observer<State> {
     }
 
     @Override
-    public void onNext(State state) {
-        System.out.println("observer: " + state);
+    public void onNext(Action action) {
+        System.out.println("observer: " + action);
     }
 
     @Override

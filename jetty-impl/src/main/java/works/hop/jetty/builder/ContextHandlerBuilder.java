@@ -3,9 +3,14 @@ package works.hop.jetty.builder;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlets.EventSource;
+import org.eclipse.jetty.servlets.EventSourceServlet;
+import works.hop.core.Restful;
 import works.hop.jetty.filter.HandlerFilter;
 import works.hop.jetty.servlet.JettyServlet;
 import works.hop.jetty.servlet.ServletConfig;
+import works.hop.jetty.sse.AppEventSource;
+import works.hop.jetty.sse.EventsEmitter;
 import works.hop.jetty.startup.AppAssetsHandlers;
 import works.hop.jetty.startup.AppCorsFilter;
 import works.hop.jetty.websocket.JettyWsPolicy;
@@ -15,6 +20,8 @@ import works.hop.route.Routing;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.function.Function;
@@ -71,9 +78,29 @@ public class ContextHandlerBuilder {
         return this;
     }
 
-    public ContextHandlerBuilder websocket(String path, JettyWsProvider provider, JettyWsPolicy policy) {
+    public ContextHandlerBuilder websocket(String path, JettyWsPolicy policy, JettyWsProvider provider) {
         String pathSpec = path.endsWith("/*") ? path : (path.endsWith("/") ? path.substring(0, path.length() - 1) : path.concat("/*"));
         ServletHolder handlerHolder = new ServletHolder("websocket-".concat(path), new JettyWsServlet(provider, policy.getPolicy()));
+        servletContext.addServlet(handlerHolder, pathSpec);
+        return this;
+    }
+
+    public ContextHandlerBuilder sse(String path, ServletConfig config, EventsEmitter eventsEmitter) {
+        String pathSpec = path.endsWith("/*") ? path : (path.endsWith("/") ? path.substring(0, path.length() - 1) : path.concat("/*"));
+        ServletHolder handlerHolder = new ServletHolder(new EventSourceServlet() {
+            @Override
+            protected EventSource newEventSource(HttpServletRequest request) {
+                return new AppEventSource(request) {
+
+                    @Override
+                    public void onOpen(EventSource.Emitter emitter) throws IOException {
+                        super.onOpen(emitter);
+                        eventsEmitter.onOpen(ObjectMapperSupplier.version2.get(), emitter);
+                    }
+                };
+            }
+        });
+        if (config != null) config.configure(handlerHolder);
         servletContext.addServlet(handlerHolder, pathSpec);
         return this;
     }
