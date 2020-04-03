@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import javax.sql.DataSource;
@@ -40,7 +39,7 @@ public class PersistConfig {
     }
 
     @Bean
-    public JedisPool redisClient(@Value("${redis.port}") int port, @Value("${redis.host") String host) {
+    public JedisPool redisClient(@Value("${redis.port}") int port, @Value("${redis.host}") String host) {
         return new JedisPool(host, port);
     }
 }

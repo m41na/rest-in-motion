@@ -13,7 +13,7 @@ import java.sql.PreparedStatement;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class JdbcReducer<S> extends AbstractReducer<Map<String, Map<String, S>>> implements Crud<RecordValue> {
+public class JdbcReducer<S> extends AbstractReducer<Map<String, Map<String, S>>> implements Crud {
 
     public static final String FETCH_ALL = "FETCH_ALL";
     public static final String CREATE_RECORD = "CREATE_RECORD";
@@ -29,8 +29,8 @@ public class JdbcReducer<S> extends AbstractReducer<Map<String, Map<String, S>>>
 
     @Override
     public List<RecordValue> fetch(RecordKey key) {
-        String FETCH_ALL = "select * from tbl_red_store where user_key = ? and collection_key = ? order by user_key, collection_key, data_id"; //default order is asc
-        List<RecordEntity> rows = template.query(FETCH_ALL, new Object[]{key.getUserKey(), key.getCollectionKey()}, (rs, rowNum) ->
+        String FETCH_QUERY = "select * from tbl_red_store where user_key = ? and collection_key = ? order by user_key, collection_key, data_id"; //default order is asc
+        List<RecordEntity> rows = template.query(FETCH_QUERY, new Object[]{key.getUserKey(), key.getCollectionKey()}, (rs, rowNum) ->
                 RecordEntity.builder()
                         .key(RecordKey.builder()
                                 .id(rs.getLong("data_id"))
@@ -47,13 +47,13 @@ public class JdbcReducer<S> extends AbstractReducer<Map<String, Map<String, S>>>
     }
 
     @Override
-    public long save(RecordKey key, RecordValue record) {
-        String CREATE_RECORD = "insert into tbl_red_store (user_key, collection_key, data_value, date_created) values (?, ?, ?, current_timestamp)";
+    public long save(RecordEntity record) {
+        String CREATE_QUERY = "insert into tbl_red_store (user_key, collection_key, data_value, date_created) values (?, ?, ?, current_timestamp)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         template.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(CREATE_RECORD, new String[]{"data_id"}); //or Statement.RETURN_GENERATED_KEYS
-            ps.setString(1, key.getUserKey());
-            ps.setString(2, key.getCollectionKey());
+            PreparedStatement ps = connection.prepareStatement(CREATE_QUERY, new String[]{"data_id"}); //or Statement.RETURN_GENERATED_KEYS
+            ps.setString(1, record.getKey().getUserKey());
+            ps.setString(2, record.getKey().getCollectionKey());
             ps.setBytes(3, SerializationUtils.serialize(record));
             return ps;
         }, keyHolder);
@@ -61,30 +61,30 @@ public class JdbcReducer<S> extends AbstractReducer<Map<String, Map<String, S>>>
     }
 
     @Override
-    public int update(RecordValue record) {
-        String UPDATE_RECORD = "update tbl_red_store set data_value = ? where data_id = ?";
-        return template.update(UPDATE_RECORD, record.getId(), SerializationUtils.serialize(record));
+    public int update(RecordEntity record) {
+        String UPDATE_QUERY = "update tbl_red_store set data_value = ? where data_id = ?";
+        return template.update(UPDATE_QUERY, record.getKey().getId(), SerializationUtils.serialize(record));
     }
 
     @Override
-    public int delete(Long id) {
-        String DELETE_RECORD = "delete from tbl_red_store where data_id = ?";
-        return template.update(DELETE_RECORD, id);
+    public int delete(RecordKey key) {
+        String DELETE_QUERY = "delete from tbl_red_store where data_id = ?";
+        return template.update(DELETE_QUERY, key);
     }
 
     @Override
     public State<Map<String, Map<String, S>>> reduce(State<Map<String, Map<String, S>>> state, Action action) {
         switch (action.getType().get()) {
-            case "FETCH_ALL":
+            case FETCH_ALL:
                 RecordKey toFetch = (RecordKey) action.getBody();
                 List<RecordValue> records = fetch(toFetch);
                 Map<String, Map<String, S>> fetchedState = state.get();
                 fetchedState.putIfAbsent(toFetch.getUserKey(), new HashMap<>());
                 fetchedState.get(toFetch.getUserKey()).putIfAbsent(toFetch.getCollectionKey(), (S) records);
                 return () -> fetchedState;
-            case "CREATE_RECORD":
+            case CREATE_RECORD:
                 RecordEntity toCreate = (RecordEntity) action.getBody();
-                long added = save(RecordKey.builder().userKey(toCreate.getKey().getUserKey()).collectionKey(toCreate.getKey().getCollectionKey()).build(), toCreate.getValue());
+                long added = save(toCreate);
                 if (added > 0) { //if created successfully
                     //add empty collections if need be
                     if (state.get().get(toCreate.getKey().getUserKey()) == null) {
@@ -103,9 +103,9 @@ public class JdbcReducer<S> extends AbstractReducer<Map<String, Map<String, S>>>
                     return () -> newState;
                 }
                 return () -> state.get();
-            case "REMOVE_TODO":
+            case DELETE_RECORD:
                 RecordKey toDelete = (RecordKey) action.getBody();
-                int deleted = delete(toDelete.getId());
+                int deleted = delete(toDelete);
                 if (deleted == 1) { //if deleted successfully
                     S list = state.get().get(toDelete.getUserKey()).get(toDelete.getCollectionKey());
                     List<RecordValue> values = ((List<RecordValue>) list).stream().filter(item -> !item.getId().equals(toDelete.getId())).collect(Collectors.toList());
@@ -115,9 +115,9 @@ public class JdbcReducer<S> extends AbstractReducer<Map<String, Map<String, S>>>
                     return () -> newState;
                 }
                 return () -> state.get();
-            case "UPDATE_RECORD":
+            case UPDATE_RECORD:
                 RecordEntity toUpdate = (RecordEntity) action.getBody();
-                int updated = update(toUpdate.getValue());
+                int updated = update(toUpdate);
                 if (updated == 1) { //if updated successfully
                     S list = state.get().get(toUpdate.getKey().getUserKey()).get(toUpdate.getKey().getCollectionKey());
                     List<RecordValue> values = ((List<RecordValue>) list).stream().map(item -> {

@@ -4,11 +4,11 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import works.hop.reducer.state.State;
 
-public class JdbcObserver implements Observer<State> {
+public class RedisObserver implements Observer<State> {
 
     @Override
     public void onSubscribe(Disposable disposable) {
-        System.out.println("subscribed to jdbc changes");
+        System.out.println("subscribed to redis changes");
     }
 
     @Override

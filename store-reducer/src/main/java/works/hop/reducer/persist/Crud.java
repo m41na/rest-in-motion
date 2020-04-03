@@ -2,13 +2,13 @@ package works.hop.reducer.persist;
 
 import java.util.List;
 
-public interface Crud<T extends RecordValue> {
+public interface Crud {
 
-    List<T> fetch(RecordKey key); //retrieve user's named collection
+    List<RecordValue> fetch(RecordKey key); //retrieve user's named collection
 
-    long save(RecordKey key, T record); //add to user's collection
+    long save(RecordEntity record); //add to user's collection
 
-    int update(T record);  //update in user's collection
+    int update(RecordEntity record);  //update in user's collection
 
-    int delete(Long id); //remove from user's collection
+    int delete(RecordKey key); //remove from user's collection
 }
