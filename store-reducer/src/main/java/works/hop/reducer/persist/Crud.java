@@ -4,11 +4,11 @@ import java.util.List;
 
 public interface Crud<T extends RecordValue> {
 
-    List<T> fetchAll(String userKey, String collectionKey);
+    List<T> fetch(RecordKey key); //retrieve user's named collection
 
-    long save(String userKey, String collectionKey, T record);
+    long save(RecordKey key, T record); //add to user's collection
 
-    int update(String userKey, String collectionKey, T record);
+    int update(T record);  //update in user's collection
 
-    int delete(String userKey, String collectionKey, Long id);
+    int delete(Long id); //remove from user's collection
 }

@@ -9,6 +9,6 @@
     <logger name="works.hop.reducer" level="debug"/>
 
     <root level="debug">
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

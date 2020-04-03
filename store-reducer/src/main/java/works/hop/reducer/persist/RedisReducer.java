@@ -1,103 +1,95 @@
 package works.hop.reducer.persist;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.util.SerializationUtils;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 import works.hop.reducer.state.AbstractReducer;
 import works.hop.reducer.state.Action;
 import works.hop.reducer.state.State;
 
-import javax.sql.DataSource;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
-import java.util.Date;
+import java.io.ByteArrayOutputStream;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Optional;
 
-public class RedisReducer<S> extends AbstractReducer<S> implements Crud<RecordValue> {
+public class RedisReducer<S> extends AbstractReducer<Map<String, Map<String, S>>> implements Crud<RecordValue> {
 
-    public static final String FETCH_ALL = "FETCH_ALL";
-    public static final String CREATE_RECORD = "CREATE_RECORD";
-    public static final String UPDATE_RECORD = "UPDATE_RECORD";
-    public static final String DELETE_RECORD = "DELETE_RECORD";
+    public static final String NEXT_ID_KEY = "next_red_store_id";
 
-    private static final Logger LOG = LoggerFactory.getLogger(RedisReducer.class);
-    private final JdbcTemplate template;
+    private final JedisPool pool;
+    private final Kryo kryo;
 
-    public RedisReducer(DataSource ds, String name, S initialState) {
+    public RedisReducer(JedisPool pool, String name, Map<String, Map<String, S>> initialState) {
         super(name, initialState);
-        this.template = new JdbcTemplate(ds);
+        this.pool = pool;
+        this.kryo = new Kryo();
+        this.kryo.register(RecordValue.class);
     }
 
-    @Override
-    public List<RecordValue> fetchAll(String userKey, String collectionKey) {
-        String FETCH_ALL = "select * from tbl_red_store";
-        List<RecordEntity> rows = template.query(FETCH_ALL, (rs, rowNum) ->
-                RecordEntity.builder().id(rs.getLong("data_id")).userKey(rs.getString("user_key"))
-                        .collectionKey(rs.getString("collection_key"))
-                        .dataValue((RecordValue) SerializationUtils.deserialize(rs.getBytes("data_value")))
-                        .dateCreated(new Date(rs.getDate("date_created").getTime()))
-                        .build());
-        return rows.stream().map(row -> {
-            RecordValue data = row.getDataValue();
-            data.setId(row.getId());
-            return data;
-        }).collect(Collectors.toList());
+    private static byte[] encode(Kryo kryo, Object obj) {
+        ByteArrayOutputStream objStream = new ByteArrayOutputStream();
+        Output objOutput = new Output(objStream);
+        kryo.writeClassAndObject(objOutput, obj);
+        objOutput.close();
+        return objStream.toByteArray();
     }
 
-    @Override
-    public long save(String userKey, String collectionKey, RecordValue record) {
-        String CREATE_RECORD = "insert into tbl_red_store (user_key, collection_key, data_value, date_created) values (?, ?, ?, current_timestamp)";
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        int result = template.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(CREATE_RECORD, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, userKey);
-            ps.setString(2, collectionKey);
-            ps.setBytes(3, SerializationUtils.serialize(record));
-            return ps;
-        }, keyHolder);
-        return keyHolder.getKey().longValue();
+    private static <T> T decode(Kryo kryo, byte[] bytes) {
+        return (T) kryo.readClassAndObject(new Input(bytes));
     }
 
-    @Override
-    public int update(String userKey, String collectionKey, RecordValue record) {
-        String UPDATE_RECORD = "update tbl_red_store set data_type = ? where user_key = ? and collection_key = ? and data_value = ?";
-        return template.update(UPDATE_RECORD, userKey, collectionKey, SerializationUtils.serialize(record));
+    private static String createUserCollectionName(RecordKey key) {
+        return String.format("%s:%s", key.getUserKey(), key.getCollectionKey());
     }
 
-    @Override
-    public int delete(String userKey, String collectionKey, Long id) {
-        String DELETE_RECORD = "delete from tbl_red_store where user_key = ? and collection_key = ? and id = ?";
-        return template.update(DELETE_RECORD, userKey, collectionKey, id);
-    }
-
-    @Override
-    public State<S> reduce(State<S> state, Action action) {
-        switch (action.getType().get()) {
-            case "FETCH_ALL":
-                RecordCriteria toFetch = (RecordCriteria) action.getBody();
-                List<RecordValue> records = fetchAll(toFetch.getUserKey(), toFetch.getCollectionKey());
-                return () -> (S) records;
-            case "CREATE_RECORD":
-                RecordEntity toCreate = (RecordEntity) action.getBody();
-                long added = save(toCreate.getUserKey(), toCreate.getCollectionKey(), toCreate.getDataValue());
-                assert added > 0;
-                return () -> (S) fetchAll(toCreate.getUserKey(), toCreate.getCollectionKey());
-            case "REMOVE_TODO":
-                RecordCriteria toDelete = (RecordCriteria) action.getBody();
-                int deleted = delete(toDelete.getUserKey(), toDelete.getCollectionKey(), toDelete.getId());
-                assert deleted == 1;
-                return () -> (S) fetchAll(toDelete.getUserKey(), toDelete.getCollectionKey());
-            case "UPDATE_RECORD":
-                RecordEntity toUpdate = (RecordEntity) action.getBody();
-                int updated = update(toUpdate.getUserKey(), toUpdate.getCollectionKey(), toUpdate.getDataValue());
-                assert updated == 1;
-                return () -> (S) fetchAll(toUpdate.getUserKey(), toUpdate.getCollectionKey());
-            default:
-                return state;
+    private synchronized Long nextId() {
+        try (Jedis jedis = pool.getResource()) {
+            Long id = Long.parseLong(Optional.ofNullable(jedis.get(NEXT_ID_KEY)).orElse("0"));
+            jedis.set(NEXT_ID_KEY, Long.toString(id + 1));
+            return id;
         }
+    }
+
+    @Override
+    public List<RecordValue> fetch(RecordKey key) {
+        return null;
+    }
+
+    @Override
+    public long save(RecordKey key, RecordValue record) {
+        Long id = nextId();
+        key.setId(id);
+        record.setId(id);
+        try (Jedis jedis = pool.getResource()) {
+            synchronized (kryo) {
+                String userCollectionName = createUserCollectionName(key);
+                byte[] userCollection = encode(kryo, userCollectionName);
+                byte[] recordId = encode(kryo, id.toString());
+                byte[] recordsBytes = jedis.hget(userCollection, recordId);
+                List<RecordValue> list = decode(kryo, recordsBytes);
+                list.add(record);
+                byte[] newRecordsBytes = encode(kryo, record);
+                //save updated records
+                jedis.hset(userCollection, recordId, newRecordsBytes);
+            }
+        }
+        return id;
+    }
+
+    @Override
+    public int update(RecordValue record) {
+        return 0;
+    }
+
+    @Override
+    public int delete(Long id) {
+        return 0;
+    }
+
+    @Override
+    public State<Map<String, Map<String, S>>> reduce(State<Map<String, Map<String, S>>> state, Action action) {
+        return null;
     }
 }

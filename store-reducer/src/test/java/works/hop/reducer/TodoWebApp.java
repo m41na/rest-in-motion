@@ -8,15 +8,15 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import works.hop.core.JsonResult;
 import works.hop.reducer.config.PersistTestConfig;
 import works.hop.reducer.persist.JdbcReducer;
-import works.hop.reducer.persist.RecordCriteria;
 import works.hop.reducer.persist.RecordEntity;
+import works.hop.reducer.persist.RecordKey;
 import works.hop.reducer.state.Action;
 import works.hop.reducer.state.ActionCreator;
 import works.hop.reducer.state.DefaultStore;
 import works.hop.reducer.state.Store;
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -35,13 +35,13 @@ public class TodoWebApp {
         final String TODO_LIST = "TODO_LIST";
         ActionCreator actions = new ActionCreator();
         //available actions
-        Function<RecordCriteria, Action<List<Todo>>> fetchAllRecords = actions.create(() -> JdbcReducer.FETCH_ALL);
+        Function<RecordKey, Action<List<Todo>>> fetchAllRecords = actions.create(() -> JdbcReducer.FETCH_ALL);
         Function<RecordEntity, Action<List<RecordEntity>>> createRecord = actions.create(() -> JdbcReducer.CREATE_RECORD);
-        Function<RecordCriteria, Action<List<RecordEntity>>> deleteRecord = actions.create(() -> JdbcReducer.DELETE_RECORD);
+        Function<RecordKey, Action<List<RecordEntity>>> deleteRecord = actions.create(() -> JdbcReducer.DELETE_RECORD);
         Function<RecordEntity, Action<List<RecordEntity>>> updateRecord = actions.create(() -> JdbcReducer.UPDATE_RECORD);
         //create reducer
         Store store = new DefaultStore();
-        store.reducer(TODO_LIST, new JdbcReducer<List<Todo>>(dataSource, TODO_LIST, new ArrayList<>()));
+        store.reducer(TODO_LIST, new JdbcReducer<List<Todo>>(dataSource, TODO_LIST, new HashMap<>()));
         store.subscribe(TODO_LIST, new TodoObserver());
         store.state().forEach(state -> LOGGER.info("updated state - {}", state.get()));
 
@@ -54,7 +54,7 @@ public class TodoWebApp {
         }));
         app.get("/{user}", (req, res, done) -> {
             String userKey = req.param("user");
-            RecordCriteria criteria = RecordCriteria.builder().collectionKey(TODO_LIST).userKey(userKey).build();
+            RecordKey criteria = RecordKey.builder().collectionKey(TODO_LIST).userKey(userKey).build();
             done.resolve(store.dispatch(fetchAllRecords.apply(criteria), state -> {
                 res.json(JsonResult.ok(state.get()));
             }));
@@ -62,7 +62,9 @@ public class TodoWebApp {
         app.post("/{user}", "application/json", "application/json", (req, res, done) -> {
             String userKey = req.param("user");
             Todo todo = req.body(Todo.class);
-            RecordEntity recordEntity = RecordEntity.builder().userKey(userKey).collectionKey(TODO_LIST).dataValue(todo).build();
+            RecordEntity recordEntity = RecordEntity.builder().key(RecordKey.builder().userKey(userKey)
+                    .collectionKey(TODO_LIST).build())
+                    .value(todo).build();
             done.resolve(store.dispatch(createRecord.apply(recordEntity), state -> {
                 res.json(JsonResult.ok(state.get()));
             }));
@@ -70,7 +72,9 @@ public class TodoWebApp {
         app.put("/{user}", (req, res, done) -> {
             String userKey = req.param("user");
             Todo todo = req.body(Todo.class);
-            RecordEntity recordEntity = RecordEntity.builder().userKey(userKey).collectionKey(TODO_LIST).dataValue(todo).build();
+            RecordEntity recordEntity = RecordEntity.builder().key(RecordKey.builder().userKey(userKey)
+                    .collectionKey(TODO_LIST).build())
+                    .value(todo).build();
             done.resolve(store.dispatch(updateRecord.apply(recordEntity), state -> {
                 res.json(JsonResult.ok(state.get()));
             }));
@@ -78,7 +82,7 @@ public class TodoWebApp {
         app.delete("/{user}/{id}", (req, res, done) -> {
             String userKey = req.param("user");
             Long todoId = req.longParam("id");
-            RecordCriteria deleteId = RecordCriteria.builder().id(todoId).userKey(userKey).collectionKey(TODO_LIST).build();
+            RecordKey deleteId = RecordKey.builder().id(todoId).userKey(userKey).collectionKey(TODO_LIST).build();
             done.resolve(store.dispatch(deleteRecord.apply(deleteId), state -> {
                 res.json(JsonResult.ok(state.get()));
             }));
