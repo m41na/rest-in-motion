@@ -49,26 +49,17 @@ public class TodoWebApp {
         Function<RecordEntity, Action<List<RecordEntity>>> createRecord = actions.create(() -> JdbcReducer.CREATE_RECORD);
         Function<RecordKey, Action<List<RecordEntity>>> deleteRecord = actions.create(() -> JdbcReducer.DELETE_RECORD);
         Function<RecordEntity, Action<List<RecordEntity>>> updateRecord = actions.create(() -> JdbcReducer.UPDATE_RECORD);
+
         //create reducer
         Store store = new DefaultStore();
         store.reducer(TODO_LIST, new JdbcReducer<List<Todo>>(dataSource, TODO_LIST, new HashMap<>()));
         store.subscribe(TODO_LIST, observer);
         store.state().forEach(state -> LOGGER.info("updated state - {}", state.get()));
 
+        //create rest api
         Map<String, String> properties = applyDefaults(new Options(), args);
         var app = createServer(properties.get("appctx"), properties, builder -> builder.cors(emptyMap())
-                .servlet("/sse", (config) -> config.setAsyncSupported(true), new EventSourceServlet() {
-                    @Override
-                    protected EventSource newEventSource(HttpServletRequest request) {
-                        return new AppEventSource(request) {
-                            @Override
-                            public void onOpen(Emitter emitter) throws IOException {
-                                super.onOpen(emitter);
-                                observer.onOpen(ObjectMapperSupplier.version2.get(), emitter);
-                            }
-                        };
-                    }
-                }).build());
+                .sse("/sse", (config) -> config.setAsyncSupported(true), observer).build());
         app.before((req, res, done) -> System.out.println("PRINT BEFORE ALL /"));
         app.before("get", "/", (req, res, done) -> System.out.println("PRINT BEFORE GET /"));
         app.get("/", (req, res, done) -> done.resolve(() -> {
