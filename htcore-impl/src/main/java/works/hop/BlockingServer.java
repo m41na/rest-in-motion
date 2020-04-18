@@ -26,8 +26,7 @@ public class BlockingServer {
                         String line;
                         while ((line = in.readLine()) != null) {
                             request.append(line);
-                            System.out.println(line);
-                            if (line.contains("\r\n")) {
+                            if (line.equals("")) {
                                 break;
                             }
                         }
