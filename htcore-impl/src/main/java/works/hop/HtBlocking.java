@@ -49,27 +49,27 @@ public class HtBlocking {
     }
 
     public static void example2() throws IOException, InterruptedException {
+        int port = 8080;
         SocketConfig socketConfig = SocketConfig.custom()
                 .setSoTimeout(15000)
                 .setTcpNoDelay(true)
                 .build();
+
+        UriHttpRequestHandlerMapper handlerMapper = new UriHttpRequestHandlerMapper();
+        handlerMapper.register("*", requestHandler);
+
         final HttpServer server = ServerBootstrap.bootstrap()
-                .setListenerPort(8080)
+                .setListenerPort(port)
                 .setServerInfo("Test/1.1")
                 .setHttpProcessor(httpProcessor)
                 .setSocketConfig(socketConfig)
                 .setExceptionLogger(new StdErrorExceptionLogger())
-                .registerHandler("*", requestHandler)
+                .setHandlerMapper(handlerMapper)
                 .create();
         server.start();
         server.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                server.shutdown(5, TimeUnit.SECONDS);
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> server.shutdown(5, TimeUnit.SECONDS)));
     }
 
     static class StdErrorExceptionLogger implements ExceptionLogger {

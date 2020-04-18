@@ -69,6 +69,9 @@ public class HtAsync {
                     .build();
         }
 
+        UriHttpAsyncRequestHandlerMapper handlerMapper = new UriHttpAsyncRequestHandlerMapper();
+        handlerMapper.register("*", requestHandler);
+
         IOReactorConfig config = IOReactorConfig.custom()
                 .setTcpNoDelay(true)
                 .setSoTimeout(5000)
@@ -82,18 +85,13 @@ public class HtAsync {
                 .setIOReactorConfig(config)
                 //.setSslContext(sslContext)
                 .setExceptionLogger(ExceptionLogger.STD_ERR)
-                .registerHandler("*", requestHandler)
+                .setHandlerMapper(handlerMapper)
                 .create();
 
         server.start();
         server.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                server.shutdown(5, TimeUnit.SECONDS);
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> server.shutdown(5, TimeUnit.SECONDS)));
     }
 
     public static void main(String[] args) throws IOException, InterruptedException, UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
