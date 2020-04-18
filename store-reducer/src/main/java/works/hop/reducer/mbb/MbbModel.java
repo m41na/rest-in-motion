@@ -24,29 +24,29 @@ public class MbbModel implements Serializable {
     private byte[] recordValueOffset = new byte[8]; //long
     private byte[] recordValueLength = new byte[4]; //int
 
-    public void id(long id){
+    public void id(long id) {
         this.id = longToBytes(id);
     }
 
-    public void userKey(String user){
+    public void userKey(String user) {
         byte[] src = user.getBytes();
         System.arraycopy(src, 0, userKey, 0, src.length);
     }
 
-    public void collectionKey(String collection){
+    public void collectionKey(String collection) {
         byte[] src = collection.getBytes();
         System.arraycopy(src, 0, userKey, 0, src.length);
     }
 
-    public void dateCreated(Date date){
+    public void dateCreated(Date date) {
         this.dateCreated = longToBytes(date.getTime());
     }
 
-    public void recordValueOffset(long offset){
+    public void recordValueOffset(long offset) {
         this.recordValueOffset = longToBytes(offset);
     }
 
-    public void recordValueLength(int length){
+    public void recordValueLength(int length) {
         this.recordValueLength = intToBytes(length);
     }
 }

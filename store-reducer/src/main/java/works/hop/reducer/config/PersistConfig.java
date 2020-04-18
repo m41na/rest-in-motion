@@ -27,14 +27,30 @@ public class PersistConfig {
     String pass;
     @Value("${jdbc.driverClassName}")
     String driver;
+    @Value("${local.jdbc.url}")
+    String localUrl;
+    @Value("${local.jdbc.username}")
+    String localUser;
+    @Value("${local.jdbc.password}")
+    String localPass;
 
-    @Bean
-    public DataSource dataSource() {
+    @Bean(name = "remoteDS")
+    public DataSource remoteDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(driver);
         dataSource.setUrl(url);
         dataSource.setUsername(user);
         dataSource.setPassword(pass);
+        return dataSource;
+    }
+
+    @Bean(name = "localDS")
+    public DataSource localDataSource() {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(driver);
+        dataSource.setUrl(localUrl);
+        dataSource.setUsername(localUser);
+        dataSource.setPassword(localPass);
         return dataSource;
     }
 

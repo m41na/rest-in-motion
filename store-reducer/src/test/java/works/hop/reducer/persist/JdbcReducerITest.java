@@ -1,10 +1,10 @@
 package works.hop.reducer.persist;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import works.hop.reducer.Todo;
@@ -15,17 +15,15 @@ import works.hop.reducer.state.Store;
 
 import javax.sql.DataSource;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = PersistTestConfig.class)
-@Ignore("use for integration testing")
 public class JdbcReducerITest {
 
+    @Qualifier("localDS")
     @Autowired
     DataSource dataSource;
 
@@ -37,10 +35,12 @@ public class JdbcReducerITest {
     JdbcReducer<List<Todo>> reducer;
     Store store;
     JdbcObserver observer;
+    JdbcState<List<Todo>> state;
 
     @Before
     public void setUp() {
-        reducer = new JdbcReducer<>(dataSource, key, new HashMap<>());
+        state = new JdbcState<>(dataSource);
+        reducer = new JdbcReducer<>(key, state);
         observer = new JdbcObserver();
         store = new DefaultStore();
         store.reducer(key, reducer);
@@ -49,8 +49,12 @@ public class JdbcReducerITest {
 
     @Test
     public void fetchAll() {
-        List<RecordValue> list = reducer.fetch(RecordKey.builder().userKey(user).collectionKey(collection).build());
+        RecordKey fetchKey = RecordKey.builder().userKey(user).collectionKey(collection).build();
+        //using state
+        List<RecordValue> list = state.fetch(fetchKey);
         assertTrue(list.size() == 1);
+        //using store dispatch
+        store.dispatch(creator.create(() -> "FETCH_RECORDS").apply(fetchKey));
     }
 
     @Test
@@ -58,10 +62,7 @@ public class JdbcReducerITest {
         Todo todo = Todo.builder().task("bread").completed(false).build();
         RecordEntity record = RecordEntity.builder().key(RecordKey.builder().userKey(user).collectionKey(collection).build())
                 .dateCreated(new Date()).value(todo).build();
-        store.dispatch(creator.create(() -> "CREATE_RECORD").apply(record), state -> {
-            List<Todo> list = state.getList(state.getMap(state.getMap(), user), collection);
-            assertEquals(1, list.size());
-        });
+        store.dispatch(creator.create(() -> "CREATE_RECORD").apply(record));
     }
 
     @Test

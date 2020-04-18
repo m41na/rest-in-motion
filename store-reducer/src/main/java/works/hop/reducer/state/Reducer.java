@@ -5,15 +5,21 @@ import io.reactivex.ObservableEmitter;
 
 import java.util.function.Function;
 
-public interface Reducer<S> extends Function<Action, State<S>> {
+public interface Reducer<S> extends Function<Action, S> {
 
     String key();
 
     State<S> state();
 
-    void nextState(State<S> state);
+    default void nextState(S state) {
+        nextState(null, null, state);
+    }
 
-    State<S> reduce(State<S> state, Action action);
+    void nextState(String user, String collection, S state);
+
+    S reduce(State<S> state, Action action);
+
+    Object compute(Action action);
 
     Observable<Action> observable();
 
@@ -24,10 +30,10 @@ public interface Reducer<S> extends Function<Action, State<S>> {
     void publisher(ObservableEmitter<Action> emitter);
 
     @Override
-    default State<S> apply(Action action) {
+    default S apply(Action action) {
         synchronized (this) {
             State<S> before = state();
-            State<S> after = reduce(before, action);
+            S after = reduce(before, action);
             nextState(after);
             publisher().onNext(action);
             return after;

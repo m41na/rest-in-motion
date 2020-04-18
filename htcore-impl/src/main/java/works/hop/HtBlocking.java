@@ -51,7 +51,7 @@ public class HtBlocking {
     public static void example2() throws IOException, InterruptedException {
         int port = 8080;
         SocketConfig socketConfig = SocketConfig.custom()
-                .setSoTimeout(15000)
+                .setSoTimeout(5000)
                 .setTcpNoDelay(true)
                 .build();
 

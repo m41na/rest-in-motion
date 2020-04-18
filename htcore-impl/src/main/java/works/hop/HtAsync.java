@@ -42,13 +42,13 @@ public class HtAsync {
 
         public void handle(
                 final HttpRequest request,
-                final HttpAsyncExchange httpexchange,
+                final HttpAsyncExchange httpExchange,
                 final HttpContext context) throws HttpException, IOException {
-            HttpResponse response = httpexchange.getResponse();
+            HttpResponse response = httpExchange.getResponse();
             response.setStatusCode(HttpStatus.SC_OK);
             response.setEntity(new StringEntity("message from async request handler",
                     ContentType.TEXT_PLAIN));
-            httpexchange.submitResponse(new BasicAsyncResponseProducer(response));
+            httpExchange.submitResponse(new BasicAsyncResponseProducer(response));
         }
 
     };

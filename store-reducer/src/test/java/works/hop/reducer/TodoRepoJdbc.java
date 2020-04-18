@@ -1,6 +1,7 @@
 package works.hop.reducer;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -15,7 +16,7 @@ public class TodoRepoJdbc implements TodoService {
 
     private final JdbcTemplate template;
 
-    public TodoRepoJdbc(@Autowired DataSource dataSource) {
+    public TodoRepoJdbc(@Autowired @Qualifier("remoteDS") DataSource dataSource) {
         this.template = new JdbcTemplate(dataSource);
     }
 

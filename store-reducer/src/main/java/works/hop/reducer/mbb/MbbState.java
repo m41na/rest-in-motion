@@ -74,13 +74,6 @@ public class MbbState implements State<Map<String, Map<String, List<RecordEntity
         };
     }
 
-    private int bytesToInt(byte[] bytes, int i) {
-        return ((bytes[0] & 0xFF) << 24) |
-                ((bytes[1] & 0xFF) << 16) |
-                ((bytes[2] & 0xFF) << 8 ) |
-                ((bytes[3] & 0xFF) << 0 );
-    }
-
     public static Path loadFileFromFS(String file) {
         return Path.of(System.getProperty("user.home"), "data", file);
     }
@@ -167,6 +160,13 @@ public class MbbState implements State<Map<String, Map<String, List<RecordEntity
         }
     }
 
+    private int bytesToInt(byte[] bytes, int i) {
+        return ((bytes[0] & 0xFF) << 24) |
+                ((bytes[1] & 0xFF) << 16) |
+                ((bytes[2] & 0xFF) << 8) |
+                ((bytes[3] & 0xFF) << 0);
+    }
+
     public void serializeEntity(RecordEntity entity) throws IOException {
         try (RandomAccessFile raBlob = new RandomAccessFile(loadFileFromFS(blobFile).toFile(), "rw");
              RandomAccessFile raFile = new RandomAccessFile(loadFileFromFS(fileName).toFile(), "rw")) {
@@ -213,12 +213,12 @@ public class MbbState implements State<Map<String, Map<String, List<RecordEntity
                 record = (MbbModel) SerializationUtils.deserialize(modelBuffer.array());
                 modelBuffer.clear();
                 offset += size;
-                if(bytesToLong(record.getId(), 0) == key.getId().longValue()){
+                if (bytesToLong(record.getId(), 0) == key.getId().longValue()) {
                     break;
                 }
             }
 
-            if(record != null){
+            if (record != null) {
                 raBlob.seek(bytesToLong(record.getRecordValueOffset(), 0)); //point to start of record
                 ByteBuffer recordBuffer = ByteBuffer.allocate(bytesToInt(record.getRecordValueLength(), 0));
                 int len = raBlobChannel.read(recordBuffer);
@@ -235,7 +235,12 @@ public class MbbState implements State<Map<String, Map<String, List<RecordEntity
     }
 
     @Override
-    public Map<String, Map<String, List<RecordEntity>>> get() {
+    public Map<String, Map<String, List<RecordEntity>>> apply(String s, String s2) {
         return null;
+    }
+
+    @Override
+    public void accept(String user, String collection, Map<String, Map<String, List<RecordEntity>>> state) {
+
     }
 }

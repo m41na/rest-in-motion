@@ -1,6 +1,5 @@
 package works.hop;
 
-import org.objectweb.asm.*;
 import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;

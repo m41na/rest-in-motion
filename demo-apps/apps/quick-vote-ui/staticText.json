@@ -1,0 +1,54 @@
+{
+    "Header": {
+        "title": "Quick Vote",
+        "links": [
+            {
+                "href": "#home-section",
+                "text": "Home"
+            },
+            {
+                "href": "/organizer",
+                "text": "Organizer"
+            },
+            {
+                "href": "/organize",
+                "text": "Organize"
+            },
+            {
+                "href": "/participants",
+                "text": "Scrum"
+            },
+            {
+                "href": "/participate",
+                "text": "Join"
+            },
+            {
+                "href": "/participant",
+                "text": "Participate"
+            }
+        ]
+    },
+    "Footer": {
+        "note": "Place sticky footer content here."
+    },
+    "mockData": {
+        "findByOrganizer": [
+            {
+                "id": 100,
+                "organizer": "steve@mikes.com",
+                "title": "The 3 musketeers",
+                "choices": ["1", "2", "3", "5", "8", "13"],
+                "participants": ["julian", "moses", "daniel", "netsa", "kumish", "dustin", "lakhas"],
+                "votes": []
+            },
+            {
+                "id": 101,
+                "organizer": "james@mikes.com",
+                "title": "The 9 lives",
+                "choices": ["A", "C", "E", "G", "I", "K"],
+                "participants": ["matts", "gwen", "garcia", "meja", "kamash", "greg", "kate"],
+                "votes": []
+            }
+        ]
+    }
+}

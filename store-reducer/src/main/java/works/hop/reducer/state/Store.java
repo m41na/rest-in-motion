@@ -13,9 +13,11 @@ public interface Store {
 
     void dispatch(Action action);
 
-    void dispatch(CompletableFuture<Action> future);
+    void dispatchAsync(CompletableFuture<Action> future);
 
-    CompletableFuture<Boolean> dispatch(Action action, Consumer<State> state);
+    <S> CompletableFuture<Boolean> dispatchAsync(Action action, Consumer<S> consumer);
+
+    <S> CompletableFuture<Boolean> dispatchQuery(Action action, Consumer<S> consumer);
 
     void subscribe(String key, Observer<Action> observer);
 

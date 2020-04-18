@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static java.util.Collections.binarySearch;
 import static java.util.Collections.emptyMap;
 import static org.mockito.Mockito.mock;
 import static works.hop.jetty.JettyStartable.createServer;

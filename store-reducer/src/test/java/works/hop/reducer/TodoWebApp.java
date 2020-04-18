@@ -1,29 +1,16 @@
 package works.hop.reducer;
 
 import org.apache.commons.cli.Options;
-import org.eclipse.jetty.servlets.EventSource;
-import org.eclipse.jetty.servlets.EventSourceServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import works.hop.core.JsonResult;
-import works.hop.jetty.builder.ObjectMapperSupplier;
-import works.hop.jetty.sse.AppEventSource;
 import works.hop.reducer.config.PersistTestConfig;
-import works.hop.reducer.persist.JdbcObserver;
-import works.hop.reducer.persist.JdbcReducer;
-import works.hop.reducer.persist.RecordEntity;
-import works.hop.reducer.persist.RecordKey;
-import works.hop.reducer.state.Action;
-import works.hop.reducer.state.ActionCreator;
-import works.hop.reducer.state.DefaultStore;
-import works.hop.reducer.state.Store;
+import works.hop.reducer.persist.*;
+import works.hop.reducer.state.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -38,11 +25,13 @@ public class TodoWebApp {
 
     public static void main(String[] args) {
         ApplicationContext ctx = new AnnotationConfigApplicationContext(PersistTestConfig.class);
-        DataSource dataSource = ctx.getBean(DataSource.class);
+        DataSource remoteDataSource = ctx.getBean("remoteDS", DataSource.class);
+        DataSource dataSource = ctx.getBean("localDS", DataSource.class);
 
         final String TODO_LIST = "TODO_LIST";
         ActionCreator actions = new ActionCreator();
         JdbcObserver observer = new JdbcObserver();
+        State<List<Todo>> states = new JdbcState<>(dataSource);
 
         //available actions
         Function<RecordKey, Action<List<Todo>>> fetchAllRecords = actions.create(() -> JdbcReducer.FETCH_ALL);
@@ -52,9 +41,9 @@ public class TodoWebApp {
 
         //create reducer
         Store store = new DefaultStore();
-        store.reducer(TODO_LIST, new JdbcReducer<List<Todo>>(dataSource, TODO_LIST, new HashMap<>()));
+        store.reducer(TODO_LIST, new JdbcReducer<>(TODO_LIST, states));
         store.subscribe(TODO_LIST, observer);
-        store.state().forEach(state -> LOGGER.info("updated state - {}", state.get()));
+        store.state().forEach(state -> LOGGER.info("updated state - {}", state));
 
         //create rest api
         Map<String, String> properties = applyDefaults(new Options(), args);
@@ -68,7 +57,7 @@ public class TodoWebApp {
         app.get("/{user}", (req, res, done) -> {
             String userKey = req.param("user");
             RecordKey criteria = RecordKey.builder().collectionKey(TODO_LIST).userKey(userKey).build();
-            done.resolve(store.dispatch(fetchAllRecords.apply(criteria), state -> res.json(JsonResult.ok(state.get()))));
+            done.resolve(store.dispatchAsync(fetchAllRecords.apply(criteria), state -> res.json(JsonResult.ok(state))));
         });
         app.post("/{user}", "application/json", "application/json", (req, res, done) -> {
             String userKey = req.param("user");
@@ -76,7 +65,7 @@ public class TodoWebApp {
             RecordEntity recordEntity = RecordEntity.builder().key(RecordKey.builder().userKey(userKey)
                     .collectionKey(TODO_LIST).build())
                     .value(todo).build();
-            done.resolve(store.dispatch(createRecord.apply(recordEntity), state -> res.json(JsonResult.ok(state.get()))));
+            done.resolve(store.dispatchAsync(createRecord.apply(recordEntity), state -> res.json(JsonResult.ok(state))));
         });
         app.put("/{user}", (req, res, done) -> {
             String userKey = req.param("user");
@@ -84,13 +73,13 @@ public class TodoWebApp {
             RecordEntity recordEntity = RecordEntity.builder().key(RecordKey.builder().id(todo.id).userKey(userKey)
                     .collectionKey(TODO_LIST).build())
                     .value(todo).build();
-            done.resolve(store.dispatch(updateRecord.apply(recordEntity), state -> res.json(JsonResult.ok(state.get()))));
+            done.resolve(store.dispatchAsync(updateRecord.apply(recordEntity), state -> res.json(JsonResult.ok(state))));
         });
         app.delete("/{user}/{id}", (req, res, done) -> {
             String userKey = req.param("user");
             Long todoId = req.longParam("id");
             RecordKey deleteId = RecordKey.builder().id(todoId).userKey(userKey).collectionKey(TODO_LIST).build();
-            done.resolve(store.dispatch(deleteRecord.apply(deleteId), state -> res.json(JsonResult.ok(state.get()))));
+            done.resolve(store.dispatchAsync(deleteRecord.apply(deleteId), state -> res.json(JsonResult.ok(state))));
         });
         app.after("get", "/", (req, res, done) -> System.out.println("PRINT AFTER GET /"));
         app.after((req, res, done) -> System.out.println("PRINT AFTER ALL /"));

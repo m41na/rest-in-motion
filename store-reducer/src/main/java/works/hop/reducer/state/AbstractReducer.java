@@ -10,9 +10,9 @@ public abstract class AbstractReducer<S> implements Reducer<S> {
     private Observable<Action> observable;
     private ObservableEmitter<Action> publisher;
 
-    public AbstractReducer(String name, S initialState) {
+    public AbstractReducer(String name, State<S> initialState) {
         this.name = name;
-        this.state = () -> initialState;
+        this.state = initialState;
     }
 
     @Override
@@ -26,8 +26,8 @@ public abstract class AbstractReducer<S> implements Reducer<S> {
     }
 
     @Override
-    public void nextState(State<S> state) {
-        this.state = state;
+    public void nextState(String user, String collection, S state) {
+        this.state.accept(user, collection, state);
     }
 
     @Override

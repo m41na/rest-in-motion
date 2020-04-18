@@ -34,17 +34,27 @@ public class DefaultStore implements Store {
     }
 
     @Override
-    public CompletableFuture<Boolean> dispatch(Action action, Consumer<State> consumer) {
+    public <S> CompletableFuture<Boolean> dispatchAsync(Action action, Consumer<S> consumer) {
         reducers.entrySet().stream().forEach((entry) -> {
             String key = entry.getKey();
-            State newState = reducers.get(key).apply(action);
+            S newState = (S) reducers.get(key).apply(action);
             consumer.accept(newState);
         });
         return CompletableFuture.completedFuture(true);
     }
 
     @Override
-    public void dispatch(CompletableFuture<Action> future) {
+    public <S> CompletableFuture<Boolean> dispatchQuery(Action action, Consumer<S> consumer) {
+        reducers.entrySet().stream().forEach((entry) -> {
+            String key = entry.getKey();
+            S computedState = (S) reducers.get(key).compute(action);
+            consumer.accept(computedState);
+        });
+        return CompletableFuture.completedFuture(true);
+    }
+
+    @Override
+    public void dispatchAsync(CompletableFuture<Action> future) {
         future.thenAccept(action -> dispatch(action));
     }
 

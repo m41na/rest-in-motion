@@ -2,10 +2,11 @@ package works.hop.reducer.state;
 
 import io.reactivex.Observer;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class CombineReducers {
+public class CombineReducers implements Iterable<State>{
 
     private final Store store;
 
@@ -19,5 +20,10 @@ public class CombineReducers {
 
     public void dispatcher(Consumer<Store> dispatch) {
         dispatch.accept(store);
+    }
+
+    @Override
+    public Iterator<State> iterator() {
+        return store.state().iterator();
     }
 }

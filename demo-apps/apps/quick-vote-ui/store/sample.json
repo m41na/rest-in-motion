@@ -1,0 +1,131 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "firstName": "Steve",
+      "lastName": "Mikes",
+      "emailAddress": "steve.mikes@email.com",
+      "phoneNumber": "569-609-4545",
+      "dateCreated": "2020-02-03T00:00:00.000+0000"
+    },
+    {
+      "id": 2,
+      "firstName": "James",
+      "lastName": "Mwai",
+      "emailAddress": "james.mwai@email.com",
+      "phoneNumber": "544-567-8765",
+      "dateCreated": "2020-03-03T00:00:00.000+0000"
+    },
+    {
+      "id": 2,
+      "firstName": "Jackie",
+      "lastName": "Welsh",
+      "emailAddress": "jackie.welsh@email.com",
+      "phoneNumber": "445-789-8765",
+      "dateCreated": "2020-04-03T00:00:00.000+0000"
+    }
+  ],
+  "teams": [
+    {
+      "id": 1,
+      "organizer": "steve.mikes@email.com",
+      "organization": "watson inc",
+      "title": "daily grind",
+      "dateCreated": "2020-04-03T00:00:00.000+0000"
+    },
+    {
+      "id": 2,
+      "organizer": "james.mwai@email.com",
+      "organization": "sandy co",
+      "title": "morning grind",
+      "dateCreated": "2020-04-03T00:00:00.000+0000"
+    },
+    {
+      "id": 3,
+      "organizer": "steve.mikes@email.com",
+      "organization": "watson inc",
+      "title": "spring recap",
+      "dateCreated": "2020-04-03T00:00:00.000+0000"
+    }
+  ],
+  "scrums": [
+    {
+      "teamId": 1,
+      "name": "magic_happens_here",
+      "topic": "all the odds",
+      "choices": [
+        "1",
+        "3",
+        "5",
+        "7",
+        "9"
+      ],
+      "participants": [
+        "benny",
+        "mirez",
+        "gaitho"
+      ]
+    },
+    {
+      "teamId": 2,
+      "name": "morning_glory",
+      "topic": "all the odds",
+      "choices": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e"
+      ],
+      "participants": [
+        "jackie",
+        "kate",
+        "rosie"
+      ]
+    },
+    {
+      "teamId": 3,
+      "name": "magic_happens_here",
+      "topic": "all the odds",
+      "choices": [
+        "1",
+        "3",
+        "5",
+        "7",
+        "9"
+      ],
+      "participants": [
+        "benny",
+        "mirez",
+        "almaz",
+        "jessie"
+      ]
+    }
+  ],
+  "votes": [
+    {
+      "locked": false,
+      "participant": "benny",
+      "scrumKey": "1:magic_happens_here",
+      "timeVoted": 1586791611750,
+      "topic": "raining tacos",
+      "value": "9"
+    },
+    {
+      "locked": false,
+      "participant": "mirez",
+      "scrumKey": "1:magic_happens_here",
+      "timeVoted": 1586791611751,
+      "topic": "raining tacos",
+      "value": "7"
+    },
+    {
+      "locked": false,
+      "participant": "gaitho",
+      "scrumKey": "1:magic_happens_here",
+      "timeVoted": 1586791611752,
+      "topic": "raining tacos",
+      "value": "5"
+    }
+  ]
+}

@@ -5,7 +5,6 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlets.EventSource;
 import org.eclipse.jetty.servlets.EventSourceServlet;
-import works.hop.core.Restful;
 import works.hop.jetty.filter.HandlerFilter;
 import works.hop.jetty.servlet.JettyServlet;
 import works.hop.jetty.servlet.ServletConfig;

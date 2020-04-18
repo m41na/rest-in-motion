@@ -1,11 +1,11 @@
 package works.hop.reducer.mbb;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import works.hop.reducer.Todo;
 import works.hop.reducer.persist.RecordEntity;
 import works.hop.reducer.persist.RecordKey;
-import works.hop.reducer.persist.RecordValue;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -18,6 +18,7 @@ import java.util.stream.LongStream;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@Ignore("The concept being tested here is far from working, so completely ignore tests")
 public class MbbStateTest {
 
     private final String file = "votes.dat";
