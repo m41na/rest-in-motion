@@ -1,4 +1,4 @@
-package works.hop;
+package works.hop.play;
 
 import java.io.IOException;
 import java.io.OutputStream;

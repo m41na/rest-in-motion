@@ -1,4 +1,4 @@
-package works.hop;
+package works.hop.play;
 
 import org.apache.http.*;
 import org.apache.http.entity.ContentType;
@@ -31,7 +31,6 @@ public class AppTest {
         System.out.println(response.getStatusLine().getStatusCode());
         System.out.println(response.getStatusLine().getReasonPhrase());
         System.out.println(response.getStatusLine().toString());
-
     }
 
     @Test

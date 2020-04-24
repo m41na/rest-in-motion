@@ -1,4 +1,4 @@
-package works.hop;
+package works.hop.play;
 
 import java.io.BufferedReader;
 import java.io.IOException;

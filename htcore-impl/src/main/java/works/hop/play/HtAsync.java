@@ -1,4 +1,4 @@
-package works.hop;
+package works.hop.play;
 
 import org.apache.http.*;
 import org.apache.http.entity.ContentType;
@@ -83,7 +83,7 @@ public class HtAsync {
                 .setListenerPort(port)
                 .setServerInfo("Test/1.1")
                 .setIOReactorConfig(config)
-                //.setSslContext(sslContext)
+                .setSslContext(sslContext)
                 .setExceptionLogger(ExceptionLogger.STD_ERR)
                 .setHandlerMapper(handlerMapper)
                 .create();

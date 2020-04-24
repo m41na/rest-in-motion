@@ -1,5 +1,7 @@
 package works.hop;
 
+import org.objectweb.asm.*;
+
 import static org.objectweb.asm.Opcodes.ASM6;
 
 public class ClassPrinter extends ClassVisitor {

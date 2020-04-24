@@ -1,4 +1,4 @@
-package works.hop;
+package works.hop.play;
 
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;

@@ -1,4 +1,4 @@
-package works.hop;
+package works.hop.play;
 
 import org.apache.http.*;
 import org.apache.http.config.SocketConfig;
