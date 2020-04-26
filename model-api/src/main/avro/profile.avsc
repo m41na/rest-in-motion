@@ -1,0 +1,32 @@
+{
+   "type" : "record",
+   "namespace" : "works.hop.model.avro",
+   "name" : "AProfile",
+   "fields" : [
+       { "name" : "firstName", "type" : ["null", "string"] },
+       { "name" : "lastName", "type" : ["null", "string"] },
+       { "name" : "age", "type" : ["null", "int"] },
+       { "name" : "height", "type" : ["null", "float"] },
+       { "name" : "registered", "type" : ["null", "boolean"] },
+       {
+            "name": "phoneNumbers",
+            "type" : {
+                "type": "array",
+                "items": [
+                    {
+                        "name": "APhone",
+                        "type": "record",
+                        "fields": [
+                            { "name" : "type" , "type" : "string" },
+                            { "name" : "number" , "type" : "string" }
+                        ]
+                    }
+                ]
+            }
+       },
+       { "name" : "integers", "type" : { "type": "array", "items" : "int" } },
+       { "name" : "strings", "type" : { "type": "array", "items" : "string" }},
+       { "name" : "floats", "type" : { "type": "array", "items" : "float" } },
+       { "name" : "booleans", "type" : { "type": "array", "items" : "boolean" } }
+   ]
+}

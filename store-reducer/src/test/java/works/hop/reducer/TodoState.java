@@ -14,12 +14,12 @@ public class TodoState implements State<List<Todo>> {
     }
 
     @Override
-    public List<Todo> apply(String user, String collection) {
+    public List<Todo> apply(String recordId) {
         return this.state;
     }
 
     @Override
-    public void accept(String user, String collection, List<Todo> state) {
+    public void accept(String recordId, List<Todo> state) {
         this.state = state;
     }
 }

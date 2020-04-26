@@ -2,9 +2,9 @@ package works.hop.reducer.persist;
 
 import java.io.Serializable;
 
-public interface RecordValue extends Serializable {
+public interface RecordValue<T> extends Serializable {
 
-    Long getId();
+    T getRecordId();
 
-    void setId(Long id);
+    void setRecordId(T id);
 }

@@ -1,0 +1,10 @@
+{
+    "type": "record",
+    "namespace" : "works.hop.model.avro",
+    "name": "ATask",
+    "fields": [
+        { "name" : "id" , "type" : "long" },
+        { "name" : "task" , "type" : "string" },
+        { "name" : "completed" , "type" : "boolean" }
+    ]
+}

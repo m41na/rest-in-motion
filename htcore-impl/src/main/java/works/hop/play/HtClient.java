@@ -3,7 +3,6 @@ package works.hop.play;
 import org.apache.http.*;
 import org.apache.http.impl.DefaultBHttpClientConnection;
 import org.apache.http.message.BasicHttpRequest;
-import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.net.Socket;

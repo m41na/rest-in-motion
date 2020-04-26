@@ -104,9 +104,9 @@ public class MbbStateTest {
     @Test
     public void testSerDeserializeEntity() throws IOException {
         RecordEntity entity = RecordEntity.builder()
-                .key(RecordKey.builder().id(1l).collectionKey("todos").userKey("steve").build())
+                .key(RecordKey.builder().recordId(1l).collectionKey("todos").userKey("steve").build())
                 .dateCreated(new Date())
-                .value(Todo.builder().task("bread").completed(false).id(1l).build())
+                .value(Todo.builder().task("bread").completed(false).id("100").build())
                 .build();
         state.serializeEntity(entity);
         //read back entity

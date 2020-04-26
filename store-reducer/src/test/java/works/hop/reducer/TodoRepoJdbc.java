@@ -3,8 +3,6 @@ package works.hop.reducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -24,7 +22,7 @@ public class TodoRepoJdbc implements TodoService {
     public List<Todo> fetchAll() {
         String FETCH_ALL_TODO = "select * from tbl_todos";
         return template.query(FETCH_ALL_TODO, (rs, rowNum) ->
-                Todo.builder().id(rs.getLong("id"))
+                Todo.builder().id(rs.getString("id"))
                         .task(rs.getString("task"))
                         .completed(rs.getBoolean("completed"))
                         .build());
@@ -32,14 +30,15 @@ public class TodoRepoJdbc implements TodoService {
 
     @Override
     public Todo save(String task) {
-        String CREATE_TODO = "insert into tbl_todos (task) values (?)";
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+        String id = Long.valueOf(System.nanoTime()).toString();
+        String CREATE_TODO = "insert into tbl_todos (id, task) values (?, ?)";
         template.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(CREATE_TODO);
             ps.setString(1, task);
+            ps.setString(2, task);
             return ps;
-        }, keyHolder);
-        return Todo.builder().id(keyHolder.getKey().longValue()).task(task).completed(false).build();
+        });
+        return Todo.builder().id(id).task(task).completed(false).build();
     }
 
     @Override

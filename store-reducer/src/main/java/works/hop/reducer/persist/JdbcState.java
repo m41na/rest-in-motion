@@ -1,8 +1,6 @@
 package works.hop.reducer.persist;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.util.SerializationUtils;
 import works.hop.reducer.state.State;
 
@@ -26,7 +24,7 @@ public class JdbcState<S> implements Crud, State<S> {
         List<RecordEntity> rows = template.query(FETCH_QUERY, new Object[]{key.getUserKey(), key.getCollectionKey()}, (rs, rowNum) ->
                 RecordEntity.builder()
                         .key(RecordKey.builder()
-                                .id(rs.getLong("data_id"))
+                                .recordId(rs.getString("data_id"))
                                 .userKey(rs.getString("user_key"))
                                 .collectionKey(rs.getString("collection_key")).build())
                         .value((RecordValue) SerializationUtils.deserialize(rs.getBytes("data_value")))
@@ -34,51 +32,51 @@ public class JdbcState<S> implements Crud, State<S> {
                         .build());
         return rows.stream().map(row -> {
             RecordValue data = row.getValue();
-            data.setId(row.getKey().getId());
+            data.setRecordId(row.getKey().getRecordId());
             return data;
         }).collect(Collectors.toList());
     }
 
     @Override
-    public RecordValue fetch(long id) {
+    public RecordValue fetch(String recordId) {
         String FETCH_BY_ID_QUERY = "select data_value from tbl_red_store where data_id = ?";
-        return template.queryForObject(FETCH_BY_ID_QUERY, new Object[]{id}, (rs, rowNum) ->
+        return template.queryForObject(FETCH_BY_ID_QUERY, new Object[]{recordId}, (rs, rowNum) ->
                 (RecordValue) SerializationUtils.deserialize(rs.getBytes("data_value")));
     }
 
     @Override
-    public long save(RecordEntity record) {
-        String CREATE_QUERY = "insert into tbl_red_store (user_key, collection_key, data_value, date_created) values (?, ?, ?, current_timestamp)";
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        template.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(CREATE_QUERY, new String[]{"data_id"}); //or Statement.RETURN_GENERATED_KEYS
-            ps.setString(1, record.getKey().getUserKey());
-            ps.setString(2, record.getKey().getCollectionKey());
-            ps.setBytes(3, SerializationUtils.serialize(record.getValue()));
+    public String save(RecordEntity record) {
+        String CREATE_QUERY = "insert into tbl_red_store (data_id, user_key, collection_key, data_value, date_created) values (?, ?, ?, ?, current_timestamp)";
+        int count = template.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(CREATE_QUERY);
+            ps.setString(1, (String) record.getKey().getRecordId());
+            ps.setString(2, record.getKey().getUserKey());
+            ps.setString(3, record.getKey().getCollectionKey());
+            ps.setBytes(4, SerializationUtils.serialize(record.getValue()));
             return ps;
-        }, keyHolder);
-        return keyHolder.getKey().longValue();
+        });
+        return count > 0 ? (String) record.getKey().getRecordId() : null;
     }
 
     @Override
     public int update(RecordEntity record) {
         String UPDATE_QUERY = "update tbl_red_store set data_value = ? where data_id = ?";
-        return template.update(UPDATE_QUERY, SerializationUtils.serialize(record.getValue()), record.getKey().getId());
+        return template.update(UPDATE_QUERY, SerializationUtils.serialize(record.getValue()), record.getKey().getRecordId());
     }
 
     @Override
     public int delete(RecordKey key) {
         String DELETE_QUERY = "delete from tbl_red_store where data_id = ?";
-        return template.update(DELETE_QUERY, key.getId());
+        return template.update(DELETE_QUERY, key.getRecordId());
     }
 
     @Override
-    public S apply(String user, String collection) {
-        return (S) fetch(RecordKey.builder().userKey(user).collectionKey(collection).build());
+    public S apply(String recordId) {
+        return (S) fetch(recordId);
     }
 
     @Override
-    public void accept(String user, String collection, S state) {
+    public void accept(String recordId, S state) {
         System.out.println("do nothing. simply acknowledge new state was accepted -> " + state);
     }
 }

@@ -10,9 +10,19 @@ import works.hop.reducer.persist.RecordValue;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Todo implements RecordValue {
+public class Todo implements RecordValue<String> {
 
-    public Long id;
+    public String id;
     public String task;
     public Boolean completed;
+
+    @Override
+    public String getRecordId() {
+        return getId();
+    }
+
+    @Override
+    public void setRecordId(String id) {
+        setId(id);
+    }
 }

@@ -22,15 +22,15 @@ public class JdbcReducer<S> extends AbstractReducer<S> {
             case CREATE_RECORD:
                 RecordEntity toCreate = (RecordEntity) action.getBody();
                 ((JdbcState) state).save(toCreate);
-                return state.apply(toCreate.getKey().getUserKey(), toCreate.getKey().getCollectionKey());
+                return state.apply((String) toCreate.getKey().getRecordId());
             case DELETE_RECORD:
                 RecordKey toDelete = (RecordKey) action.getBody();
                 ((JdbcState) state).delete(toDelete);
-                return state.apply(toDelete.getUserKey(), toDelete.getCollectionKey());
+                return state.apply((String) toDelete.getRecordId());
             case UPDATE_RECORD:
                 RecordEntity toUpdate = (RecordEntity) action.getBody();
                 ((JdbcState) state).update(toUpdate);
-                return state.apply(toUpdate.getKey().getUserKey(), toUpdate.getKey().getCollectionKey());
+                return state.apply((String) toUpdate.getKey().getRecordId());
             default:
                 return null;
         }
@@ -41,9 +41,9 @@ public class JdbcReducer<S> extends AbstractReducer<S> {
         switch (action.getType().get()) {
             case FETCH_ALL:
                 RecordKey toFetch = (RecordKey) action.getBody();
-                return this.state().apply(toFetch.getUserKey(), toFetch.getCollectionKey());
+                return this.state().apply((String) toFetch.getRecordId());
             case FETCH_BY_ID:
-                long fetchId = (long) action.getBody();
+                String fetchId = (String) action.getBody();
                 return ((JdbcState) this.state()).fetch(fetchId);
             default:
                 return null;

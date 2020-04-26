@@ -6,7 +6,6 @@ import io.etcd.jetcd.kv.PutResponse;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 public class JEtcdRepo {
 
@@ -27,7 +26,7 @@ public class JEtcdRepo {
     }
 
     public static void main(String[] args) throws InterruptedException, ExecutionException {
-        try(KV client = instance().kvClient()) {
+        try (KV client = instance().kvClient()) {
             ByteSequence key = ByteSequence.from("firstName".getBytes());
             ByteSequence value = ByteSequence.from("Steve".getBytes());
             CompletableFuture<PutResponse> putResult = client.put(key, value);

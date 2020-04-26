@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RecordKey {
+public class RecordKey<T> {
 
-    private Long id;
+    private T recordId;
     private String userKey;
     private String collectionKey;
 }

@@ -14,6 +14,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import works.hop.core.JsonSupplier;
@@ -111,6 +112,7 @@ public class BasicJUnit4ClassRunnerTest {
     }
 
     @Test
+    @Ignore
     public void testGET_TWO_FromServer(HttpClient client) throws InterruptedException, IOException {
         String uri = String.format("http://%s:%d%s", HOST, PORT, "/two");
         HttpRequest request = HttpRequest.newBuilder()

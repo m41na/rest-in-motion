@@ -33,8 +33,8 @@ public class CombineReducersTest {
         CombineReducers combinedReducers = new CombineReducers(new DefaultStore(), new TodoObserver(),
                 Map.of(FIRST_TODO, firstRed, SECOND_TODO, secondRed));
         //dispatch event to invoke reduce method
-        combinedReducers.dispatcher((store) -> store.dispatch(addTodo.apply(Todo.builder().task("yes").id(1L).completed(false).build())));
-        assertEquals(2, ((List) firstRed.state().apply(null, null)).size());
-        assertEquals(2, ((List) secondRed.state().apply(null, null)).size());
+        combinedReducers.dispatcher((store) -> store.dispatch(addTodo.apply(Todo.builder().task("yes").id("100").completed(false).build())));
+        assertEquals(2, ((List) firstRed.state().apply(null)).size());
+        assertEquals(2, ((List) secondRed.state().apply(null)).size());
     }
 }

@@ -7,12 +7,12 @@ public class MemState<S> implements State<S> {
     private S state;
 
     @Override
-    public S apply(String user, String collection) {
+    public S apply(String recordId) {
         return state;
     }
 
     @Override
-    public void accept(String user, String collection, S state) {
+    public void accept(String recordId, S state) {
         this.state = state;
     }
 }

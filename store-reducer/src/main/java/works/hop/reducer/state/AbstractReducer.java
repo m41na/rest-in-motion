@@ -26,8 +26,8 @@ public abstract class AbstractReducer<S> implements Reducer<S> {
     }
 
     @Override
-    public void nextState(String user, String collection, S state) {
-        this.state.accept(user, collection, state);
+    public void nextState(String recordId, S state) {
+        this.state.accept(recordId, state);
     }
 
     @Override

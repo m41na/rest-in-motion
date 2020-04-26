@@ -22,10 +22,10 @@ public class TodoApp {
         store.reducer(reducerKey, new TodoReducer(reducerKey, state));
         store.subscribe(reducerKey, new TodoObserver());
         //dispatch some actions (with future)
-        store.dispatchAsync(CompletableFuture.supplyAsync(() -> addTodo.apply(new Todo(1L, "butter", false))));
+        store.dispatchAsync(CompletableFuture.supplyAsync(() -> addTodo.apply(new Todo("100", "butter", false))));
         //dispatch some actions (same thread as dispatcher)
-        store.dispatch(addTodo.apply(new Todo(2L, "milk", false)));
-        store.dispatch(addTodo.apply(new Todo(3L, "bread", false)));
+        store.dispatch(addTodo.apply(new Todo("120", "milk", false)));
+        store.dispatch(addTodo.apply(new Todo("140", "bread", false)));
         store.dispatch(completeTodo.apply("milk"));
         store.dispatch(removeTodo.apply("bread"));
         store.state().forEach(records -> {

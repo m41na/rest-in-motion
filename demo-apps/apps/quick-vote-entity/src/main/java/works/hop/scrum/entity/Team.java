@@ -1,7 +1,5 @@
 package works.hop.scrum.entity;
 
-import lombok.*;
-
 import java.util.Date;
 
 @Data

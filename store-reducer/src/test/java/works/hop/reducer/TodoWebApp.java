@@ -57,7 +57,7 @@ public class TodoWebApp {
         app.get("/{user}", (req, res, done) -> {
             String userKey = req.param("user");
             RecordKey criteria = RecordKey.builder().collectionKey(TODO_LIST).userKey(userKey).build();
-            done.resolve(store.dispatchAsync(fetchAllRecords.apply(criteria), state -> res.json(JsonResult.ok(state))));
+            done.resolve(store.dispatchQuery(fetchAllRecords.apply(criteria), state -> res.json(JsonResult.ok(state))));
         });
         app.post("/{user}", "application/json", "application/json", (req, res, done) -> {
             String userKey = req.param("user");
@@ -70,7 +70,7 @@ public class TodoWebApp {
         app.put("/{user}", (req, res, done) -> {
             String userKey = req.param("user");
             Todo todo = req.body(Todo.class);
-            RecordEntity recordEntity = RecordEntity.builder().key(RecordKey.builder().id(todo.id).userKey(userKey)
+            RecordEntity recordEntity = RecordEntity.builder().key(RecordKey.builder().recordId(todo.id).userKey(userKey)
                     .collectionKey(TODO_LIST).build())
                     .value(todo).build();
             done.resolve(store.dispatchAsync(updateRecord.apply(recordEntity), state -> res.json(JsonResult.ok(state))));
@@ -78,7 +78,7 @@ public class TodoWebApp {
         app.delete("/{user}/{id}", (req, res, done) -> {
             String userKey = req.param("user");
             Long todoId = req.longParam("id");
-            RecordKey deleteId = RecordKey.builder().id(todoId).userKey(userKey).collectionKey(TODO_LIST).build();
+            RecordKey deleteId = RecordKey.builder().recordId(todoId).userKey(userKey).collectionKey(TODO_LIST).build();
             done.resolve(store.dispatchAsync(deleteRecord.apply(deleteId), state -> res.json(JsonResult.ok(state))));
         });
         app.after("get", "/", (req, res, done) -> System.out.println("PRINT AFTER GET /"));

@@ -17,8 +17,6 @@ import works.hop.nosql.command.AResult;
 import works.hop.nosql.command.EntityDocuments;
 import works.hop.scrum.entity.Team;
 
-import java.util.*;
-
 @Repository
 public class TeamRepo {
 

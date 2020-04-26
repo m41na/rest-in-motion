@@ -38,7 +38,7 @@ public class PersistTestConfig {
 
     @PostConstruct
     public void setupScript() throws SQLException {
-        Path path = Path.of(System.getProperty("user.dir"), "/src/test/resources", "schema.sql");
+        Path path = Path.of(System.getProperty("user.dir"), "src/test/resources", "schema.sql");
         RunScript.execute(localUrl, localUser, localPass, path.toString(), Charset.defaultCharset(), false);
     }
 

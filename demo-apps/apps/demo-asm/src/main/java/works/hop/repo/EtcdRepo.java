@@ -21,31 +21,16 @@ public class EtcdRepo {
 
     private final KvStoreClient client;
 
-    private EtcdRepo(){
+    private EtcdRepo() {
         this.client = EtcdClient.forEndpoint("localhost", 2379).withPlainText().build();
         init();
     }
 
-    public static EtcdRepo instance(){
-        if(instance == null){
+    public static EtcdRepo instance() {
+        if (instance == null) {
             instance = new EtcdRepo();
         }
         return instance;
-    }
-
-    private void init(){
-    }
-
-    public KvClient kvClient(){
-        return client.getKvClient();
-    }
-
-    public LeaseClient leaseClient(){
-        return client.getLeaseClient();
-    }
-
-    public LockClient lockClient(){
-        return client.getLockClient();
     }
 
     public static void main(String[] args) throws InterruptedException, ExecutionException, TimeoutException {
@@ -60,5 +45,20 @@ public class EtcdRepo {
         ListenableFuture<PutResponse> asyncPut = client.put(req);
         PutResponse asyncPutResponse = asyncPut.get(1000, TimeUnit.MILLISECONDS);
         System.out.println(asyncPutResponse);
+    }
+
+    private void init() {
+    }
+
+    public KvClient kvClient() {
+        return client.getKvClient();
+    }
+
+    public LeaseClient leaseClient() {
+        return client.getLeaseClient();
+    }
+
+    public LockClient lockClient() {
+        return client.getLockClient();
     }
 }

@@ -1,0 +1,36 @@
+{
+   "type" : "record",
+   "namespace" : "works.hop.model.avro",
+   "name" : "AScrum",
+   "fields" : [
+       { "name" : "resourceId", "type" : "string", "required": "true" },
+       { "name" : "organizer", "type" : "string", "required": "true" },
+       { "name" : "title", "type" : ["null", "string"] },
+       { "name" : "task", "type" : "string", "default": "unspecified" },
+       { "name" : "locked", "type" : "boolean", "default": false },
+       {
+            "name": "players",
+            "type" : {
+                "type": "array",
+                "items": [
+                    {
+                        "name": "APlayer",
+                        "type": "record",
+                        "fields": [
+                            { "name" : "email" , "type" : "string", "required": "true" },
+                            { "name" : "name" , "type" : "string", "required": "true" }
+                        ]
+                    }
+                ]
+            }
+       },
+       { "name" : "choices", "type" : { "type": "array", "items" : "string" }},
+       {
+            "name": "votes",
+            "type" : {
+                "type": "map",
+                "values": "string"
+            }
+       }
+   ]
+}

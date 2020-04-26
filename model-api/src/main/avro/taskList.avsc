@@ -1,0 +1,29 @@
+{
+   "type" : "record",
+   "namespace" : "works.hop.model.avro",
+   "name" : "TaskList",
+   "fields" : [
+       {
+            "name": "list",
+            "type" : {
+                "type": "array",
+                "items": [
+                    {
+                        "type": "array",
+                        "items": [
+                            {
+                                "name": "Task",
+                                "type": "record",
+                                "fields": [
+                                    { "name" : "id" , "type" : "long" },
+                                    { "name" : "task" , "type" : "string" },
+                                    { "name" : "completed" , "type" : "boolean" }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+       }
+   ]
+}

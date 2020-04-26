@@ -12,10 +12,10 @@ public interface Reducer<S> extends Function<Action, S> {
     State<S> state();
 
     default void nextState(S state) {
-        nextState(null, null, state);
+        nextState(null, state);
     }
 
-    void nextState(String user, String collection, S state);
+    void nextState(String recordId, S state);
 
     S reduce(State<S> state, Action action);
 

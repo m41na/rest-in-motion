@@ -1,0 +1,24 @@
+{
+   "type" : "record",
+   "namespace" : "works.hop.model.avro",
+   "name" : "ATodoList",
+   "fields" : [
+       {
+            "name": "list",
+            "type" : {
+                "type": "array",
+                "items": [
+                    {
+                        "name": "ATask",
+                        "type": "record",
+                        "fields": [
+                            { "name" : "id" , "type" : "long" },
+                            { "name" : "task" , "type" : "string" },
+                            { "name" : "completed" , "type" : "boolean" }
+                        ]
+                    }
+                ]
+            }
+       }
+   ]
+}

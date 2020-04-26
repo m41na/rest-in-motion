@@ -17,7 +17,6 @@ import works.hop.nosql.command.AResult;
 import works.hop.nosql.command.EntityDocuments;
 import works.hop.scrum.entity.Scrum;
 
-import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository

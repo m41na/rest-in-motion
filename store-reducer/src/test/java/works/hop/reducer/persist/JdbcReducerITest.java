@@ -16,6 +16,7 @@ import works.hop.reducer.state.Store;
 import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.junit.Assert.assertTrue;
 
@@ -36,6 +37,7 @@ public class JdbcReducerITest {
     Store store;
     JdbcObserver observer;
     JdbcState<List<Todo>> state;
+    AtomicLong nextId = new AtomicLong(100);
 
     @Before
     public void setUp() {
@@ -60,7 +62,7 @@ public class JdbcReducerITest {
     @Test
     public void save() {
         Todo todo = Todo.builder().task("bread").completed(false).build();
-        RecordEntity record = RecordEntity.builder().key(RecordKey.builder().userKey(user).collectionKey(collection).build())
+        RecordEntity record = RecordEntity.builder().key(RecordKey.builder().recordId(Long.valueOf(nextId.getAndAdd(20)).toString()).userKey(user).collectionKey(collection).build())
                 .dateCreated(new Date()).value(todo).build();
         store.dispatch(creator.create(() -> "CREATE_RECORD").apply(record));
     }

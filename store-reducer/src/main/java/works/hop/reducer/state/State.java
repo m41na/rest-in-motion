@@ -1,8 +1,14 @@
 package works.hop.reducer.state;
 
-import java.util.function.BiFunction;
+import works.hop.reducer.persist.MemState;
 
-public interface State<S> extends BiFunction<String, String, S> {
+import java.util.function.Function;
 
-    void accept(String user, String collection, S state);
+public interface State<S> extends Function<String, S> {
+
+    static <S> State<S> of(S initialState) {
+        return new MemState<>();
+    }
+
+    void accept(String recordId, S state);
 }

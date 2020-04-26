@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class CombineReducers implements Iterable<State>{
+public class CombineReducers implements Iterable<State> {
 
     private final Store store;
 

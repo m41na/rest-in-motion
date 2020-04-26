@@ -17,8 +17,6 @@ import works.hop.nosql.command.AResult;
 import works.hop.nosql.command.EntityDocuments;
 import works.hop.scrum.entity.Chat;
 
-import java.util.*;
-
 @Repository
 public class ChatRepo {
 

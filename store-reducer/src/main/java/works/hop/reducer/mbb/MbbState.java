@@ -185,7 +185,7 @@ public class MbbState implements State<Map<String, Map<String, List<RecordEntity
             MappedByteBuffer mappedByteBuffer = raFile.getChannel().map(FileChannel.MapMode.READ_WRITE, raFileEnd, modelSize);
             if (mappedByteBuffer != null) {
                 MbbModel model = new MbbModel();
-                model.id(entity.getKey().getId());
+                model.id((Long) entity.getKey().getRecordId());
                 model.collectionKey(entity.getKey().getCollectionKey());
                 model.userKey(entity.getKey().getUserKey());
                 model.recordValueLength(recordBytes.length);
@@ -198,7 +198,7 @@ public class MbbState implements State<Map<String, Map<String, List<RecordEntity
         }
     }
 
-    public void deserializeEntity(RecordKey key, Consumer<RecordEntity> consumer) throws IOException {
+    public void deserializeEntity(RecordKey<Long> key, Consumer<RecordEntity> consumer) throws IOException {
         int modelSize = (SIZE + PADDING);
         try (RandomAccessFile raFile = new RandomAccessFile(loadFileFromFS(fileName).toFile(), "r");
              RandomAccessFile raBlob = new RandomAccessFile(loadFileFromFS(blobFile).toFile(), "rw");
@@ -213,7 +213,7 @@ public class MbbState implements State<Map<String, Map<String, List<RecordEntity
                 record = (MbbModel) SerializationUtils.deserialize(modelBuffer.array());
                 modelBuffer.clear();
                 offset += size;
-                if (bytesToLong(record.getId(), 0) == key.getId().longValue()) {
+                if (bytesToLong(record.getId(), 0) == key.getRecordId().longValue()) {
                     break;
                 }
             }
@@ -235,12 +235,12 @@ public class MbbState implements State<Map<String, Map<String, List<RecordEntity
     }
 
     @Override
-    public Map<String, Map<String, List<RecordEntity>>> apply(String s, String s2) {
+    public Map<String, Map<String, List<RecordEntity>>> apply(String recordId) {
         return null;
     }
 
     @Override
-    public void accept(String user, String collection, Map<String, Map<String, List<RecordEntity>>> state) {
+    public void accept(String recordId, Map<String, Map<String, List<RecordEntity>>> state) {
 
     }
 }
