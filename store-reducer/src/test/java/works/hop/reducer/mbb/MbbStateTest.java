@@ -3,6 +3,7 @@ package works.hop.reducer.mbb;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.util.SerializationUtils;
 import works.hop.reducer.Todo;
 import works.hop.reducer.persist.RecordEntity;
 import works.hop.reducer.persist.RecordKey;
@@ -106,7 +107,7 @@ public class MbbStateTest {
         RecordEntity entity = RecordEntity.builder()
                 .key(RecordKey.builder().recordId(1l).collectionKey("todos").userKey("steve").build())
                 .dateCreated(new Date())
-                .value(Todo.builder().task("bread").completed(false).id("100").build())
+                .value(SerializationUtils.serialize(Todo.builder().task("bread").completed(false).id("100").build()))
                 .build();
         state.serializeEntity(entity);
         //read back entity

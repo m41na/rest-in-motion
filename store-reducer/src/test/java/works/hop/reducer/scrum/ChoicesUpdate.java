@@ -4,14 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import works.hop.model.Vote;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class VoteRecord {
+public class ChoicesUpdate {
 
     private String scrumId;
-    private Vote vote;
+    private String[] choices;
 }

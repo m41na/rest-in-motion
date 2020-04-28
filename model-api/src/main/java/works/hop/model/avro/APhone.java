@@ -41,7 +41,8 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * All-args constructor.
-     * @param type The new value for type
+     *
+     * @param type   The new value for type
      * @param number The new value for number
      */
     public APhone(java.lang.CharSequence type, java.lang.CharSequence number) {
@@ -55,6 +56,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Return the BinaryMessageEncoder instance used by this class.
+     *
      * @return the message encoder used by this class
      */
     public static BinaryMessageEncoder<APhone> getEncoder() {
@@ -63,6 +65,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Return the BinaryMessageDecoder instance used by this class.
+     *
      * @return the message decoder used by this class
      */
     public static BinaryMessageDecoder<APhone> getDecoder() {
@@ -71,6 +74,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Create a new BinaryMessageDecoder instance for this class that uses the specified {@link SchemaStore}.
+     *
      * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
      * @return a BinaryMessageDecoder instance for this class backed by the given SchemaStore
      */
@@ -80,6 +84,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Deserializes a APhone from a ByteBuffer.
+     *
      * @param b a byte buffer holding serialized data for an instance of this class
      * @return a APhone instance decoded from the given buffer
      * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
@@ -91,6 +96,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Creates a new APhone RecordBuilder.
+     *
      * @return A new APhone RecordBuilder
      */
     public static works.hop.model.avro.APhone.Builder newBuilder() {
@@ -99,6 +105,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Creates a new APhone RecordBuilder by copying an existing Builder.
+     *
      * @param other The existing builder to copy.
      * @return A new APhone RecordBuilder
      */
@@ -112,6 +119,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Creates a new APhone RecordBuilder by copying an existing APhone instance.
+     *
      * @param other The existing instance to copy.
      * @return A new APhone RecordBuilder
      */
@@ -125,6 +133,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Serializes this APhone to a ByteBuffer.
+     *
      * @return a buffer holding the serialized data for this instance
      * @throws java.io.IOException if this instance could not be serialized
      */
@@ -169,6 +178,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Gets the value of the 'type' field.
+     *
      * @return The value of the 'type' field.
      */
     public java.lang.CharSequence getType() {
@@ -177,6 +187,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Sets the value of the 'type' field.
+     *
      * @param value the value to set.
      */
     public void setType(java.lang.CharSequence value) {
@@ -185,6 +196,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Gets the value of the 'number' field.
+     *
      * @return The value of the 'number' field.
      */
     public java.lang.CharSequence getNumber() {
@@ -193,6 +205,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Sets the value of the 'number' field.
+     *
      * @param value the value to set.
      */
     public void setNumber(java.lang.CharSequence value) {
@@ -262,13 +275,16 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
         private java.lang.CharSequence type;
         private java.lang.CharSequence number;
 
-        /** Creates a new Builder */
+        /**
+         * Creates a new Builder
+         */
         private Builder() {
             super(SCHEMA$);
         }
 
         /**
          * Creates a Builder by copying an existing Builder.
+         *
          * @param other The existing Builder to copy.
          */
         private Builder(works.hop.model.avro.APhone.Builder other) {
@@ -285,6 +301,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Creates a Builder by copying an existing APhone instance
+         *
          * @param other The existing instance to copy.
          */
         private Builder(works.hop.model.avro.APhone other) {
@@ -301,6 +318,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Gets the value of the 'type' field.
+         *
          * @return The value.
          */
         public java.lang.CharSequence getType() {
@@ -310,6 +328,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Sets the value of the 'type' field.
+         *
          * @param value The value of 'type'.
          * @return This builder.
          */
@@ -322,6 +341,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Checks whether the 'type' field has been set.
+         *
          * @return True if the 'type' field has been set, false otherwise.
          */
         public boolean hasType() {
@@ -331,6 +351,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Clears the value of the 'type' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.APhone.Builder clearType() {
@@ -341,6 +362,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Gets the value of the 'number' field.
+         *
          * @return The value.
          */
         public java.lang.CharSequence getNumber() {
@@ -350,6 +372,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Sets the value of the 'number' field.
+         *
          * @param value The value of 'number'.
          * @return This builder.
          */
@@ -362,6 +385,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Checks whether the 'number' field has been set.
+         *
          * @return True if the 'number' field has been set, false otherwise.
          */
         public boolean hasNumber() {
@@ -371,6 +395,7 @@ public class APhone extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Clears the value of the 'number' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.APhone.Builder clearNumber() {

@@ -14,6 +14,6 @@ import java.util.Date;
 public class RecordEntity {
 
     private RecordKey key;
-    private RecordValue value;
+    private byte[] value;
     private Date dateCreated;
 }

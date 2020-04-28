@@ -6,14 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Todo implements Serializable {
+public class TodoList implements Serializable {
 
-    public String id;
-    public String task;
-    public Boolean completed;
+    public String resourceId;
+    public List<Todo> todos;
 }

@@ -45,6 +45,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
     public java.util.List<java.lang.Float> floats;
     @Deprecated
     public java.util.List<java.lang.Boolean> booleans;
+
     /**
      * Default constructor.  Note that this does not initialize fields
      * to their default values from the schema.  If that is desired then
@@ -52,18 +53,20 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
      */
     public AProfile() {
     }
+
     /**
      * All-args constructor.
-     * @param firstName The new value for firstName
-     * @param lastName The new value for lastName
-     * @param age The new value for age
-     * @param height The new value for height
-     * @param registered The new value for registered
+     *
+     * @param firstName    The new value for firstName
+     * @param lastName     The new value for lastName
+     * @param age          The new value for age
+     * @param height       The new value for height
+     * @param registered   The new value for registered
      * @param phoneNumbers The new value for phoneNumbers
-     * @param integers The new value for integers
-     * @param strings The new value for strings
-     * @param floats The new value for floats
-     * @param booleans The new value for booleans
+     * @param integers     The new value for integers
+     * @param strings      The new value for strings
+     * @param floats       The new value for floats
+     * @param booleans     The new value for booleans
      */
     public AProfile(java.lang.CharSequence firstName, java.lang.CharSequence lastName, java.lang.Integer age, java.lang.Float height, java.lang.Boolean registered, java.util.List<java.lang.Object> phoneNumbers, java.util.List<java.lang.Integer> integers, java.util.List<java.lang.CharSequence> strings, java.util.List<java.lang.Float> floats, java.util.List<java.lang.Boolean> booleans) {
         this.firstName = firstName;
@@ -84,6 +87,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Return the BinaryMessageEncoder instance used by this class.
+     *
      * @return the message encoder used by this class
      */
     public static BinaryMessageEncoder<AProfile> getEncoder() {
@@ -92,6 +96,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Return the BinaryMessageDecoder instance used by this class.
+     *
      * @return the message decoder used by this class
      */
     public static BinaryMessageDecoder<AProfile> getDecoder() {
@@ -100,6 +105,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Create a new BinaryMessageDecoder instance for this class that uses the specified {@link SchemaStore}.
+     *
      * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
      * @return a BinaryMessageDecoder instance for this class backed by the given SchemaStore
      */
@@ -109,6 +115,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Deserializes a AProfile from a ByteBuffer.
+     *
      * @param b a byte buffer holding serialized data for an instance of this class
      * @return a AProfile instance decoded from the given buffer
      * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
@@ -120,6 +127,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Creates a new AProfile RecordBuilder.
+     *
      * @return A new AProfile RecordBuilder
      */
     public static works.hop.model.avro.AProfile.Builder newBuilder() {
@@ -128,6 +136,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Creates a new AProfile RecordBuilder by copying an existing Builder.
+     *
      * @param other The existing builder to copy.
      * @return A new AProfile RecordBuilder
      */
@@ -141,6 +150,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Creates a new AProfile RecordBuilder by copying an existing AProfile instance.
+     *
      * @param other The existing instance to copy.
      * @return A new AProfile RecordBuilder
      */
@@ -154,6 +164,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Serializes this AProfile to a ByteBuffer.
+     *
      * @return a buffer holding the serialized data for this instance
      * @throws java.io.IOException if this instance could not be serialized
      */
@@ -238,6 +249,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Gets the value of the 'firstName' field.
+     *
      * @return The value of the 'firstName' field.
      */
     public java.lang.CharSequence getFirstName() {
@@ -246,6 +258,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Sets the value of the 'firstName' field.
+     *
      * @param value the value to set.
      */
     public void setFirstName(java.lang.CharSequence value) {
@@ -254,6 +267,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Gets the value of the 'lastName' field.
+     *
      * @return The value of the 'lastName' field.
      */
     public java.lang.CharSequence getLastName() {
@@ -262,6 +276,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Sets the value of the 'lastName' field.
+     *
      * @param value the value to set.
      */
     public void setLastName(java.lang.CharSequence value) {
@@ -270,6 +285,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Gets the value of the 'age' field.
+     *
      * @return The value of the 'age' field.
      */
     public java.lang.Integer getAge() {
@@ -278,6 +294,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Sets the value of the 'age' field.
+     *
      * @param value the value to set.
      */
     public void setAge(java.lang.Integer value) {
@@ -286,6 +303,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Gets the value of the 'height' field.
+     *
      * @return The value of the 'height' field.
      */
     public java.lang.Float getHeight() {
@@ -294,6 +312,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Sets the value of the 'height' field.
+     *
      * @param value the value to set.
      */
     public void setHeight(java.lang.Float value) {
@@ -302,6 +321,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Gets the value of the 'registered' field.
+     *
      * @return The value of the 'registered' field.
      */
     public java.lang.Boolean getRegistered() {
@@ -310,6 +330,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Sets the value of the 'registered' field.
+     *
      * @param value the value to set.
      */
     public void setRegistered(java.lang.Boolean value) {
@@ -318,6 +339,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Gets the value of the 'phoneNumbers' field.
+     *
      * @return The value of the 'phoneNumbers' field.
      */
     public java.util.List<java.lang.Object> getPhoneNumbers() {
@@ -326,6 +348,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Sets the value of the 'phoneNumbers' field.
+     *
      * @param value the value to set.
      */
     public void setPhoneNumbers(java.util.List<java.lang.Object> value) {
@@ -334,6 +357,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Gets the value of the 'integers' field.
+     *
      * @return The value of the 'integers' field.
      */
     public java.util.List<java.lang.Integer> getIntegers() {
@@ -342,6 +366,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Sets the value of the 'integers' field.
+     *
      * @param value the value to set.
      */
     public void setIntegers(java.util.List<java.lang.Integer> value) {
@@ -350,6 +375,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Gets the value of the 'strings' field.
+     *
      * @return The value of the 'strings' field.
      */
     public java.util.List<java.lang.CharSequence> getStrings() {
@@ -358,6 +384,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Sets the value of the 'strings' field.
+     *
      * @param value the value to set.
      */
     public void setStrings(java.util.List<java.lang.CharSequence> value) {
@@ -366,6 +393,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Gets the value of the 'floats' field.
+     *
      * @return The value of the 'floats' field.
      */
     public java.util.List<java.lang.Float> getFloats() {
@@ -374,6 +402,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Sets the value of the 'floats' field.
+     *
      * @param value the value to set.
      */
     public void setFloats(java.util.List<java.lang.Float> value) {
@@ -382,6 +411,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Gets the value of the 'booleans' field.
+     *
      * @return The value of the 'booleans' field.
      */
     public java.util.List<java.lang.Boolean> getBooleans() {
@@ -390,6 +420,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Sets the value of the 'booleans' field.
+     *
      * @param value the value to set.
      */
     public void setBooleans(java.util.List<java.lang.Boolean> value) {
@@ -426,13 +457,16 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
         private java.util.List<java.lang.Float> floats;
         private java.util.List<java.lang.Boolean> booleans;
 
-        /** Creates a new Builder */
+        /**
+         * Creates a new Builder
+         */
         private Builder() {
             super(SCHEMA$);
         }
 
         /**
          * Creates a Builder by copying an existing Builder.
+         *
          * @param other The existing Builder to copy.
          */
         private Builder(works.hop.model.avro.AProfile.Builder other) {
@@ -481,6 +515,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Creates a Builder by copying an existing AProfile instance
+         *
          * @param other The existing instance to copy.
          */
         private Builder(works.hop.model.avro.AProfile other) {
@@ -529,6 +564,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Gets the value of the 'firstName' field.
+         *
          * @return The value.
          */
         public java.lang.CharSequence getFirstName() {
@@ -538,6 +574,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Sets the value of the 'firstName' field.
+         *
          * @param value The value of 'firstName'.
          * @return This builder.
          */
@@ -550,6 +587,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Checks whether the 'firstName' field has been set.
+         *
          * @return True if the 'firstName' field has been set, false otherwise.
          */
         public boolean hasFirstName() {
@@ -559,6 +597,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Clears the value of the 'firstName' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.AProfile.Builder clearFirstName() {
@@ -569,6 +608,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Gets the value of the 'lastName' field.
+         *
          * @return The value.
          */
         public java.lang.CharSequence getLastName() {
@@ -578,6 +618,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Sets the value of the 'lastName' field.
+         *
          * @param value The value of 'lastName'.
          * @return This builder.
          */
@@ -590,6 +631,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Checks whether the 'lastName' field has been set.
+         *
          * @return True if the 'lastName' field has been set, false otherwise.
          */
         public boolean hasLastName() {
@@ -599,6 +641,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Clears the value of the 'lastName' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.AProfile.Builder clearLastName() {
@@ -609,6 +652,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Gets the value of the 'age' field.
+         *
          * @return The value.
          */
         public java.lang.Integer getAge() {
@@ -618,6 +662,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Sets the value of the 'age' field.
+         *
          * @param value The value of 'age'.
          * @return This builder.
          */
@@ -630,6 +675,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Checks whether the 'age' field has been set.
+         *
          * @return True if the 'age' field has been set, false otherwise.
          */
         public boolean hasAge() {
@@ -639,6 +685,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Clears the value of the 'age' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.AProfile.Builder clearAge() {
@@ -649,6 +696,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Gets the value of the 'height' field.
+         *
          * @return The value.
          */
         public java.lang.Float getHeight() {
@@ -658,6 +706,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Sets the value of the 'height' field.
+         *
          * @param value The value of 'height'.
          * @return This builder.
          */
@@ -670,6 +719,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Checks whether the 'height' field has been set.
+         *
          * @return True if the 'height' field has been set, false otherwise.
          */
         public boolean hasHeight() {
@@ -679,6 +729,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Clears the value of the 'height' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.AProfile.Builder clearHeight() {
@@ -689,6 +740,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Gets the value of the 'registered' field.
+         *
          * @return The value.
          */
         public java.lang.Boolean getRegistered() {
@@ -698,6 +750,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Sets the value of the 'registered' field.
+         *
          * @param value The value of 'registered'.
          * @return This builder.
          */
@@ -710,6 +763,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Checks whether the 'registered' field has been set.
+         *
          * @return True if the 'registered' field has been set, false otherwise.
          */
         public boolean hasRegistered() {
@@ -719,6 +773,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Clears the value of the 'registered' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.AProfile.Builder clearRegistered() {
@@ -729,6 +784,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Gets the value of the 'phoneNumbers' field.
+         *
          * @return The value.
          */
         public java.util.List<java.lang.Object> getPhoneNumbers() {
@@ -738,6 +794,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Sets the value of the 'phoneNumbers' field.
+         *
          * @param value The value of 'phoneNumbers'.
          * @return This builder.
          */
@@ -750,6 +807,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Checks whether the 'phoneNumbers' field has been set.
+         *
          * @return True if the 'phoneNumbers' field has been set, false otherwise.
          */
         public boolean hasPhoneNumbers() {
@@ -759,6 +817,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Clears the value of the 'phoneNumbers' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.AProfile.Builder clearPhoneNumbers() {
@@ -769,6 +828,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Gets the value of the 'integers' field.
+         *
          * @return The value.
          */
         public java.util.List<java.lang.Integer> getIntegers() {
@@ -778,6 +838,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Sets the value of the 'integers' field.
+         *
          * @param value The value of 'integers'.
          * @return This builder.
          */
@@ -790,6 +851,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Checks whether the 'integers' field has been set.
+         *
          * @return True if the 'integers' field has been set, false otherwise.
          */
         public boolean hasIntegers() {
@@ -799,6 +861,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Clears the value of the 'integers' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.AProfile.Builder clearIntegers() {
@@ -809,6 +872,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Gets the value of the 'strings' field.
+         *
          * @return The value.
          */
         public java.util.List<java.lang.CharSequence> getStrings() {
@@ -818,6 +882,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Sets the value of the 'strings' field.
+         *
          * @param value The value of 'strings'.
          * @return This builder.
          */
@@ -830,6 +895,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Checks whether the 'strings' field has been set.
+         *
          * @return True if the 'strings' field has been set, false otherwise.
          */
         public boolean hasStrings() {
@@ -839,6 +905,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Clears the value of the 'strings' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.AProfile.Builder clearStrings() {
@@ -849,6 +916,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Gets the value of the 'floats' field.
+         *
          * @return The value.
          */
         public java.util.List<java.lang.Float> getFloats() {
@@ -858,6 +926,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Sets the value of the 'floats' field.
+         *
          * @param value The value of 'floats'.
          * @return This builder.
          */
@@ -870,6 +939,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Checks whether the 'floats' field has been set.
+         *
          * @return True if the 'floats' field has been set, false otherwise.
          */
         public boolean hasFloats() {
@@ -879,6 +949,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Clears the value of the 'floats' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.AProfile.Builder clearFloats() {
@@ -889,6 +960,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Gets the value of the 'booleans' field.
+         *
          * @return The value.
          */
         public java.util.List<java.lang.Boolean> getBooleans() {
@@ -898,6 +970,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Sets the value of the 'booleans' field.
+         *
          * @param value The value of 'booleans'.
          * @return This builder.
          */
@@ -910,6 +983,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Checks whether the 'booleans' field has been set.
+         *
          * @return True if the 'booleans' field has been set, false otherwise.
          */
         public boolean hasBooleans() {
@@ -919,6 +993,7 @@ public class AProfile extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Clears the value of the 'booleans' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.AProfile.Builder clearBooleans() {

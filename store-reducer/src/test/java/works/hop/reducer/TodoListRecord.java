@@ -1,10 +1,9 @@
-package works.hop.reducer.scrum;
+package works.hop.reducer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import works.hop.model.Scrum;
 import works.hop.reducer.persist.RecordEntity;
 import works.hop.reducer.persist.RecordValue;
 
@@ -13,24 +12,24 @@ import java.io.IOException;
 @Data
 @AllArgsConstructor
 @Builder
-public class ScrumRecord implements RecordValue<Scrum> {
+public class TodoListRecord implements RecordValue<TodoList> {
 
     private final ObjectMapper mapper = new ObjectMapper();
     private RecordEntity entity;
 
     @Override
-    public Scrum getValue() {
+    public TodoList getValue() {
         try {
-            return mapper.readValue(entity.getValue(), Scrum.class);
+            return mapper.readValue(entity.getValue(), TodoList.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void setValue(Scrum scrum) {
+    public void setValue(TodoList todoList) {
         try {
-            byte[] bytes = mapper.writeValueAsBytes(scrum);
+            byte[] bytes = mapper.writeValueAsBytes(todoList);
             entity.setValue(bytes);
         } catch (IOException e) {
             throw new RuntimeException(e);

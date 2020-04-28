@@ -41,8 +41,9 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
      * All-args constructor.
+     *
      * @param email The new value for email
-     * @param name The new value for name
+     * @param name  The new value for name
      */
     public APlayer(java.lang.CharSequence email, java.lang.CharSequence name) {
         this.email = email;
@@ -55,6 +56,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
      * Return the BinaryMessageEncoder instance used by this class.
+     *
      * @return the message encoder used by this class
      */
     public static BinaryMessageEncoder<APlayer> getEncoder() {
@@ -63,6 +65,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
      * Return the BinaryMessageDecoder instance used by this class.
+     *
      * @return the message decoder used by this class
      */
     public static BinaryMessageDecoder<APlayer> getDecoder() {
@@ -71,6 +74,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
      * Create a new BinaryMessageDecoder instance for this class that uses the specified {@link SchemaStore}.
+     *
      * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
      * @return a BinaryMessageDecoder instance for this class backed by the given SchemaStore
      */
@@ -80,6 +84,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
      * Deserializes a APlayer from a ByteBuffer.
+     *
      * @param b a byte buffer holding serialized data for an instance of this class
      * @return a APlayer instance decoded from the given buffer
      * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
@@ -91,6 +96,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
      * Creates a new APlayer RecordBuilder.
+     *
      * @return A new APlayer RecordBuilder
      */
     public static works.hop.model.avro.APlayer.Builder newBuilder() {
@@ -99,6 +105,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
      * Creates a new APlayer RecordBuilder by copying an existing Builder.
+     *
      * @param other The existing builder to copy.
      * @return A new APlayer RecordBuilder
      */
@@ -112,6 +119,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
      * Creates a new APlayer RecordBuilder by copying an existing APlayer instance.
+     *
      * @param other The existing instance to copy.
      * @return A new APlayer RecordBuilder
      */
@@ -125,6 +133,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
      * Serializes this APlayer to a ByteBuffer.
+     *
      * @return a buffer holding the serialized data for this instance
      * @throws java.io.IOException if this instance could not be serialized
      */
@@ -169,6 +178,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
      * Gets the value of the 'email' field.
+     *
      * @return The value of the 'email' field.
      */
     public java.lang.CharSequence getEmail() {
@@ -177,6 +187,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
      * Sets the value of the 'email' field.
+     *
      * @param value the value to set.
      */
     public void setEmail(java.lang.CharSequence value) {
@@ -185,6 +196,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
      * Gets the value of the 'name' field.
+     *
      * @return The value of the 'name' field.
      */
     public java.lang.CharSequence getName() {
@@ -193,6 +205,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
     /**
      * Sets the value of the 'name' field.
+     *
      * @param value the value to set.
      */
     public void setName(java.lang.CharSequence value) {
@@ -262,13 +275,16 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
         private java.lang.CharSequence email;
         private java.lang.CharSequence name;
 
-        /** Creates a new Builder */
+        /**
+         * Creates a new Builder
+         */
         private Builder() {
             super(SCHEMA$);
         }
 
         /**
          * Creates a Builder by copying an existing Builder.
+         *
          * @param other The existing Builder to copy.
          */
         private Builder(works.hop.model.avro.APlayer.Builder other) {
@@ -285,6 +301,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
         /**
          * Creates a Builder by copying an existing APlayer instance
+         *
          * @param other The existing instance to copy.
          */
         private Builder(works.hop.model.avro.APlayer other) {
@@ -301,6 +318,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
         /**
          * Gets the value of the 'email' field.
+         *
          * @return The value.
          */
         public java.lang.CharSequence getEmail() {
@@ -310,6 +328,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
         /**
          * Sets the value of the 'email' field.
+         *
          * @param value The value of 'email'.
          * @return This builder.
          */
@@ -322,6 +341,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
         /**
          * Checks whether the 'email' field has been set.
+         *
          * @return True if the 'email' field has been set, false otherwise.
          */
         public boolean hasEmail() {
@@ -331,6 +351,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
         /**
          * Clears the value of the 'email' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.APlayer.Builder clearEmail() {
@@ -341,6 +362,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
         /**
          * Gets the value of the 'name' field.
+         *
          * @return The value.
          */
         public java.lang.CharSequence getName() {
@@ -350,6 +372,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
         /**
          * Sets the value of the 'name' field.
+         *
          * @param value The value of 'name'.
          * @return This builder.
          */
@@ -362,6 +385,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
         /**
          * Checks whether the 'name' field has been set.
+         *
          * @return True if the 'name' field has been set, false otherwise.
          */
         public boolean hasName() {
@@ -371,6 +395,7 @@ public class APlayer extends org.apache.avro.specific.SpecificRecordBase impleme
 
         /**
          * Clears the value of the 'name' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.APlayer.Builder clearName() {

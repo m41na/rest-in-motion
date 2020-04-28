@@ -38,6 +38,7 @@ public class TaskList extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * All-args constructor.
+     *
      * @param list The new value for list
      */
     public TaskList(java.util.List<java.lang.Object> list) {
@@ -50,6 +51,7 @@ public class TaskList extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Return the BinaryMessageEncoder instance used by this class.
+     *
      * @return the message encoder used by this class
      */
     public static BinaryMessageEncoder<TaskList> getEncoder() {
@@ -58,6 +60,7 @@ public class TaskList extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Return the BinaryMessageDecoder instance used by this class.
+     *
      * @return the message decoder used by this class
      */
     public static BinaryMessageDecoder<TaskList> getDecoder() {
@@ -66,6 +69,7 @@ public class TaskList extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Create a new BinaryMessageDecoder instance for this class that uses the specified {@link SchemaStore}.
+     *
      * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
      * @return a BinaryMessageDecoder instance for this class backed by the given SchemaStore
      */
@@ -75,6 +79,7 @@ public class TaskList extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Deserializes a TaskList from a ByteBuffer.
+     *
      * @param b a byte buffer holding serialized data for an instance of this class
      * @return a TaskList instance decoded from the given buffer
      * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
@@ -86,6 +91,7 @@ public class TaskList extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Creates a new TaskList RecordBuilder.
+     *
      * @return A new TaskList RecordBuilder
      */
     public static works.hop.model.avro.TaskList.Builder newBuilder() {
@@ -94,6 +100,7 @@ public class TaskList extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Creates a new TaskList RecordBuilder by copying an existing Builder.
+     *
      * @param other The existing builder to copy.
      * @return A new TaskList RecordBuilder
      */
@@ -107,6 +114,7 @@ public class TaskList extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Creates a new TaskList RecordBuilder by copying an existing TaskList instance.
+     *
      * @param other The existing instance to copy.
      * @return A new TaskList RecordBuilder
      */
@@ -120,6 +128,7 @@ public class TaskList extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Serializes this TaskList to a ByteBuffer.
+     *
      * @return a buffer holding the serialized data for this instance
      * @throws java.io.IOException if this instance could not be serialized
      */
@@ -159,6 +168,7 @@ public class TaskList extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Gets the value of the 'list' field.
+     *
      * @return The value of the 'list' field.
      */
     public java.util.List<java.lang.Object> getList() {
@@ -167,6 +177,7 @@ public class TaskList extends org.apache.avro.specific.SpecificRecordBase implem
 
     /**
      * Sets the value of the 'list' field.
+     *
      * @param value the value to set.
      */
     public void setList(java.util.List<java.lang.Object> value) {
@@ -194,13 +205,16 @@ public class TaskList extends org.apache.avro.specific.SpecificRecordBase implem
 
         private java.util.List<java.lang.Object> list;
 
-        /** Creates a new Builder */
+        /**
+         * Creates a new Builder
+         */
         private Builder() {
             super(SCHEMA$);
         }
 
         /**
          * Creates a Builder by copying an existing Builder.
+         *
          * @param other The existing Builder to copy.
          */
         private Builder(works.hop.model.avro.TaskList.Builder other) {
@@ -213,6 +227,7 @@ public class TaskList extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Creates a Builder by copying an existing TaskList instance
+         *
          * @param other The existing instance to copy.
          */
         private Builder(works.hop.model.avro.TaskList other) {
@@ -225,6 +240,7 @@ public class TaskList extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Gets the value of the 'list' field.
+         *
          * @return The value.
          */
         public java.util.List<java.lang.Object> getList() {
@@ -234,6 +250,7 @@ public class TaskList extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Sets the value of the 'list' field.
+         *
          * @param value The value of 'list'.
          * @return This builder.
          */
@@ -246,6 +263,7 @@ public class TaskList extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Checks whether the 'list' field has been set.
+         *
          * @return True if the 'list' field has been set, false otherwise.
          */
         public boolean hasList() {
@@ -255,6 +273,7 @@ public class TaskList extends org.apache.avro.specific.SpecificRecordBase implem
 
         /**
          * Clears the value of the 'list' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.TaskList.Builder clearList() {

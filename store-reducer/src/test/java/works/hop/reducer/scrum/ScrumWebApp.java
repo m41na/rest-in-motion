@@ -1,5 +1,6 @@
 package works.hop.reducer.scrum;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import works.hop.reducer.state.State;
 import works.hop.reducer.state.Store;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
@@ -36,6 +38,7 @@ public class ScrumWebApp {
         ApplicationContext ctx = new AnnotationConfigApplicationContext(PersistTestConfig.class);
         DataSource remoteDataSource = ctx.getBean("remoteDS", DataSource.class);
         DataSource dataSource = ctx.getBean("localDS", DataSource.class);
+        ObjectMapper mapper = new ObjectMapper();
 
         final String SCRUMS_COLLECTION = "SCRUMS_COLLECTION";
         JdbcObserver observer = new JdbcObserver();
@@ -60,62 +63,174 @@ public class ScrumWebApp {
             String userKey = req.param("userKey");
             Organizer organizer = req.body(Organizer.class);
             Scrum scrum = Scrum.builder().organizer(organizer.getEmail()).title(organizer.getTitle()).resourceId(UUID.randomUUID().toString()).build();
-            RecordEntity recordEntity = RecordEntity.builder().key(RecordKey.builder().userKey(userKey)
-                    .collectionKey(SCRUMS_COLLECTION).build())
-                    .value(ScrumRecord.builder().scrum(scrum).build()).build();
-            done.resolve(store.dispatchAsync(INIT_SCRUM_ACTION.apply(recordEntity), state -> res.json(JsonResult.ok(state))));
+            try {
+                RecordEntity recordEntity = RecordEntity.builder().key(RecordKey.builder().userKey(userKey)
+                        .collectionKey(SCRUMS_COLLECTION).build())
+                        .value(mapper.writeValueAsBytes(scrum)).build();
+                done.resolve(store.dispatchAsync(INIT_SCRUM_ACTION.apply(recordEntity), state -> {
+                    try {
+                        RecordEntity entity = (RecordEntity) state;
+                        Scrum result = mapper.readValue(entity.getValue(), Scrum.class);
+                        result.setResourceId(entity.getKey().getRecordId().toString());
+                        res.json(JsonResult.ok(result));
+                    } catch (IOException e) {
+                        res.json(JsonResult.err(e.getMessage()));
+                    }
+                }));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         });
         app.get("/{scrumId}", (req, res, done) -> {
-            String scrumId = req.param("user");
-            done.resolve(store.dispatchQuery(RETRIEVE_SCRUM_ACTION.apply(scrumId), state -> res.json(JsonResult.ok(state))));
+            String scrumId = req.param("scrumId");
+            done.resolve(store.dispatchQuery(RETRIEVE_SCRUM_ACTION.apply(scrumId), state -> {
+                try {
+                    RecordEntity entity = (RecordEntity) state;
+                    Scrum result = mapper.readValue(entity.getValue(), Scrum.class);
+                    result.setResourceId(entity.getKey().getRecordId().toString());
+                    res.json(JsonResult.ok(result));
+                } catch (IOException e) {
+                    res.json(JsonResult.err(e.getMessage()));
+                }
+            }));
         });
-        app.put("/{scrumId}/invite", (req, res, done) -> {
+        app.put("/{scrumId}/invite", "application/json", "application/json", (req, res, done) -> {
             String scrumId = req.param("scrumId");
             Player player = req.body(Player.class);
             PlayerRecord playerEntity = PlayerRecord.builder().player(player).scrumId(scrumId).build();
-            done.resolve(store.dispatchAsync(INVITE_PLAYER_ACTION.apply(playerEntity), state -> res.json(JsonResult.ok(state))));
+            done.resolve(store.dispatchAsync(INVITE_PLAYER_ACTION.apply(playerEntity), state -> {
+                try {
+                    RecordEntity entity = (RecordEntity) state;
+                    Scrum result = mapper.readValue(entity.getValue(), Scrum.class);
+                    result.setResourceId(entity.getKey().getRecordId().toString());
+                    res.json(JsonResult.ok(result));
+                } catch (IOException e) {
+                    res.json(JsonResult.err(e.getMessage()));
+                }
+            }));
         });
-        app.put("/{scrumId}/title/{title}", (req, res, done) -> {
+        app.put("/{scrumId}/title/{title}", "application/json", "application/json", (req, res, done) -> {
             String scrumId = req.param("scrumId");
             String title = req.param("title");
             TitleUpdate titleEntity = TitleUpdate.builder().title(title).scrumId(scrumId).build();
-            done.resolve(store.dispatchAsync(UPDATE_TITLE_ACTION.apply(titleEntity), state -> res.json(JsonResult.ok(state))));
+            done.resolve(store.dispatchAsync(UPDATE_TITLE_ACTION.apply(titleEntity), state -> {
+                try {
+                    RecordEntity entity = (RecordEntity) state;
+                    Scrum result = mapper.readValue(entity.getValue(), Scrum.class);
+                    result.setResourceId(entity.getKey().getRecordId().toString());
+                    res.json(JsonResult.ok(result));
+                } catch (IOException e) {
+                    res.json(JsonResult.err(e.getMessage()));
+                }
+            }));
         });
-        app.put("/{scrumId}/title/{title}", (req, res, done) -> {
+        app.put("/{scrumId}/task/{task}", "application/json", "application/json", (req, res, done) -> {
             String scrumId = req.param("scrumId");
-            String task = req.param("title");
+            String task = req.param("task");
             TaskUpdate taskEntity = TaskUpdate.builder().task(task).scrumId(scrumId).build();
-            done.resolve(store.dispatchAsync(UPDATE_TASK_ACTION.apply(taskEntity), state -> res.json(JsonResult.ok(state))));
+            done.resolve(store.dispatchAsync(UPDATE_TASK_ACTION.apply(taskEntity), state -> {
+                try {
+                    RecordEntity entity = (RecordEntity) state;
+                    Scrum result = mapper.readValue(entity.getValue(), Scrum.class);
+                    result.setResourceId(entity.getKey().getRecordId().toString());
+                    res.json(JsonResult.ok(result));
+                } catch (IOException e) {
+                    res.json(JsonResult.err(e.getMessage()));
+                }
+            }));
         });
-        app.put("/{scrumId}/join", (req, res, done) -> {
+        app.put("/{scrumId}/choices", "application/json", "application/json", (req, res, done) -> {
+            String scrumId = req.param("scrumId");
+            String[] choices = req.body(String[].class);
+            ChoicesUpdate choicesUpdate = ChoicesUpdate.builder().choices(choices).scrumId(scrumId).build();
+            done.resolve(store.dispatchAsync(UPDATE_CHOICES_ACTION.apply(choicesUpdate), state -> {
+                try {
+                    RecordEntity entity = (RecordEntity) state;
+                    Scrum result = mapper.readValue(entity.getValue(), Scrum.class);
+                    result.setResourceId(entity.getKey().getRecordId().toString());
+                    res.json(JsonResult.ok(result));
+                } catch (IOException e) {
+                    res.json(JsonResult.err(e.getMessage()));
+                }
+            }));
+        });
+        app.put("/{scrumId}/join", "application/json", "application/json", (req, res, done) -> {
             String scrumId = req.param("scrumId");
             Player player = req.body(Player.class);
             PlayerRecord playerEntity = PlayerRecord.builder().player(player).scrumId(scrumId).build();
-            done.resolve(store.dispatchAsync(JOIN_SCRUM_ACTION.apply(playerEntity), state -> res.json(JsonResult.ok(state))));
+            done.resolve(store.dispatchAsync(JOIN_SCRUM_ACTION.apply(playerEntity), state -> {
+                try {
+                    RecordEntity entity = (RecordEntity) state;
+                    Scrum result = mapper.readValue(entity.getValue(), Scrum.class);
+                    result.setResourceId(entity.getKey().getRecordId().toString());
+                    res.json(JsonResult.ok(result));
+                } catch (IOException e) {
+                    res.json(JsonResult.err(e.getMessage()));
+                }
+            }));
         });
-        app.put("/{scrumId}/exit/{name}", (req, res, done) -> {
+        app.put("/{scrumId}/exit/{name}", "application/json", "application/json", (req, res, done) -> {
             String scrumId = req.param("scrumId");
             String player = req.param("name");
             ExitRecord exitEntity = ExitRecord.builder().name(player).scrumId(scrumId).build();
-            done.resolve(store.dispatchAsync(EXIT_SCRUM_ACTION.apply(exitEntity), state -> res.json(JsonResult.ok(state))));
+            done.resolve(store.dispatchAsync(EXIT_SCRUM_ACTION.apply(exitEntity), state -> {
+                try {
+                    RecordEntity entity = (RecordEntity) state;
+                    Scrum result = mapper.readValue(entity.getValue(), Scrum.class);
+                    result.setResourceId(entity.getKey().getRecordId().toString());
+                    res.json(JsonResult.ok(result));
+                } catch (IOException e) {
+                    res.json(JsonResult.err(e.getMessage()));
+                }
+            }));
         });
-        app.put("/{scrumId}/lock", (req, res, done) -> {
+        app.put("/{scrumId}/lock", "application/json", "application/json", (req, res, done) -> {
             String scrumId = req.param("scrumId");
-            done.resolve(store.dispatchAsync(TOGGLE_LOCK_ACTION.apply(scrumId), state -> res.json(JsonResult.ok(state))));
+            done.resolve(store.dispatchAsync(TOGGLE_LOCK_ACTION.apply(scrumId), state -> {
+                try {
+                    RecordEntity entity = (RecordEntity) state;
+                    Scrum result = mapper.readValue(entity.getValue(), Scrum.class);
+                    result.setResourceId(entity.getKey().getRecordId().toString());
+                    res.json(JsonResult.ok(result));
+                } catch (IOException e) {
+                    res.json(JsonResult.err(e.getMessage()));
+                }
+            }));
         });
-        app.put("/{scrumId}/vote", (req, res, done) -> {
+        app.put("/{scrumId}/vote", "application/json", "application/json", (req, res, done) -> {
             String scrumId = req.param("scrumId");
             Vote vote = req.body(Vote.class);
             VoteRecord voteRecord = VoteRecord.builder().vote(vote).scrumId(scrumId).build();
-            done.resolve(store.dispatchAsync(SUBMIT_VOTE_ACTION.apply(voteRecord), state -> res.json(JsonResult.ok(state))));
+            done.resolve(store.dispatchAsync(SUBMIT_VOTE_ACTION.apply(voteRecord), state -> {
+                try {
+                    RecordEntity entity = (RecordEntity) state;
+                    Scrum result = mapper.readValue(entity.getValue(), Scrum.class);
+                    result.setResourceId(entity.getKey().getRecordId().toString());
+                    res.json(JsonResult.ok(result));
+                } catch (IOException e) {
+                    res.json(JsonResult.err(e.getMessage()));
+                }
+            }));
         });
         app.get("/{scrumId}/vote", (req, res, done) -> {
             String scrumId = req.param("scrumId");
-            done.resolve(store.dispatchQuery(REVEAL_VOTES_ACTION.apply(scrumId), state -> res.json(JsonResult.ok(state))));
+            done.resolve(store.dispatchQuery(REVEAL_VOTES_ACTION.apply(scrumId), state -> {
+                Map<String, String> result = (Map<String, String>) state;
+                res.json(JsonResult.ok(result));
+            }));
         });
         app.delete("/{scrumId}/vote", (req, res, done) -> {
             String scrumId = req.param("scrumId");
-            done.resolve(store.dispatchAsync(CLEAR_VOTES_ACTION.apply(scrumId), state -> res.json(JsonResult.ok(state))));
+            done.resolve(store.dispatchAsync(CLEAR_VOTES_ACTION.apply(scrumId), state -> {
+                try {
+                    RecordEntity entity = (RecordEntity) state;
+                    Scrum result = mapper.readValue(entity.getValue(), Scrum.class);
+                    result.setResourceId(entity.getKey().getRecordId().toString());
+                    res.json(JsonResult.ok(result));
+                } catch (IOException e) {
+                    res.json(JsonResult.err(e.getMessage()));
+                }
+            }));
         });
         app.after("get", "/", (req, res, done) -> System.out.println("PRINT AFTER GET /"));
         app.after((req, res, done) -> System.out.println("PRINT AFTER ALL /"));

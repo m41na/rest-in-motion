@@ -28,7 +28,7 @@ public class TodoReducer extends AbstractReducer<List<Todo>> {
                 String toComplete = (String) action.getBody();
                 return state.apply(null).stream().map(todo -> {
                     if (todo.task.equalsIgnoreCase(toComplete)) {
-                        return Todo.builder().id(todo.id).task(todo.task).completed(!todo.completed).build();
+                        return Todo.builder().task(todo.task).completed(!todo.completed).build();
                     } else {
                         return todo;
                     }

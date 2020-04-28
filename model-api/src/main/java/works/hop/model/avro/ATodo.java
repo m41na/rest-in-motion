@@ -40,8 +40,9 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
     /**
      * All-args constructor.
-     * @param id The new value for id
-     * @param task The new value for task
+     *
+     * @param id        The new value for id
+     * @param task      The new value for task
      * @param completed The new value for completed
      */
     public ATodo(java.lang.Long id, java.lang.CharSequence task, java.lang.Boolean completed) {
@@ -56,6 +57,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
     /**
      * Return the BinaryMessageEncoder instance used by this class.
+     *
      * @return the message encoder used by this class
      */
     public static BinaryMessageEncoder<ATodo> getEncoder() {
@@ -64,6 +66,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
     /**
      * Return the BinaryMessageDecoder instance used by this class.
+     *
      * @return the message decoder used by this class
      */
     public static BinaryMessageDecoder<ATodo> getDecoder() {
@@ -72,6 +75,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
     /**
      * Create a new BinaryMessageDecoder instance for this class that uses the specified {@link SchemaStore}.
+     *
      * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
      * @return a BinaryMessageDecoder instance for this class backed by the given SchemaStore
      */
@@ -81,6 +85,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
     /**
      * Deserializes a ATodo from a ByteBuffer.
+     *
      * @param b a byte buffer holding serialized data for an instance of this class
      * @return a ATodo instance decoded from the given buffer
      * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
@@ -92,6 +97,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
     /**
      * Creates a new ATodo RecordBuilder.
+     *
      * @return A new ATodo RecordBuilder
      */
     public static works.hop.model.avro.ATodo.Builder newBuilder() {
@@ -100,6 +106,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
     /**
      * Creates a new ATodo RecordBuilder by copying an existing Builder.
+     *
      * @param other The existing builder to copy.
      * @return A new ATodo RecordBuilder
      */
@@ -113,6 +120,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
     /**
      * Creates a new ATodo RecordBuilder by copying an existing ATodo instance.
+     *
      * @param other The existing instance to copy.
      * @return A new ATodo RecordBuilder
      */
@@ -126,6 +134,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
     /**
      * Serializes this ATodo to a ByteBuffer.
+     *
      * @return a buffer holding the serialized data for this instance
      * @throws java.io.IOException if this instance could not be serialized
      */
@@ -175,6 +184,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
     /**
      * Gets the value of the 'id' field.
+     *
      * @return The value of the 'id' field.
      */
     public long getId() {
@@ -183,6 +193,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
     /**
      * Sets the value of the 'id' field.
+     *
      * @param value the value to set.
      */
     public void setId(long value) {
@@ -191,6 +202,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
     /**
      * Gets the value of the 'task' field.
+     *
      * @return The value of the 'task' field.
      */
     public java.lang.CharSequence getTask() {
@@ -199,6 +211,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
     /**
      * Sets the value of the 'task' field.
+     *
      * @param value the value to set.
      */
     public void setTask(java.lang.CharSequence value) {
@@ -207,6 +220,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
     /**
      * Gets the value of the 'completed' field.
+     *
      * @return The value of the 'completed' field.
      */
     public boolean getCompleted() {
@@ -215,6 +229,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
     /**
      * Sets the value of the 'completed' field.
+     *
      * @param value the value to set.
      */
     public void setCompleted(boolean value) {
@@ -293,13 +308,16 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
         private java.lang.CharSequence task;
         private boolean completed;
 
-        /** Creates a new Builder */
+        /**
+         * Creates a new Builder
+         */
         private Builder() {
             super(SCHEMA$);
         }
 
         /**
          * Creates a Builder by copying an existing Builder.
+         *
          * @param other The existing Builder to copy.
          */
         private Builder(works.hop.model.avro.ATodo.Builder other) {
@@ -320,6 +338,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
         /**
          * Creates a Builder by copying an existing ATodo instance
+         *
          * @param other The existing instance to copy.
          */
         private Builder(works.hop.model.avro.ATodo other) {
@@ -340,6 +359,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
         /**
          * Gets the value of the 'id' field.
+         *
          * @return The value.
          */
         public long getId() {
@@ -349,6 +369,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
         /**
          * Sets the value of the 'id' field.
+         *
          * @param value The value of 'id'.
          * @return This builder.
          */
@@ -361,6 +382,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
         /**
          * Checks whether the 'id' field has been set.
+         *
          * @return True if the 'id' field has been set, false otherwise.
          */
         public boolean hasId() {
@@ -370,6 +392,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
         /**
          * Clears the value of the 'id' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.ATodo.Builder clearId() {
@@ -379,6 +402,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
         /**
          * Gets the value of the 'task' field.
+         *
          * @return The value.
          */
         public java.lang.CharSequence getTask() {
@@ -388,6 +412,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
         /**
          * Sets the value of the 'task' field.
+         *
          * @param value The value of 'task'.
          * @return This builder.
          */
@@ -400,6 +425,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
         /**
          * Checks whether the 'task' field has been set.
+         *
          * @return True if the 'task' field has been set, false otherwise.
          */
         public boolean hasTask() {
@@ -409,6 +435,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
         /**
          * Clears the value of the 'task' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.ATodo.Builder clearTask() {
@@ -419,6 +446,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
         /**
          * Gets the value of the 'completed' field.
+         *
          * @return The value.
          */
         public boolean getCompleted() {
@@ -428,6 +456,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
         /**
          * Sets the value of the 'completed' field.
+         *
          * @param value The value of 'completed'.
          * @return This builder.
          */
@@ -440,6 +469,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
         /**
          * Checks whether the 'completed' field has been set.
+         *
          * @return True if the 'completed' field has been set, false otherwise.
          */
         public boolean hasCompleted() {
@@ -449,6 +479,7 @@ public class ATodo extends org.apache.avro.specific.SpecificRecordBase implement
 
         /**
          * Clears the value of the 'completed' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.ATodo.Builder clearCompleted() {

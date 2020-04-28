@@ -41,6 +41,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
     public java.util.List<java.lang.CharSequence> choices;
     @Deprecated
     public java.util.Map<java.lang.CharSequence, java.lang.CharSequence> votes;
+
     /**
      * Default constructor.  Note that this does not initialize fields
      * to their default values from the schema.  If that is desired then
@@ -48,16 +49,18 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
      */
     public AScrum() {
     }
+
     /**
      * All-args constructor.
+     *
      * @param resourceId The new value for resourceId
-     * @param organizer The new value for organizer
-     * @param title The new value for title
-     * @param task The new value for task
-     * @param locked The new value for locked
-     * @param players The new value for players
-     * @param choices The new value for choices
-     * @param votes The new value for votes
+     * @param organizer  The new value for organizer
+     * @param title      The new value for title
+     * @param task       The new value for task
+     * @param locked     The new value for locked
+     * @param players    The new value for players
+     * @param choices    The new value for choices
+     * @param votes      The new value for votes
      */
     public AScrum(java.lang.CharSequence resourceId, java.lang.CharSequence organizer, java.lang.CharSequence title, java.lang.CharSequence task, java.lang.Boolean locked, java.util.List<java.lang.Object> players, java.util.List<java.lang.CharSequence> choices, java.util.Map<java.lang.CharSequence, java.lang.CharSequence> votes) {
         this.resourceId = resourceId;
@@ -76,6 +79,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Return the BinaryMessageEncoder instance used by this class.
+     *
      * @return the message encoder used by this class
      */
     public static BinaryMessageEncoder<AScrum> getEncoder() {
@@ -84,6 +88,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Return the BinaryMessageDecoder instance used by this class.
+     *
      * @return the message decoder used by this class
      */
     public static BinaryMessageDecoder<AScrum> getDecoder() {
@@ -92,6 +97,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Create a new BinaryMessageDecoder instance for this class that uses the specified {@link SchemaStore}.
+     *
      * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
      * @return a BinaryMessageDecoder instance for this class backed by the given SchemaStore
      */
@@ -101,6 +107,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Deserializes a AScrum from a ByteBuffer.
+     *
      * @param b a byte buffer holding serialized data for an instance of this class
      * @return a AScrum instance decoded from the given buffer
      * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
@@ -112,6 +119,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Creates a new AScrum RecordBuilder.
+     *
      * @return A new AScrum RecordBuilder
      */
     public static works.hop.model.avro.AScrum.Builder newBuilder() {
@@ -120,6 +128,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Creates a new AScrum RecordBuilder by copying an existing Builder.
+     *
      * @param other The existing builder to copy.
      * @return A new AScrum RecordBuilder
      */
@@ -133,6 +142,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Creates a new AScrum RecordBuilder by copying an existing AScrum instance.
+     *
      * @param other The existing instance to copy.
      * @return A new AScrum RecordBuilder
      */
@@ -146,6 +156,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Serializes this AScrum to a ByteBuffer.
+     *
      * @return a buffer holding the serialized data for this instance
      * @throws java.io.IOException if this instance could not be serialized
      */
@@ -220,6 +231,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Gets the value of the 'resourceId' field.
+     *
      * @return The value of the 'resourceId' field.
      */
     public java.lang.CharSequence getResourceId() {
@@ -228,6 +240,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Sets the value of the 'resourceId' field.
+     *
      * @param value the value to set.
      */
     public void setResourceId(java.lang.CharSequence value) {
@@ -236,6 +249,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Gets the value of the 'organizer' field.
+     *
      * @return The value of the 'organizer' field.
      */
     public java.lang.CharSequence getOrganizer() {
@@ -244,6 +258,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Sets the value of the 'organizer' field.
+     *
      * @param value the value to set.
      */
     public void setOrganizer(java.lang.CharSequence value) {
@@ -252,6 +267,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Gets the value of the 'title' field.
+     *
      * @return The value of the 'title' field.
      */
     public java.lang.CharSequence getTitle() {
@@ -260,6 +276,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Sets the value of the 'title' field.
+     *
      * @param value the value to set.
      */
     public void setTitle(java.lang.CharSequence value) {
@@ -268,6 +285,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Gets the value of the 'task' field.
+     *
      * @return The value of the 'task' field.
      */
     public java.lang.CharSequence getTask() {
@@ -276,6 +294,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Sets the value of the 'task' field.
+     *
      * @param value the value to set.
      */
     public void setTask(java.lang.CharSequence value) {
@@ -284,6 +303,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Gets the value of the 'locked' field.
+     *
      * @return The value of the 'locked' field.
      */
     public boolean getLocked() {
@@ -292,6 +312,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Sets the value of the 'locked' field.
+     *
      * @param value the value to set.
      */
     public void setLocked(boolean value) {
@@ -300,6 +321,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Gets the value of the 'players' field.
+     *
      * @return The value of the 'players' field.
      */
     public java.util.List<java.lang.Object> getPlayers() {
@@ -308,6 +330,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Sets the value of the 'players' field.
+     *
      * @param value the value to set.
      */
     public void setPlayers(java.util.List<java.lang.Object> value) {
@@ -316,6 +339,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Gets the value of the 'choices' field.
+     *
      * @return The value of the 'choices' field.
      */
     public java.util.List<java.lang.CharSequence> getChoices() {
@@ -324,6 +348,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Sets the value of the 'choices' field.
+     *
      * @param value the value to set.
      */
     public void setChoices(java.util.List<java.lang.CharSequence> value) {
@@ -332,6 +357,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Gets the value of the 'votes' field.
+     *
      * @return The value of the 'votes' field.
      */
     public java.util.Map<java.lang.CharSequence, java.lang.CharSequence> getVotes() {
@@ -340,6 +366,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
     /**
      * Sets the value of the 'votes' field.
+     *
      * @param value the value to set.
      */
     public void setVotes(java.util.Map<java.lang.CharSequence, java.lang.CharSequence> value) {
@@ -374,13 +401,16 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
         private java.util.List<java.lang.CharSequence> choices;
         private java.util.Map<java.lang.CharSequence, java.lang.CharSequence> votes;
 
-        /** Creates a new Builder */
+        /**
+         * Creates a new Builder
+         */
         private Builder() {
             super(SCHEMA$);
         }
 
         /**
          * Creates a Builder by copying an existing Builder.
+         *
          * @param other The existing Builder to copy.
          */
         private Builder(works.hop.model.avro.AScrum.Builder other) {
@@ -421,6 +451,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Creates a Builder by copying an existing AScrum instance
+         *
          * @param other The existing instance to copy.
          */
         private Builder(works.hop.model.avro.AScrum other) {
@@ -461,6 +492,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Gets the value of the 'resourceId' field.
+         *
          * @return The value.
          */
         public java.lang.CharSequence getResourceId() {
@@ -470,6 +502,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Sets the value of the 'resourceId' field.
+         *
          * @param value The value of 'resourceId'.
          * @return This builder.
          */
@@ -482,6 +515,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Checks whether the 'resourceId' field has been set.
+         *
          * @return True if the 'resourceId' field has been set, false otherwise.
          */
         public boolean hasResourceId() {
@@ -491,6 +525,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Clears the value of the 'resourceId' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.AScrum.Builder clearResourceId() {
@@ -501,6 +536,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Gets the value of the 'organizer' field.
+         *
          * @return The value.
          */
         public java.lang.CharSequence getOrganizer() {
@@ -510,6 +546,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Sets the value of the 'organizer' field.
+         *
          * @param value The value of 'organizer'.
          * @return This builder.
          */
@@ -522,6 +559,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Checks whether the 'organizer' field has been set.
+         *
          * @return True if the 'organizer' field has been set, false otherwise.
          */
         public boolean hasOrganizer() {
@@ -531,6 +569,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Clears the value of the 'organizer' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.AScrum.Builder clearOrganizer() {
@@ -541,6 +580,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Gets the value of the 'title' field.
+         *
          * @return The value.
          */
         public java.lang.CharSequence getTitle() {
@@ -550,6 +590,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Sets the value of the 'title' field.
+         *
          * @param value The value of 'title'.
          * @return This builder.
          */
@@ -562,6 +603,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Checks whether the 'title' field has been set.
+         *
          * @return True if the 'title' field has been set, false otherwise.
          */
         public boolean hasTitle() {
@@ -571,6 +613,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Clears the value of the 'title' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.AScrum.Builder clearTitle() {
@@ -581,6 +624,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Gets the value of the 'task' field.
+         *
          * @return The value.
          */
         public java.lang.CharSequence getTask() {
@@ -590,6 +634,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Sets the value of the 'task' field.
+         *
          * @param value The value of 'task'.
          * @return This builder.
          */
@@ -602,6 +647,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Checks whether the 'task' field has been set.
+         *
          * @return True if the 'task' field has been set, false otherwise.
          */
         public boolean hasTask() {
@@ -611,6 +657,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Clears the value of the 'task' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.AScrum.Builder clearTask() {
@@ -621,6 +668,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Gets the value of the 'locked' field.
+         *
          * @return The value.
          */
         public boolean getLocked() {
@@ -630,6 +678,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Sets the value of the 'locked' field.
+         *
          * @param value The value of 'locked'.
          * @return This builder.
          */
@@ -642,6 +691,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Checks whether the 'locked' field has been set.
+         *
          * @return True if the 'locked' field has been set, false otherwise.
          */
         public boolean hasLocked() {
@@ -651,6 +701,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Clears the value of the 'locked' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.AScrum.Builder clearLocked() {
@@ -660,6 +711,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Gets the value of the 'players' field.
+         *
          * @return The value.
          */
         public java.util.List<java.lang.Object> getPlayers() {
@@ -669,6 +721,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Sets the value of the 'players' field.
+         *
          * @param value The value of 'players'.
          * @return This builder.
          */
@@ -681,6 +734,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Checks whether the 'players' field has been set.
+         *
          * @return True if the 'players' field has been set, false otherwise.
          */
         public boolean hasPlayers() {
@@ -690,6 +744,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Clears the value of the 'players' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.AScrum.Builder clearPlayers() {
@@ -700,6 +755,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Gets the value of the 'choices' field.
+         *
          * @return The value.
          */
         public java.util.List<java.lang.CharSequence> getChoices() {
@@ -709,6 +765,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Sets the value of the 'choices' field.
+         *
          * @param value The value of 'choices'.
          * @return This builder.
          */
@@ -721,6 +778,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Checks whether the 'choices' field has been set.
+         *
          * @return True if the 'choices' field has been set, false otherwise.
          */
         public boolean hasChoices() {
@@ -730,6 +788,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Clears the value of the 'choices' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.AScrum.Builder clearChoices() {
@@ -740,6 +799,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Gets the value of the 'votes' field.
+         *
          * @return The value.
          */
         public java.util.Map<java.lang.CharSequence, java.lang.CharSequence> getVotes() {
@@ -749,6 +809,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Sets the value of the 'votes' field.
+         *
          * @param value The value of 'votes'.
          * @return This builder.
          */
@@ -761,6 +822,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Checks whether the 'votes' field has been set.
+         *
          * @return True if the 'votes' field has been set, false otherwise.
          */
         public boolean hasVotes() {
@@ -770,6 +832,7 @@ public class AScrum extends org.apache.avro.specific.SpecificRecordBase implemen
 
         /**
          * Clears the value of the 'votes' field.
+         *
          * @return This builder.
          */
         public works.hop.model.avro.AScrum.Builder clearVotes() {

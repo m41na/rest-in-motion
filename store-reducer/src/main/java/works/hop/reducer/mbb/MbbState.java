@@ -3,7 +3,6 @@ package works.hop.reducer.mbb;
 import org.springframework.util.SerializationUtils;
 import works.hop.reducer.persist.RecordEntity;
 import works.hop.reducer.persist.RecordKey;
-import works.hop.reducer.persist.RecordValue;
 import works.hop.reducer.state.State;
 
 import java.io.File;
@@ -223,9 +222,8 @@ public class MbbState implements State<Map<String, Map<String, List<RecordEntity
                 ByteBuffer recordBuffer = ByteBuffer.allocate(bytesToInt(record.getRecordValueLength(), 0));
                 int len = raBlobChannel.read(recordBuffer);
                 System.out.println("blob length read -> " + len);
-                RecordValue recordValue = (RecordValue) SerializationUtils.deserialize(recordBuffer.array());
                 //re-create entity
-                RecordEntity recordEntity = RecordEntity.builder().value(recordValue)
+                RecordEntity recordEntity = RecordEntity.builder().value(recordBuffer.array())
                         .key(key)
                         .dateCreated(new Date(bytesToLong(record.getDateCreated(), 0)))
                         .build();

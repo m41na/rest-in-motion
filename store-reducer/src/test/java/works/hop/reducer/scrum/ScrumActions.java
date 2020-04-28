@@ -15,6 +15,7 @@ public interface ScrumActions {
     String INVITE_PLAYER = "INVITE_PLAYER";
     String UPDATE_TITLE = "UPDATE_TITLE";
     String UPDATE_TASK = "UPDATE_TASK";
+    String UPDATE_CHOICES = "UPDATE_CHOICES";
     String JOIN_SCRUM = "JOIN_SCRUM";
     String EXIT_SCRUM = "EXIT_SCRUM";
     String TOGGLE_LOCK = "TOGGLE_LOCK";
@@ -29,6 +30,7 @@ public interface ScrumActions {
     Function<PlayerRecord, Action<Scrum>> INVITE_PLAYER_ACTION = actions.create(() -> INVITE_PLAYER);       //PUT       /{scrumId}/invite           {email: "", name: ""}
     Function<TitleUpdate, Action<Scrum>> UPDATE_TITLE_ACTION = actions.create(() -> UPDATE_TITLE);          //PUT       /{scrumId}/title/{title}
     Function<TaskUpdate, Action<Scrum>> UPDATE_TASK_ACTION = actions.create(() -> UPDATE_TASK);             //PUT       /{scrumId}/task             {task: ""}
+    Function<ChoicesUpdate, Action<Scrum>> UPDATE_CHOICES_ACTION = actions.create(() -> UPDATE_CHOICES);    //PUT       /{scrumId}/choices          {choices: []}
     Function<PlayerRecord, Action<Scrum>> JOIN_SCRUM_ACTION = actions.create(() -> JOIN_SCRUM);             //PUT       /{scrumId}/join             {email: "", name: ""}
     Function<ExitRecord, Action<Scrum>> EXIT_SCRUM_ACTION = actions.create(() -> EXIT_SCRUM);               //DELETE    /{scrumId}/exit/{name}
     Function<String, Action<Scrum>> TOGGLE_LOCK_ACTION = actions.create(() -> TOGGLE_LOCK);                 //PUT       /{scrumId}/lock

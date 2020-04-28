@@ -5,24 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import works.hop.model.Player;
-import works.hop.reducer.persist.RecordValue;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PlayerRecord implements RecordValue<String> {
+public class PlayerRecord {
 
     private String scrumId;
     private Player player;
-
-    @Override
-    public String getRecordId() {
-        return scrumId;
-    }
-
-    @Override
-    public void setRecordId(String id) {
-        this.setScrumId(id);
-    }
 }

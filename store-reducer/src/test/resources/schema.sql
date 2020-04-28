@@ -1,4 +1,4 @@
-drop table IF EXISTS tbl_red_store;
+--drop table IF EXISTS tbl_red_store;
 create TABLE IF NOT EXISTS tbl_red_store (
     data_id VARCHAR(128) NOT NULL,
     user_key VARCHAR(128) not null,
